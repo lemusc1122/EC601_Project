@@ -1,5 +1,7 @@
 # EC601_Project_001
-The goal here is to provide a Tutorial for topic of interest and Reflection of collaboration with LLM, along with a semester-long project proposal. This repository will be used to track progress and brainstormed ideas.
+The goal here is to provide a final prototype for the product described in the proposal submitted this semester. <br>
+This repository will be used to track the following:
+- Sprints through
 
 brainstormingPart0xx.md is used for tracking thoughts and links on one source.
 
