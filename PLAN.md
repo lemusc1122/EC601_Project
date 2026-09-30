@@ -1,4 +1,4 @@
-Here is the plan as required from Lecture given on 2026_09_28
+## $\color{#00ff00}\textsf{Plan as required - Lecture 2026_09_28}$ 
 
 ## $\color{#00ff00}\textsf{Mission Statement}$
 For $\color{#ffe135}\textsf{students}$ who $\color{#ffe135}\textsf{need a GUI-based quantum circuit simulator}$, the $\color{#ffe135}\textsf{Quantum Circuit Design and Simulation Tool}$ is a $\color{#ffe135}\textsf{design and simulation tool}$ that $\color{#ffe135}\textsf{accelerates learning}$. Unlike $\color{#ffe135}\textsf{Qiskit}$, it $\color{#ffe135}\textsf{provides an additional layer of abstraction to make simulation intuitive and rapid.}$
