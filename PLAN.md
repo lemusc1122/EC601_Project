@@ -47,8 +47,14 @@ The baseline will be Qiskit itself - we are adding capabilities leveraging the Q
 Metric: Improvement in state probabilities 
 
 ## $\color{#00ff00}\textsf{Articles for Reference}$
-Please see \docs folder in this repo to view physical copies. Links and descriptions of reference contents will be below
--d
+Please see \docs folder in this repo to view physical copies. Links and descriptions of reference contents will be below<br>
+[1] Wang, Y., Hu, Z., Sanders, B. C., & Kais, S. (2020). Qudits and High-Dimensional Quantum Computing. Frontiers in Physics, 8. https://doi.org/10.3389/fphy.2020.589504<br>
+[2] Krantz, P., Kjaergaard, M., Yan, F., Orlando, T. P., Gustavsson, S., & Oliver, W. D. (2019). A quantum engineer’s guide to superconducting qubits. Applied Physics Reviews, 6(2), 021318. https://doi.org/10.1063/1.5089550<br>
+[3] Quantum Technology | IBM Quantum Learning. (2026). IBM Quantum Learning. https://quantum.cloud.ibm.com/learning/en/courses/quantum-business-foundations/quantum-technology<br>
+[4] White Paper - Beam Splitters for Quantum Applications. (2026). Aliroquantum.Com. https://www.aliroquantum.com/white-paper-beam-splitters-for-quantum-applications<br>
+[5] Schwarze, C. R., Simon, D. S., Manni, A. D., Ndao, A., & Sergienko, A. V. (2024). Experimental demonstration of a Grover-Michelson interferometer. Optics Express, 32(19), 34116. https://doi.org/10.1364/oe.532364<br>
+[6] Unbiased four-port photonic circuit for quantum information applications. (n.d.). Retrieved September 12, 2026, from https://open.bu.edu/server/api/core/bitstreams/f8f0c0be-ff5c-478a-8d58-9c0d2d7ae6d8/content<br>
+
 ## $\color{#00ff00}\textsf{Reprocussions if Wrong}$
 - Worst case: Building false foundation of understanding for future works. Affects students, teachers, businesses if the project deliverable indirectly makes it into the company
 - Building bad habits that could make re-learning the material in future difficult. Affects students, teachers as breaking bad habits takes time and raises the stakes and decreases probability of meeting metrics on time
