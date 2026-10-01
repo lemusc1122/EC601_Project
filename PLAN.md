@@ -47,7 +47,11 @@ The baseline will be Qiskit itself - we are adding capabilities leveraging the Q
 Metric: Improvement in state probabilities 
 
 ## $\color{#00ff00}\textsf{Articles for Reference}$
-- 
+-d
+## $\color{#00ff00}\textsf{Reprocussions if Wrong}$
+- Worst case: Building false foundation of understanding for future works. Affects students, teachers, businesses if the project deliverable indirectly makes it into the company
+- Building bad habits that could make re-learning the material in future difficult
+- Users not verifying sources and propagating any potentially incorrect information
 ## $\color{#ff0000}\textsf{IBM Composer}$
 https://quantum.cloud.ibm.com/composer<br>
 https://construct.psiquantum.com/qdk
