@@ -47,6 +47,7 @@ The baseline will be Qiskit itself - we are adding capabilities leveraging the Q
 Metric: Improvement in state probabilities 
 
 ## $\color{#00ff00}\textsf{Articles for Reference}$
+Please see \docs folder in this repo to view physical copies. Links and descriptions of reference contents will be below
 -d
 ## $\color{#00ff00}\textsf{Reprocussions if Wrong}$
 - Worst case: Building false foundation of understanding for future works. Affects students, teachers, businesses if the project deliverable indirectly makes it into the company
