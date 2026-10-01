@@ -25,7 +25,7 @@ i.e. As a [specific user], I want [capability], so that [outcome I care about].<
 ## $\color{#00ff00}\textsf{Tooling}$
 - IBM's Qiskit will be used for the project, which is supported by C/C++ and Python.
 - IBM's Quantum Composer to leverage pre-existing schematic views and under-the-hood code (Qiskit) to describe the system designed. 
-- Python will be what the GUI is made through as well as referenced to Qiskit API
+- Python will be what the GUI is made through. Will serve as wrapper to Quantum Composer and Qiskit API
 - Any models required will be pulled from Python via API or coded in with references from sources
 ## $\color{#00ff00}\textsf{Demo Statement}$
 - At the end of the next two weeks we will demonstrate an example quantum circuit that can execute, with a GUI that has drop downs for language (supports english and spanish for now) and a initial pass for wiki on quantum information and references.
