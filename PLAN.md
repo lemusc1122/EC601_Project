@@ -24,6 +24,7 @@ i.e. As a [specific user], I want [capability], so that [outcome I care about].<
 - Add capability for this to be deployed as an executable (help from LLM)
 ## $\color{#00ff00}\textsf{Tooling}$
 - IBM's Qiskit will be used for the project, which is supported by C/C++ and Python.
+- IBM's Quantum Composer to leverage pre-existing schematic views and under-the-hood code (Qiskit) to describe the system designed. 
 - Python will be what the GUI is made through as well as referenced to Qiskit API
 - Any models required will be pulled from Python via API or coded in with references from sources
 ## $\color{#00ff00}\textsf{Demo Statement}$
