@@ -31,7 +31,7 @@ i.e. As a [specific user], I want [capability], so that [outcome I care about].<
 - At the end of the next two weeks we will demonstrate an example quantum circuit that can execute, with a GUI that has drop downs for language (supports english and spanish for now) and a initial pass for wiki on quantum information and references.
 
 ## $\color{#00ff00}\textsf{Kill criteria and 5 potentially proposal-ending assumptions}$
-We terminate the project if there exists a tool that already provides this service and targets the same audience<br>
+Kill statement / Pivot Line: We terminate the project if there exists a tool that already provides all the services and tools we highlighted above<br>
 | Assumptions if proven wrong can cause failure |
 | -------- |
 | Students Have Sufficient Prior Knowledge  | 
@@ -41,6 +41,10 @@ We terminate the project if there exists a tool that already provides this servi
 | The Simulation Accurately Represents Real Quantum Circuits  |
 
 https://terriergpt.bu.edu/share/tQPIuZe7L7_pgDNBznsWL 
+
+## $\color{#00ff00}\textsf{Comparison to Baseline}$
+The baseline will be Qiskit itself - we are adding capabilities leveraging the Qiskit API and will be comparing our results to that. 
 ## $\color{#ff0000}\textsf{IBM Composer}$
 https://quantum.cloud.ibm.com/composer<br>
 https://construct.psiquantum.com/qdk
+
