@@ -1,14 +1,17 @@
-# $\color{#00ff00}\textsf{Plan as required Lecture 2026_09_28}$ 
+# $\color{#00ff00}\textsf{Plan as required - Lecture 2026-09-28}$ 
 
 ## $\color{#00ff00}\textsf{Mission Statement}$
 For $\color{#ffe135}\textsf{students}$ who $\color{#ffe135}\textsf{need a GUI-based quantum circuit simulator}$, the $\color{#ffe135}\textsf{Quantum Circuit Design and Simulation Tool}$ is a $\color{#ffe135}\textsf{design and simulation tool}$ that $\color{#ffe135}\textsf{accelerates learning}$. Unlike $\color{#ffe135}\textsf{Qiskit}$, it $\color{#ffe135}\textsf{provides an additional layer of abstraction to make simulation intuitive and rapid.}$
-## $\color{#00ff00}\textsf{User and Subproduct}$
-First User: Student is user, Raw design tool to lay out circuit and run simulation/measurements/algorithms and learn concepts of quantum<br>
-Other User: Researcher is user, Raw design tool plus access to implement algorithms, simulate/measure results, and Qiskit code under hood<br>
+## $\color{#00ff00}\textsf{User}$
+Main User: Students ranging from juniors in high school to sophomores in college<br>
+Other User: Researchers looking for a second opinion<br>
 ## $\color{#00ff00}\textsf{User stories}$
 i.e. As a [specific user], I want [capability], so that [outcome I care about].<br>
-As a $\color{#ffe135}\textsf{student}$, I want $\color{#ffe135}\textsf{a GUI-based design and simulation tool}$, so that $\color{#ffe135}\textsf{I can learn about qunatum circuits}$<br>
-As a $\color{#ffe135}\textsf{researcher}$, I want $\color{#ffe135}\textsf{a GUI-based design and simulation tool with ability to incorporate algorithms for error reduction (zero-fault tolerant) and view code under the hood}$, so that $\color{#ffe135}\textsf{I can simulate a circuit in question and verify whether certain algorithms are better than others}$
+- As a $\color{#ffe135}\textsf{student}$, I want $\color{#ffe135}\textsf{a GUI-based design and simulation tool}$, so that $\color{#ffe135}\textsf{I can learn about quantum circuits}$<br>
+- As a $\color{#ffe135}\textsf{student}$, I want $\color{#ffe135}\textsf{a GUI-based design and simulation tool with support of many languages}$, so that $\color{#ffe135}\textsf{I can learn about quantum circuits and concepts across many languages}$<br>
+- As a $\color{#ffe135}\textsf{student}$, I want $\color{#ffe135}\textsf{a GUI-based design and simulation tool with wiki of information}$, so that $\color{#ffe135}\textsf{I can learn about quantum circuits and concepts across a range of students with different prerequisite knowledge}$<br>
+- As a $\color{#ffe135}\textsf{student}$, I want $\color{#ffe135}\textsf{a GUI-based design and simulation tool that is easy to install and navigate}$, so that $\color{#ffe135}\textsf{accessing the tool is quick, efficient and easy}$<br>
+- As a $\color{#ffe135}\textsf{sudent}$, I want $\color{#ffe135}\textsf{a GUI-based design and simulation tool with ability to incorporate algorithms for error reduction (zero-fault tolerant) and view code under the hood}$, so that $\color{#ffe135}\textsf{I can simulate a circuit in question and verify whether certain algorithms are better than others on certain applications of circuits}$
 ## $\color{#00ff00}\textsf{Assumption Table with Test Results}$
 | Assumption | Test Results |
 | -------- | -------- | 
