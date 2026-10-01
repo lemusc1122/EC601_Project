@@ -45,6 +45,9 @@ https://terriergpt.bu.edu/share/tQPIuZe7L7_pgDNBznsWL
 ## $\color{#00ff00}\textsf{Comparison to Baseline}$
 The baseline will be Qiskit itself - we are adding capabilities leveraging the Qiskit API and will be comparing our results to that.<br>
 Metric: Improvement in state probabilities 
+
+## $\color{#00ff00}\textsf{Articles for Reference}$
+- 
 ## $\color{#ff0000}\textsf{IBM Composer}$
 https://quantum.cloud.ibm.com/composer<br>
 https://construct.psiquantum.com/qdk
