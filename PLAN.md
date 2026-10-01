@@ -27,7 +27,7 @@ i.e. As a [specific user], I want [capability], so that [outcome I care about].<
 - Python will be what the GUI is made through as well as referenced to Qiskit API
 - Any models required will be pulled from Python via API or coded in with references from sources
 ## $\color{#00ff00}\textsf{Demo Statement}$
-- At the end of the next two weeks we will demonstrate an example quantum circuit that can execute on a real server, with a GUI that has drop downs for language (supports english and spanish for now) and a initial pass for wiki on quantum information and references.
+- At the end of the next two weeks we will demonstrate an example quantum circuit that can execute, with a GUI that has drop downs for language (supports english and spanish for now) and a initial pass for wiki on quantum information and references.
 
 ## $\color{#00ff00}\textsf{Kill criteria and 5 potentially proposal-ending assumptions}$
 We terminate the project if there exists a tool that already provides this service and targets the same audience<br>
