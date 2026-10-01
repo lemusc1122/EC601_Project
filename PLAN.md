@@ -36,7 +36,7 @@ We terminate the project if there exists a tool that already provides this servi
 | -------- |
 | Students Have Sufficient Prior Knowledge  | 
 | The GUI is Intuitive Enough for Students  |
-| Access to Required Hardware/Software  | 
+| Valid IBM Qiskit API token  | 
 | Students Are Motivated to Use the Tool Independently  |
 | The Simulation Accurately Represents Real Quantum Circuits  |
 
