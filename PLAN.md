@@ -12,16 +12,23 @@ i.e. As a [specific user], I want [capability], so that [outcome I care about].<
 - As a $\color{#ffe135}\textsf{student}$, I want $\color{#ffe135}\textsf{a GUI-based design and simulation tool with wiki of information}$, so that $\color{#ffe135}\textsf{I can learn about quantum circuits and concepts across a range of students with different prerequisite knowledge}$<br>
 - As a $\color{#ffe135}\textsf{student}$, I want $\color{#ffe135}\textsf{a GUI-based design and simulation tool that is easy to install and navigate}$, so that $\color{#ffe135}\textsf{accessing the tool is quick, efficient and easy}$<br>
 - As a $\color{#ffe135}\textsf{sudent}$, I want $\color{#ffe135}\textsf{a GUI-based design and simulation tool with ability to incorporate algorithms for error reduction (zero-fault tolerant) and view code under hood}$, so that $\color{#ffe135}\textsf{I can simulate a circuit in question and verify whether certain algorithms are better than others on certain applications of circuits}$
-## $\color{#00ff00}\textsf{Assumption Table with Test Results}$
-| Assumption | Test Results |
-| -------- | -------- | 
-| Students with various knowledge need a tool to design and simulate | Create a GUI where design is possible |
-| Researchers want a tool quickly test new ideas | GUI, plus options to implement algorithms and debug Qiskit code |
-| Any methods that can reduce error in simulated quantum circuit can be used in larger Quantum system | Apply methods to different scale processors to confirm behavior |
-## $\color{#00ff00}\textsf{Proposal re-written as assumptions}$
-- Students with different exposure levels wants to learn about quantum circuits (#3 - Someone will want a tool like this)
-- Quantum circuits can be easily simulated on computers (#1 - Most fatal if wrong)
-- The results will assist in reinforcing understanding or expected results (i.e. testing a new algorithm) (#2 - results might be wrong but can always fix on next iteration. Non-fatal)
+## $\color{#00ff00}\textsf{Feasability}$
+- I will have a functional example of Qiskit to compile and run on the PC, which will demonstrate how these tests are built, compiled, transpiled for execution on real hardware and what the results are.
+- I will re-gain access to a 10-day trial for API token needed to run the code on remote QPU server
+- The above two are for demo
+- The following will be moving forward
+- Wrap the code with an intuitive GUI (help from LLM)
+- Add capability to add Language selection (help from LLM)
+- Add capability to add a couple algorithm choices or none (help from LLM)
+- Add capability to access wiki (help from LLM and explain in many ways with analogies and different levels of complexity)
+- Add capability for this to be deployed as an executable (help from LLM)
+## $\color{#00ff00}\textsf{Tooling}$
+- IBM's Qiskit will be used for the project, which is supported by C/C++ and Python.
+- Python will be what the GUI is made through as well as referenced to Qiskit API
+- Any models required will be pulled from Python via API or coded in with references from sources
+## $\color{#00ff00}\textsf{Demo Statement}$
+- At the end of the next two weeks we will demonstrate an example quantum circuit that can execute on a real server, with a GUI that has drop downs for language (supports english and spanish for now) and a initial pass for wiki on quantum information and references.
+
 ## $\color{#00ff00}\textsf{Kill criteria and 5 potentially proposal-ending assumptions}$
 We terminate the project if there exists a tool that already provides this service and targets the same audience<br>
 | Assumptions if proven wrong can cause failure |
