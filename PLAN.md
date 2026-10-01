@@ -11,7 +11,7 @@ i.e. As a [specific user], I want [capability], so that [outcome I care about].<
 - As a $\color{#ffe135}\textsf{student}$, I want $\color{#ffe135}\textsf{a GUI-based design and simulation tool with support of many languages}$, so that $\color{#ffe135}\textsf{I can learn about quantum circuits and concepts across many languages}$<br>
 - As a $\color{#ffe135}\textsf{student}$, I want $\color{#ffe135}\textsf{a GUI-based design and simulation tool with wiki of information}$, so that $\color{#ffe135}\textsf{I can learn about quantum circuits and concepts across a range of students with different prerequisite knowledge}$<br>
 - As a $\color{#ffe135}\textsf{student}$, I want $\color{#ffe135}\textsf{a GUI-based design and simulation tool that is easy to install and navigate}$, so that $\color{#ffe135}\textsf{accessing the tool is quick, efficient and easy}$<br>
-- As a $\color{#ffe135}\textsf{sudent}$, I want $\color{#ffe135}\textsf{a GUI-based design and simulation tool with ability to incorporate algorithms for error reduction (zero-fault tolerant) and view code under the hood}$, so that $\color{#ffe135}\textsf{I can simulate a circuit in question and verify whether certain algorithms are better than others on certain applications of circuits}$
+- As a $\color{#ffe135}\textsf{sudent}$, I want $\color{#ffe135}\textsf{a GUI-based design and simulation tool with ability to incorporate algorithms for error reduction (zero-fault tolerant) and view code under hood}$, so that $\color{#ffe135}\textsf{I can simulate a circuit in question and verify whether certain algorithms are better than others on certain applications of circuits}$
 ## $\color{#00ff00}\textsf{Assumption Table with Test Results}$
 | Assumption | Test Results |
 | -------- | -------- | 
