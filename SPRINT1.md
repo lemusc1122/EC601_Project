@@ -4,7 +4,6 @@
 For $\color{#ffe135}\textsf{students}$ who $\color{#ffe135}\textsf{need a GUI-based quantum circuit simulator}$, the $\color{#ffe135}\textsf{Quantum Circuit Design and Simulation Tool}$ is a $\color{#ffe135}\textsf{design and simulation tool}$ that $\color{#ffe135}\textsf{supports learning quantum material}$. Unlike $\color{#ffe135}\textsf{Qiskit}$, it $\color{#ffe135}\textsf{provides an additional layer of abstraction to make simulation intuitive along with useful examples.}$
 ## $\color{#00ff00}\textsf{User}$
 Main User: Students ranging from juniors in high school to sophomores in college<br>
-Other User: Researchers looking for a second opinion<br>
 ## $\color{#00ff00}\textsf{User stories}$
 i.e. As a [specific user], I want [capability], so that [outcome I care about].<br>
 - As a $\color{#ffe135}\textsf{student}$, I want $\color{#ffe135}\textsf{a GUI-based design and simulation tool}$, so that $\color{#ffe135}\textsf{I can learn about quantum circuits}$<br>
