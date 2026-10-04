@@ -36,7 +36,7 @@ Kill statement / Pivot Line: We terminate the project if there exists a tool tha
 | -------- |
 | Students Have Sufficient Prior Knowledge  | 
 | The GUI is Intuitive Enough for Students  |
-| Valid IBM Qiskit API token and local simulation does not work| 
+| Valid IBM Qiskit API token and local simulation functions| 
 | Students Are Motivated to Use the Tool Independently  |
 | The Simulation Accurately Represents Real Quantum Circuits  |
 
