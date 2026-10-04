@@ -12,8 +12,8 @@ i.e. As a [specific user], I want [capability], so that [outcome I care about].<
 - As a $\color{#ffe135}\textsf{student}$, I want $\color{#ffe135}\textsf{a GUI-based design and simulation tool that is easy to install and navigate}$, so that $\color{#ffe135}\textsf{accessing the tool is quick, efficient and easy}$<br>
 - As a $\color{#ffe135}\textsf{sudent}$, I want $\color{#ffe135}\textsf{a GUI-based design and simulation tool with ability to incorporate algorithms for error reduction (zero-fault tolerant) and view code under hood}$, so that $\color{#ffe135}\textsf{I can simulate a circuit in question and verify whether certain algorithms are better than others on certain applications of circuits}$
 ## $\color{#00ff00}\textsf{Feasability}$
-- I will have a functional example of Qiskit to compile and run on the PC, which will demonstrate how these tests are built, compiled, transpiled for execution on real hardware and what the results are.
-- I will add capability to run simulations locally or remote - difficulty will be re-gaining access to a 10-day trial for API token needed to run the code on remote QPU server
+- I will have a functional example of Qiskit to compile and run on the PC, which will demonstrate how these tests are built, compiled, transpiled for execution on real hardware and what the results are. This is achievable for two weeks.
+- I will add capability to run simulations locally or remote - difficulty will be re-gaining access to a 10-day trial for API token needed to run the code on remote QPU server. This is achievable for two weeks.
 - The above two are for demo
 - The following will be moving forward
 - Wrap the code with an intuitive GUI (help from LLM)
