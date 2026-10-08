@@ -7,6 +7,8 @@ Here are repo files and what they are for:
 - brainstormingPart0xx.md is used for tracking thoughts and links on one source file.
 -  \docs : this folder will contain any documents such as references used for information
 -  firstQiskitScript.py : this is the deliverable for the end of Sprint 1
+-  gettingStarted.md: software needed and how to set up environment on laptop to execute prototype.py
+-  prototype.py: code for SPRINT1
 
 Here is how to run the project for yourself:
 - download bash file to setup your environment and then run code? 
