@@ -33,6 +33,9 @@ python -m pip install \
     "qiskit==2.4.2" \
     "matplotlib"
 
+# Install Qiskit's optional visualization dependencies.
+python -m pip install "qiskit[visualization]"
+
 echo
 echo "Checking installed packages..."
 python - <<'PY'
