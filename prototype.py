@@ -7,6 +7,12 @@
 # Qiskit Version 2.4.2
 # PySide6 Version 6.11.2
 #
+# Automated Installer for Dependecies
+# Execute the following before running this Pything script
+# A. chmod +x install_dependencies.bash
+# B. ./install_dependencies.bash   
+# Note: what you should notice is that all the packages above will install and report 'Installation complete.'
+#
 # References
 # Krantz, P., et al. Applied Physics Reviews, vol. 6, no. 2, 2019.
 # Perlin, Michael A., et al. Physical Review X, 2026.
