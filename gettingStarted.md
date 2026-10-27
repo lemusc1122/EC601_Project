@@ -10,3 +10,6 @@ B. In the IDE of your choice, execute the following commands to install the requ
     - ./install_dependencies.bash <br>
     - Note: what you should notice is that all the packages above will install and report 'Installation complete.' <br>
 C. Run the prototype.py script in the IDE of your choice. Happy navigating! <br>
+
+Audio walkthroughs are optional and use the operating system's local text-to-speech voice. <br>
+To hear English, Spanish, or Arabic narration, enable a matching voice in your operating system's speech or accessibility settings. Voice availability varies by system; the app reports when a matching voice is unavailable. <br>
