@@ -6,6 +6,9 @@
 # Matplotlib Version 3.7.2
 # Qiskit Version 2.4.2
 # PySide6 Version 6.11.2
+# Node.js v22.23.4
+# npm v10.9.9
+# codex-cli 0.164.0
 #
 # Automated Installer for Dependecies
 # Execute the following before running this Pything script
@@ -40,7 +43,7 @@ from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QDialog, QLabel, QComboBox,
     QPushButton, QToolButton, QVBoxLayout, QHBoxLayout, QFormLayout,
     QGridLayout, QScrollArea, QFrame, QTextBrowser, QPlainTextEdit, QTabWidget,
-    QLineEdit, QCheckBox, QTableWidget, QTableWidgetItem, QHeaderView
+    QLineEdit, QCheckBox, QSlider, QTableWidget, QTableWidgetItem, QHeaderView
 )
 
 try:
@@ -1162,6 +1165,7 @@ CRYPTO_COPY = {
         "animation_play": "▶ Play animation", "animation_pause": "Ⅱ Pause animation",
         "animation_empty": "Run an exchange to watch the pulses travel from Alice to Bob.",
         "animation_status": "Pulse {index} of {total} • bit {bit} • {basis}",
+        "speed_slow": "Slower", "speed_fast": "Faster", "speed_label": "Pulse speed:",
         "alice": "Alice", "bob": "Bob", "eve_label": "Eve",
         "pulse_heading": "Transmitted pulses — each row shows Alice’s polarization",
         "result_heading": "Exchange results", "back": "◀ Back",
@@ -1191,6 +1195,7 @@ CRYPTO_COPY = {
         "animation_play": "▶ Reproducir animación", "animation_pause": "Ⅱ Pausar animación",
         "animation_empty": "Ejecuta un intercambio para ver los pulsos viajar de Alice a Bob.",
         "animation_status": "Pulso {index} de {total} • bit {bit} • {basis}",
+        "speed_slow": "Más lento", "speed_fast": "Más rápido", "speed_label": "Velocidad del pulso:",
         "alice": "Alice", "bob": "Bob", "eve_label": "Eve",
         "pulse_heading": "Pulsos transmitidos — cada fila muestra la polarización de Alice",
         "result_heading": "Resultados del intercambio", "back": "◀ Atrás",
@@ -1220,6 +1225,7 @@ CRYPTO_COPY = {
         "animation_play": "▶ تشغيل الحركة", "animation_pause": "Ⅱ إيقاف الحركة مؤقتًا",
         "animation_empty": "شغّل التبادل لمشاهدة انتقال النبضات من أليس إلى بوب.",
         "animation_status": "النبضة {index} من {total} • البت {bit} • {basis}",
+        "speed_slow": "أبطأ", "speed_fast": "أسرع", "speed_label": "سرعة النبضة:",
         "alice": "أليس", "bob": "بوب", "eve_label": "إيف",
         "pulse_heading": "النبضات المرسلة — يعرض كل صف استقطاب أليس",
         "result_heading": "نتائج التبادل", "back": "◀ رجوع",
@@ -2451,6 +2457,7 @@ class PulseStreamWidget(QWidget):
         self.records = []
         self.index = 0
         self.progress = 0.0
+        self.step = 0.0158
         self.setMinimumHeight(142)
         self.timer = QTimer(self)
         self.timer.setInterval(30)
@@ -2465,7 +2472,7 @@ class PulseStreamWidget(QWidget):
     def advance(self):
         if not self.records:
             return
-        self.progress += 0.045
+        self.progress += self.step
         if self.progress >= 1.0:
             self.progress = 0.0
             self.index = (self.index + 1) % len(self.records)
@@ -2638,7 +2645,25 @@ class CryptographyWindow(QMainWindow):
         self.animation_button.setStyleSheet(BUTTON_STYLE_BACK)
         self.animation_button.setCheckable(True)
         self.animation_button.toggled.connect(self.toggle_animation)
-        body.addWidget(self.animation_button, 0, Qt.AlignmentFlag.AlignLeft)
+        animation_controls = QHBoxLayout()
+        animation_controls.addWidget(self.animation_button)
+        animation_controls.addSpacing(14)
+        animation_controls.addWidget(QLabel(self.copy["speed_label"]))
+        animation_controls.addWidget(QLabel(self.copy["speed_slow"]))
+        self.speed_slider = QSlider(Qt.Orientation.Horizontal)
+        self.speed_slider.setRange(1, 10)
+        self.speed_slider.setValue(3)
+        self.speed_slider.setSingleStep(1)
+        self.speed_slider.setPageStep(2)
+        self.speed_slider.setTickPosition(QSlider.TickPosition.TicksBelow)
+        self.speed_slider.setTickInterval(1)
+        self.speed_slider.setAccessibleName(self.copy["speed_label"])
+        self.speed_slider.setToolTip(self.copy["speed_label"])
+        self.speed_slider.valueChanged.connect(self.set_animation_speed)
+        animation_controls.addWidget(self.speed_slider, 1)
+        animation_controls.addWidget(QLabel(self.copy["speed_fast"]))
+        body.addLayout(animation_controls)
+        self.set_animation_speed(self.speed_slider.value())
 
         results_heading = QLabel(self.copy["result_heading"])
         results_heading.setFont(QFont("Arial", 13, QFont.Weight.Bold))
@@ -2660,7 +2685,7 @@ class CryptographyWindow(QMainWindow):
         self.pulse_table.verticalHeader().setVisible(False)
         self.pulse_table.setIconSize(QSize(50, 38))
         self.pulse_table.horizontalHeader().setSectionResizeMode(
-            QHeaderView.ResizeMode.ResizeToContents)
+            QHeaderView.ResizeMode.Interactive)
         body.addWidget(self.pulse_table, 1)
 
         controls_bottom = QHBoxLayout()
@@ -2703,7 +2728,10 @@ class CryptographyWindow(QMainWindow):
 
         records = []
         required_message_bits = len(message_bits)
-        batch_size = max(64, required_message_bits * 4 + 64)
+        # Generate enough pulses for the key and a 32-round public sample,
+        # with margin for the random basis matches. The former 4x batch
+        # produced many unnecessary table rows for longer messages.
+        batch_size = max(64, required_message_bits * 2 + 128)
         while True:
             for _ in range(batch_size):
                 alice_bit = secrets.randbits(1)
@@ -2787,39 +2815,48 @@ class CryptographyWindow(QMainWindow):
     def _populate_pulse_table(self, records, matched_indices, sample_indices,
                               exchange_aborted):
         matched_set = set(matched_indices)
-        self.pulse_table.setRowCount(len(records))
-        for row, record in enumerate(records):
-            if row not in matched_set:
-                round_label = self.copy["discard"]
-            elif row in sample_indices:
-                round_label = self.copy["protocol_abort"] if exchange_aborted else self.copy["sample"]
-            else:
-                round_label = self.copy["protocol_abort"] if exchange_aborted else self.copy["key"]
+        self.pulse_table.setUpdatesEnabled(False)
+        try:
+            self.pulse_table.setRowCount(len(records))
+            for row, record in enumerate(records):
+                if row not in matched_set:
+                    round_label = self.copy["discard"]
+                elif row in sample_indices:
+                    round_label = (self.copy["protocol_abort"] if exchange_aborted
+                                   else self.copy["sample"])
+                else:
+                    round_label = (self.copy["protocol_abort"] if exchange_aborted
+                                   else self.copy["key"])
 
-            eve_text = self.copy["no_eve"]
-            if record["eve_basis"] is not None:
-                eve_text = self.copy["eve_value"].format(
-                    basis=self._basis_label(record["eve_basis"]),
-                    bit=record["eve_bit"],
-                )
-            polarization_label = self.copy[{
-                "H": "horizontal", "V": "vertical",
-                "D": "diagonal", "A": "antidiagonal",
-            }[record["polarization"]]]
-            row_items = [
-                QTableWidgetItem(str(row + 1)),
-                QTableWidgetItem(str(record["alice_bit"])),
-                QTableWidgetItem(self._basis_label(record["alice_basis"])),
-                QTableWidgetItem(polarization_label),
-                QTableWidgetItem(eve_text),
-                QTableWidgetItem(self._basis_label(record["bob_basis"])),
-                QTableWidgetItem(str(record["bob_bit"])),
-                QTableWidgetItem(round_label),
-            ]
-            row_items[3].setIcon(self.polarization_icons[record["polarization"]])
-            row_items[3].setToolTip(f"{polarization_label} — {record['angle']}°")
-            for column, item in enumerate(row_items):
-                self.pulse_table.setItem(row, column, item)
+                eve_text = self.copy["no_eve"]
+                if record["eve_basis"] is not None:
+                    eve_text = self.copy["eve_value"].format(
+                        basis=self._basis_label(record["eve_basis"]),
+                        bit=record["eve_bit"],
+                    )
+                polarization_label = self.copy[{
+                    "H": "horizontal", "V": "vertical",
+                    "D": "diagonal", "A": "antidiagonal",
+                }[record["polarization"]]]
+                row_items = [
+                    QTableWidgetItem(str(row + 1)),
+                    QTableWidgetItem(str(record["alice_bit"])),
+                    QTableWidgetItem(self._basis_label(record["alice_basis"])),
+                    QTableWidgetItem(polarization_label),
+                    QTableWidgetItem(eve_text),
+                    QTableWidgetItem(self._basis_label(record["bob_basis"])),
+                    QTableWidgetItem(str(record["bob_bit"])),
+                    QTableWidgetItem(round_label),
+                ]
+                row_items[3].setIcon(self.polarization_icons[record["polarization"]])
+                row_items[3].setToolTip(f"{polarization_label} — {record['angle']}°")
+                for column, item in enumerate(row_items):
+                    self.pulse_table.setItem(row, column, item)
+            # Do one content measurement after population instead of after
+            # every cell insertion. Keep the full translated labels visible.
+            self.pulse_table.resizeColumnsToContents()
+        finally:
+            self.pulse_table.setUpdatesEnabled(True)
         self.pulse_table.scrollToTop()
 
     def toggle_animation(self, playing):
@@ -2829,6 +2866,11 @@ class CryptographyWindow(QMainWindow):
         else:
             self.pulse_animation.timer.stop()
             self.animation_button.setText(self.copy["animation_play"])
+
+    def set_animation_speed(self, value):
+        # Slider level 1 takes about five seconds per pulse; level 10 takes
+        # about six tenths of a second. The default is close to two seconds.
+        self.pulse_animation.step = 0.006 + (value - 1) * 0.0049
 
     def go_back(self):
         self._closing_for_navigation = True
