@@ -1,27 +1,11 @@
 # ─────────────────────────────────────────────
-# Notes of software versions
-# VS Code Version 1.108.2 (macOS Ventura 13.7.8)
-# Python Version 3.11.5
-# Numpy Version 1.26.4
-# Matplotlib Version 3.7.2
-# Qiskit Version 2.4.2
-# PySide6 Version 6.11.2
-# Node.js v22.23.4
-# npm v10.9.9
-# codex-cli 0.164.0
-#
-# Automated Installer for Dependecies
-# Execute the following before running this Pything script
-# A. chmod +x install_dependencies.bash
-# B. ./install_dependencies.bash   
-# Note: what you should notice is that all the packages above will install and report 'Installation complete.'
-#
-# References
-# Krantz, P., et al. Applied Physics Reviews, vol. 6, no. 2, 2019.
-# Perlin, Michael A., et al. Physical Review X, 2026.
-# Schwarze, Christopher R., et al. Optics Express, vol. 32, no. 19, 2024.
-# Wang, Yuchen, et al. Frontiers in Physics, vol. 8, 2020.
-# https://quantum.cloud.ibm.com/learning/en/courses/basics-of-quantum-information
+# Quantum Circuit Builder desktop learning prototype.
+# Install and run instructions live in README.md and gettingStarted.md.
+# The local simulator works without Qiskit; Qiskit adds circuit diagrams and
+# the example-circuit simulation. IBM hardware access is handled separately.
+# User-facing languages: English, Spanish, and Modern Standard Arabic.
+# Research references are indexed in SPRINT1.md; the BB84 citation is linked
+# directly from the cryptography screen.
 # ─────────────────────────────────────────────
 
 # ─────────────────────────────────────────────
@@ -32,13 +16,14 @@ import re
 import random
 import secrets
 import math
+from html import escape as html_escape
 from collections import Counter
 from datetime import datetime
 from io import BytesIO
 from pathlib import Path
 
-from PySide6.QtCore import Qt, Signal, QTimer, QSize
-from PySide6.QtGui  import QFont, QPixmap, QPainter, QPen, QColor, QIcon
+from PySide6.QtCore import Qt, Signal, QTimer, QSize, QMimeData
+from PySide6.QtGui  import QFont, QPixmap, QPainter, QPen, QColor, QIcon, QDrag
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QDialog, QLabel, QComboBox,
     QPushButton, QToolButton, QVBoxLayout, QHBoxLayout, QFormLayout,
@@ -161,11 +146,11 @@ QPushButton:pressed { background-color: #1b625d; }
 
 BUTTON_STYLE_BACK = """
 QPushButton {
-    background-color: #7d2e2e; color: white;
-    border: 1px solid #aaaaaa; border-radius: 8px; padding: 8px;
+    background-color: #e7edef; color: #243238;
+    border: 1px solid #d1dcde; border-radius: 8px; padding: 8px;
 }
-QPushButton:hover   { background-color: #e0e0e0; color: #333; }
-QPushButton:pressed { background-color: #cccccc; }
+QPushButton:hover   { background-color: #dbe6e8; }
+QPushButton:pressed { background-color: #ccd9db; }
 """
 
 
@@ -185,7 +170,7 @@ TRANSLATIONS = {
         "description": "Explanation", "circuit_help": "Circuit overview",
         "matrix_label": "Gate Matrix:",
         "simulation": "▶ Theory & Local Simulation", "close": "✕ Close",
-        "close_application": "✕ Close Application", "shots": "Number of measurement shots:",
+        "close_application": "✕ Close Application", "shots": "Number of circuit runs:",
         "run": "▶ Run Local Simulation", "show_code": "▶ Show Qiskit Code",
         "hide_code": "▼ Hide Qiskit Code",
         "welcome": "Quantum Circuit Builder — Welcome",
@@ -197,8 +182,13 @@ TRANSLATIONS = {
         "feedback_send": "Submit feedback", "feedback_empty": "Write a few words before submitting.",
         "feedback_saved": "Saved as an open issue in Feedback/.",
         "feedback_error": "Could not save feedback. Check that this folder is writable.",
+        "feedback_issue_title": "Feedback issue", "feedback_status_label": "Status",
+        "feedback_open_label": "Open", "feedback_submitted_label": "Submitted",
+        "feedback_screen_label": "Screen", "feedback_language_label": "Interface language",
+        "feedback_text_heading": "Feedback",
         "operator_chart_hint": "Select a gate image to open its explanation.",
         "cryptography": "🔐 Quantum Cryptography",
+        "playground": "🧩 Two-Qubit Playground",
     },
     "Español": {
         "title": "Constructor de Circuitos Cuánticos Qiskit", "main": "⚛️ Constructor de Circuitos Cuánticos",
@@ -223,8 +213,13 @@ TRANSLATIONS = {
         "feedback_send": "Enviar comentarios", "feedback_empty": "Escribe un comentario antes de enviarlo.",
         "feedback_saved": "Guardado como incidencia abierta en Feedback/.",
         "feedback_error": "No se pudieron guardar los comentarios. Comprueba que la carpeta permita escritura.",
+        "feedback_issue_title": "Incidencia de comentarios", "feedback_status_label": "Estado",
+        "feedback_open_label": "Abierta", "feedback_submitted_label": "Enviada",
+        "feedback_screen_label": "Pantalla", "feedback_language_label": "Idioma de la interfaz",
+        "feedback_text_heading": "Comentarios",
         "operator_chart_hint": "Selecciona la imagen de una puerta para ver su explicación.",
         "cryptography": "🔐 Criptografía cuántica",
+        "playground": "🧩 Zona de dos qubits",
     },
     "Français": {
         "title": "Constructeur de Circuits Quantiques Qiskit", "main": "⚛️ Constructeur de Circuits Quantiques",
@@ -316,11 +311,36 @@ TRANSLATIONS["العربية"] = {
     "feedback_send": "إرسال الملاحظات", "feedback_empty": "اكتب ملاحظاتك قبل الإرسال.",
     "feedback_saved": "حُفظت الملاحظات كمسألة مفتوحة في مجلد Feedback/.",
     "feedback_error": "تعذّر حفظ الملاحظات. تحقّق من صلاحية الكتابة في المجلد.",
+    "feedback_issue_title": "ملاحظة المستخدم", "feedback_status_label": "الحالة",
+    "feedback_open_label": "مفتوحة", "feedback_submitted_label": "تاريخ الإرسال",
+    "feedback_screen_label": "الشاشة", "feedback_language_label": "لغة الواجهة",
+    "feedback_text_heading": "الملاحظات",
     "operator_chart_hint": "اختر صورة بوابة لفتح شرحها.",
     "cryptography": "🔐 التشفير الكمي",
+    "playground": "🧩 مساحة بناء دائرة بكيوبتين",
 }
 LANGUAGES = ["English", "Español", "العربية"]
 TRANSLATIONS = {language: TRANSLATIONS[language] for language in LANGUAGES}
+FEEDBACK_SOURCE_LABELS = {
+    "English": {
+        "welcome": "Welcome", "experience": "Experience selection",
+        "circuit": "Circuit selection", "operator": "Operator guide",
+        "operator_detail": "Operator explanation", "cryptography": "Quantum cryptography / BB84",
+        "playground": "Two-qubit circuit playground", "simulation": "Theory and local simulation",
+    },
+    "Español": {
+        "welcome": "Bienvenida", "experience": "Selección de experiencia",
+        "circuit": "Selección de circuito", "operator": "Guía de operadores",
+        "operator_detail": "Explicación del operador", "cryptography": "Criptografía cuántica / BB84",
+        "playground": "Zona de circuitos de dos qubits", "simulation": "Teoría y simulación local",
+    },
+    "العربية": {
+        "welcome": "الترحيب", "experience": "اختيار مستوى الخبرة",
+        "circuit": "اختيار الدائرة", "operator": "دليل البوابات",
+        "operator_detail": "شرح البوابة", "cryptography": "التشفير الكمي / BB84",
+        "playground": "مساحة دائرة بكيوبتين", "simulation": "النظرية والمحاكاة المحلية",
+    },
+}
 COUNTRIES  = {
     "United States": ["Alabama","Alaska","Arizona","California","Florida",
                       "Massachusetts","New York","Texas","Other / N/A"],
@@ -341,6 +361,26 @@ COUNTRY_LABELS = {
     "العربية": {
         "United States": "الولايات المتحدة", "Canada": "كندا",
         "United Kingdom": "المملكة المتحدة", "India": "الهند", "Other": "أخرى",
+    },
+}
+
+REGION_LABELS = {
+    "Español": {
+        "New York": "Nueva York",
+        "British Columbia": "Columbia Británica",
+        "England": "Inglaterra", "Northern Ireland": "Irlanda del Norte",
+        "Scotland": "Escocia", "Wales": "Gales",
+    },
+    "العربية": {
+        "Alabama": "ألاباما", "Alaska": "ألاسكا", "Arizona": "أريزونا",
+        "California": "كاليفورنيا", "Florida": "فلوريدا",
+        "Massachusetts": "ماساتشوستس", "New York": "نيويورك", "Texas": "تكساس",
+        "Alberta": "ألبرتا", "British Columbia": "كولومبيا البريطانية",
+        "Ontario": "أونتاريو", "Quebec": "كيبيك",
+        "England": "إنجلترا", "Northern Ireland": "أيرلندا الشمالية",
+        "Scotland": "اسكتلندا", "Wales": "ويلز",
+        "Delhi": "دلهي", "Gujarat": "غوجارات", "Karnataka": "كارناتاكا",
+        "Maharashtra": "ماهاراشترا", "Tamil Nadu": "تاميل نادو",
     },
 }
 
@@ -453,27 +493,27 @@ OPERATORS = [
 # A short plain-language primer shown before the gate reference cards.
 BEGINNER_PRIMER = {
     "English": (
-        "Start with a picture: a qubit is like a tiny arrow that can point in more than one direction.\n"
-        "Superposition: like a spinning coin, it has more than one possible measurement result until measured.\n"
-        "A gate: a controlled move of the arrow. H makes a balanced choice; X flips 0 and 1; Z changes phase.\n"
-        "Entanglement: two arrows become part of one shared description. Measuring one tells you how their results relate.\n"
-        "Coherence: the wave-like relationship between possibilities is still intact. Noise is like a splash that scrambles it.\n"
+        "Picture a qubit as a tiny arrow. Gates can turn it, and its direction helps set the chances of measurement results.\n"
+        "Superposition: like a coin in motion, more than one result is possible. The coin is only an analogy: a qubit can show wave-like interference between possibilities.\n"
+        "A gate: a controlled move of the arrow. H prepares two equally likely results if measured right away; later gates can change those chances. X flips 0 and 1; Z changes phase.\n"
+        "Entanglement: two qubits can share one quantum state. In this circuit's Bell pair, the shown measurement results always match, but neither qubit sends a message to the other.\n"
+        "Coherence: like ripples keeping their rhythm, the wave-like pattern stays intact. Later gates can make parts reinforce or cancel, changing the chances of results. Noise is like a splash that scrambles the pattern.\n"
         "Measurement: asks for one result and changes the state. Reset returns the qubit to its starting state; a barrier is just a circuit marker."
     ),
     "Español": (
-        "Imagina primero que un qubit es como una pequeña flecha que puede apuntar en varias direcciones.\n"
-        "Superposición: como una moneda girando, hay varios resultados posibles hasta medirla.\n"
-        "Una puerta es un movimiento controlado de la flecha. H crea una mezcla equilibrada; X intercambia 0 y 1; Z cambia la fase.\n"
-        "Entrelazamiento: dos flechas comparten una descripción. Al medir una, sabemos cómo se relacionan sus resultados.\n"
-        "Coherencia: la relación ondulatoria entre posibilidades sigue intacta. El ruido la desordena, como una salpicadura.\n"
+        "Imagina un qubit como una flecha pequeña. Las puertas pueden girarla, y su dirección influye en las probabilidades de los resultados al medir.\n"
+        "Superposición: como una moneda en movimiento, hay varios resultados posibles. Es solo una comparación: un qubit puede mostrar interferencia ondulatoria entre posibilidades.\n"
+        "Una puerta es un movimiento controlado de la flecha. H prepara dos resultados igual de probables si se mide enseguida; otras puertas pueden cambiar esas probabilidades. X intercambia 0 y 1; Z cambia la fase.\n"
+        "Entrelazamiento: dos qubits pueden compartir un estado cuántico. En el par de Bell de este circuito, los resultados de la medición mostrada siempre coinciden, pero ningún qubit envía un mensaje al otro.\n"
+        "Coherencia: como ondas que conservan el ritmo, el patrón ondulatorio sigue intacto. Otras puertas pueden hacer que algunas partes se refuercen o se cancelen y así cambiar las probabilidades. El ruido altera el patrón, como una salpicadura.\n"
         "Medir da un resultado y cambia el estado. Reiniciar devuelve el qubit a su estado inicial; una barrera solo marca una sección del circuito."
     ),
     "العربية": (
-        "للتقريب، تخيّل أن الكيوبت سهم صغير يمكن أن يشير في أكثر من اتجاه.\n"
-        "التراكب: يشبه قطعة نقدية تدور؛ توجد نتائج محتملة متعددة قبل القياس.\n"
-        "البوابة حركة تغيّر حالة الكيوبت. البوابة H تهيّئ احتمالين متساويين، وX تبدّل 0 و1، وZ تغيّر الطور.\n"
-        "التشابك: يصبح كيوبتان جزءًا من وصف مشترك؛ قياس أحدهما يكشف علاقة نتيجتيهما.\n"
-        "التماسك: تبقى العلاقة الموجية بين الاحتمالات محفوظة. الضوضاء تشبه رشة ماء تفسد هذا النمط.\n"
+        "للتقريب، تخيّل الكيوبت سهمًا صغيرًا. تغيّر البوابات اتجاهه، ويساعد اتجاهه في تحديد فرص نتائج القياس.\n"
+        "التراكب: يشبه قطعة نقدية تتحرك، إذ توجد نتائج محتملة متعددة. لكنه تشبيه فقط؛ فالكيوبت يُظهر تداخلًا موجيًا بين الاحتمالات.\n"
+        "البوابة حركة تغيّر حالة الكيوبت. تهيّئ H نتيجتين متساويتين في الاحتمال إذا قِيس الكيوبت مباشرة؛ ويمكن للبوابات اللاحقة تغيير هذه الفرص. تبدّل X القيمتين 0 و1، وتغيّر Z الطور.\n"
+        "التشابك: قد يشترك كيوبتان في حالة كمية واحدة. في حالة بيل التي تنشئها هذه الدائرة تتطابق نتيجتا القياس المعروض دائمًا، لكن أيًّا من الكيوبتين لا يرسل رسالة إلى الآخر.\n"
+        "التماسك: يشبه موجات تحافظ على إيقاعها؛ فيبقى النمط الموجي محفوظًا. قد تجعل بوابات لاحقة أجزاءً تتعزز أو تلغي بعضها، فتتغير فرص النتائج. والضوضاء كرشة ماء تفسد النمط.\n"
         "القياس يعطي نتيجة ويغيّر الحالة. إعادة الضبط تعيد الكيوبت إلى حالة البداية، والحاجز علامة لتنظيم الدائرة فقط."
     ),
 }
@@ -482,7 +522,7 @@ BRAND_NEW_CIRCUITS = {
     "English": {
         "heading": "How this circuit works",
         "The Bell State Circuit (Entanglement)": {
-            "description": "This circuit first creates two possible outcomes for one qubit, then links the two qubits. Their measurement results match, like two coins whose outcomes are connected.",
+            "description": "This circuit prepares two equally likely possibilities, then links the qubits in one shared quantum state. Their measurement results always match: both are 0 or both are 1. Neither qubit sends a message to the other.",
             "steps": "1. Start with both qubits at zero.\n2. Create two possible paths for the first qubit.\n3. Link the qubits with a controlled flip.\n4. Measure them; the results match.",
         },
         "Three-Qubit GHZ State Circuit": {
@@ -497,7 +537,7 @@ BRAND_NEW_CIRCUITS = {
     "Español": {
         "heading": "Cómo funciona este circuito",
         "The Bell State Circuit (Entanglement)": {
-            "description": "Primero crea dos posibilidades para un qubit y luego conecta los dos qubits. Sus resultados al medirlos coinciden, como dos monedas cuyos resultados están relacionados.",
+            "description": "Primero prepara dos posibilidades igual de probables y después conecta los qubits en un mismo estado cuántico. Al medirlos, los resultados siempre coinciden: ambos son 0 o ambos son 1. Ningún qubit envía un mensaje al otro.",
             "steps": "1. Empieza con ambos qubits en cero.\n2. Crea dos posibilidades para el primero.\n3. Conecta los qubits con un cambio controlado.\n4. Mídelos; los resultados coinciden.",
         },
         "Three-Qubit GHZ State Circuit": {
@@ -512,7 +552,7 @@ BRAND_NEW_CIRCUITS = {
     "العربية": {
         "heading": "كيف تعمل هذه الدائرة",
         "The Bell State Circuit (Entanglement)": {
-            "description": "تنشئ الدائرة أولًا احتمالين للكيوبت الأول، ثم تربط الكيوبتين. عند القياس تتطابق النتيجتان، مثل قطعتَي نقد ترتبط نتيجتاهما.",
+            "description": "تهيّئ الدائرة احتمالين متساويين، ثم تربط الكيوبتين في حالة كمية مشتركة. عند القياس تتطابق النتيجتان دائمًا: إما 0 لكليهما أو 1 لكليهما. ولا يرسل أيٌّ من الكيوبتين رسالة إلى الآخر.",
             "steps": "1. ابدأ والكيوبتان عند الصفر.\n2. أنشئ احتمالين للكيوبت الأول.\n3. اربط الكيوبتين بقلب مشروط.\n4. قِسهما؛ تتطابق النتيجتان.",
         },
         "Three-Qubit GHZ State Circuit": {
@@ -527,7 +567,7 @@ BRAND_NEW_CIRCUITS = {
 }
 
 ARABIC_BEGINNER_GATES = {
-    "H": ("بوابة هادامارد", "تفتح الطريق لاحتمالين متساويين، مثل عملة تدور قبل أن تسقط."),
+    "H": ("بوابة هادامارد", "تتيح احتمالين متساويين، مثل عملة تتحرك. لكن الكيوبت، بخلاف العملة العادية، يُظهر أيضًا تداخلًا بين الاحتمالات."),
     "X": ("بوابة X / تبديل", "تبدّل 0 و1، مثل مفتاح يغيّر وضعه."),
     "Y": ("بوابة Y", "تبدّل الحالة وتغيّر طورها؛ تخيّل تدوير السهم حول محور آخر."),
     "Z": ("بوابة Z", "تغيّر طور الجزء المرتبط بـ1، مثل تغيير توقيت موجة من دون تغيير فرص القياس فورًا."),
@@ -557,7 +597,7 @@ ARABIC_BEGINNER_GATES = {
 # ─────────────────────────────────────────────
 BRAND_NEW_OPERATOR_EXPLANATIONS = {
     "English": {
-        "H": "Like a fair coin spinning, it keeps two possible outcomes in play. This is superposition.",
+        "H": "Like a coin in motion, it keeps two possible outcomes in play. A qubit can also show interference, unlike an ordinary coin.",
         "X": "Like flipping a light switch: it changes the qubit from one basic value to the other.",
         "Y": "Flips the qubit and also shifts the timing of its wave-like pattern.",
         "Z": "Keeps the immediate odds the same but changes wave timing, which can affect later gates.",
@@ -578,10 +618,10 @@ BRAND_NEW_OPERATOR_EXPLANATIONS = {
         "Barrier": "A divider in the circuit picture. It organizes steps but does not change the qubits.",
         "If": "Chooses the next action based on an earlier measurement result.",
         "For": "Repeats a group of steps, like repeating a move in a set of instructions.",
-        "Unitary": "A reversible change to a quantum state that keeps all outcome probabilities valid.",
+        "Unitary": "A reversible change that keeps all possible measurement chances adding up to 100%.",
     },
     "Español": {
-        "H": "Como una moneda girando, mantiene dos resultados posibles. A esto se le llama superposición.",
+        "H": "Como una moneda en movimiento, mantiene dos resultados posibles. A diferencia de una moneda común, un qubit también puede mostrar interferencia.",
         "X": "Como un interruptor: cambia el qubit de un valor básico al otro.",
         "Y": "Cambia el qubit y también desplaza el ritmo de su patrón ondulatorio.",
         "Z": "Mantiene iguales las probabilidades inmediatas, pero cambia el ritmo de la onda y puede afectar pasos posteriores.",
@@ -602,7 +642,7 @@ BRAND_NEW_OPERATOR_EXPLANATIONS = {
         "Barrier": "Es una división en el dibujo del circuito. Ordena los pasos, pero no cambia los qubits.",
         "If": "Elige la siguiente acción según un resultado de medición anterior.",
         "For": "Repite un grupo de pasos, como repetir un movimiento de unas instrucciones.",
-        "Unitary": "Un cambio reversible del estado cuántico que conserva probabilidades válidas.",
+        "Unitary": "Un cambio reversible que mantiene en 100 % la suma de las probabilidades de todos los resultados.",
     },
     "العربية": {
         symbol: details[1] for symbol, details in ARABIC_BEGINNER_GATES.items()
@@ -1021,11 +1061,14 @@ SIMULATION_COPY = {
     "English": {
         "window": "Quantum Theory & Local Simulation",
         "title": "⚛️ Theoretical Expectations & Local Simulation",
+        "beginner_window": "Circuit Walkthrough & Local Simulation",
+        "beginner_title": "⚛️ What this circuit does",
+        "beginner_intro": "Circuit: {name}\nThe explanation below shows what to expect in an ideal simulation. The simulator runs locally on this computer.",
         "intro": "Circuit: {name}\nThe theory below is the ideal noiseless prediction. The simulator runs locally on this computer.",
         "theory_heading": "Gate-by-gate theoretical expectations",
         "grover_heading": "Gate-by-gate theoretical expectations (Grover Search)",
         "initial": "Initial state", "expected": "Expected", "target": "Target state",
-        "circuit_heading": "Selected quantum circuit", "shots": "Number of measurement shots:",
+        "circuit_heading": "Selected quantum circuit", "shots": "Number of circuit runs:",
         "run": "▶ Run Local Simulation", "show_code": "▶ Show Qiskit Code",
         "hide_code": "▼ Hide Qiskit Code", "close": "✕ Close Application",
         "back": "◀ Back", "placeholder": "Click Run Local Simulation to see sampled measurement counts.",
@@ -1034,12 +1077,12 @@ SIMULATION_COPY = {
         "no_qiskit": "Qiskit is not installed.\n\nInstall with: python -m pip install 'qiskit[visualization]' matplotlib",
         "unavailable": "This circuit is unavailable. Install Qiskit first.",
         "unavailable_status": "Simulation unavailable: install Qiskit first.",
-        "result_title": "LOCAL STATEVECTOR SIMULATION — {shots:,} shots",
+        "result_title": "LOCAL STATEVECTOR SIMULATION — {shots:,} circuit runs",
         "beginner_result_title": "LOCAL CIRCUIT SIMULATION — {shots:,} measurements",
         "amplitudes": "Final state amplitudes:", "outcome": "Outcome", "theory_column": "Theory",
         "count": "Sample count", "observed": "Observed",
         "result_note": "Theory = exact ideal probability; Observed = this run's sampled fraction.",
-        "complete": "Simulation complete: {shots:,} shots. No cloud or hardware used.",
+        "complete": "Simulation complete: {shots:,} circuit runs. No cloud or hardware used.",
         "exact_probabilities": "Exact probabilities:",
         "circuit_label": "Circuit:", "measurement_counts": "Measurement counts",
         "code_comment": "Simulate the ideal circuit locally and sample measurements.",
@@ -1053,6 +1096,9 @@ SIMULATION_COPY = {
     "Español": {
         "window": "Teoría cuántica y simulación local",
         "title": "⚛️ Predicciones teóricas y simulación local",
+        "beginner_window": "Recorrido del circuito y simulación local",
+        "beginner_title": "⚛️ Qué hace este circuito",
+        "beginner_intro": "Circuito: {name}\nLa explicación muestra qué esperar en una simulación ideal. El simulador se ejecuta en este equipo.",
         "intro": "Circuito: {name}\nLa teoría muestra la predicción ideal, sin ruido. El simulador se ejecuta en este equipo.",
         "theory_heading": "Predicciones teóricas paso a paso",
         "grover_heading": "Predicciones teóricas paso a paso (búsqueda de Grover)",
@@ -1069,8 +1115,8 @@ SIMULATION_COPY = {
         "result_title": "SIMULACIÓN LOCAL DE VECTOR DE ESTADO — {shots:,} mediciones",
         "beginner_result_title": "SIMULACIÓN LOCAL DEL CIRCUITO — {shots:,} mediciones",
         "amplitudes": "Amplitudes del estado final:", "outcome": "Resultado", "theory_column": "Teoría",
-        "count": "Conteo", "observed": "Observado",
-        "result_note": "Teoría = probabilidad ideal exacta; Observado = fracción obtenida en esta ejecución.",
+        "count": "Conteo", "observed": "Proporción observada",
+        "result_note": "Teoría = probabilidad ideal exacta; proporción observada = fracción obtenida en esta ejecución.",
         "complete": "Simulación completada: {shots:,} mediciones. Sin nube ni hardware.",
         "exact_probabilities": "Probabilidades exactas:",
         "circuit_label": "Circuito:", "measurement_counts": "Conteos de mediciones",
@@ -1085,6 +1131,9 @@ SIMULATION_COPY = {
     "العربية": {
         "window": "نظرية الكم والمحاكاة المحلية",
         "title": "⚛️ التوقعات النظرية والمحاكاة المحلية",
+        "beginner_window": "شرح الدائرة والمحاكاة المحلية",
+        "beginner_title": "⚛️ ماذا تفعل هذه الدائرة",
+        "beginner_intro": "الدائرة: {name}\nيعرض الشرح النتائج المتوقعة في محاكاة مثالية. تعمل المحاكاة على هذا الجهاز.",
         "intro": "الدائرة: {name}\nتعرض النظرية التوقع المثالي من دون ضوضاء. تعمل المحاكاة على هذا الجهاز.",
         "theory_heading": "التوقعات النظرية خطوة بخطوة",
         "grover_heading": "التوقعات النظرية خطوة بخطوة (بحث غروفر)",
@@ -1121,6 +1170,7 @@ AUDIO_COPY = {
         "off": "🔇 Audio walkthrough: Off", "on": "🔊 Audio walkthrough: On",
         "intro": "Audio walkthrough started. This circuit has {count} operations.",
         "step": "Step {step} of {count}. {gate}, on qubits {qubits}. {description} {parameters}",
+        "playground_results": "At measurement, the ideal outcomes are {results} (Qubit 1, then Qubit 0).",
         "complete": "Audio walkthrough complete.",
         "stopped": "Audio walkthrough stopped.",
         "unknown": "This is an operation named {gate}.",
@@ -1132,6 +1182,7 @@ AUDIO_COPY = {
         "off": "🔇 Guía de audio: desactivada", "on": "🔊 Guía de audio: activada",
         "intro": "Comienza la guía de audio. Este circuito tiene {count} operaciones.",
         "step": "Paso {step} de {count}. {gate}, en los qubits {qubits}. {description} {parameters}",
+        "playground_results": "Al medir, los resultados ideales son {results} (primero qubit 1 y luego qubit 0).",
         "complete": "Terminó la guía de audio.",
         "stopped": "Se detuvo la guía de audio.",
         "unknown": "Esta es una operación llamada {gate}.",
@@ -1143,6 +1194,7 @@ AUDIO_COPY = {
         "off": "🔇 الشرح الصوتي: متوقف", "on": "🔊 الشرح الصوتي: يعمل",
         "intro": "بدأ الشرح الصوتي. تحتوي هذه الدائرة على {count} عملية.",
         "step": "الخطوة {step} من {count}. {gate} على الكيوبتات {qubits}. {description} {parameters}",
+        "playground_results": "عند القياس، النتائج المثالية هي {results} (الكيوبت 1 ثم الكيوبت 0).",
         "complete": "اكتمل الشرح الصوتي.",
         "stopped": "توقف الشرح الصوتي.",
         "unknown": "هذه عملية باسم {gate}.",
@@ -1162,16 +1214,18 @@ CRYPTO_COPY = {
         "input_label": "Word or short phrase:", "input_hint": "Type up to 24 characters",
         "eve": "Add Eve (intercept and resend pulses)", "run": "▶ Run key exchange and encrypt",
         "live_heading": "Live pulse stream",
+        "live_note": "The animation loops through up to the first {preview_limit} pulses; the table below shows every pulse sent.",
         "animation_play": "▶ Play animation", "animation_pause": "Ⅱ Pause animation",
         "animation_empty": "Run an exchange to watch the pulses travel from Alice to Bob.",
-        "animation_status": "Pulse {index} of {total} • bit {bit} • {basis}",
+        "animation_status": "Pulse {index} of {total} • {actor}'s bit {bit} • {basis}",
         "speed_slow": "Slower", "speed_fast": "Faster", "speed_label": "Pulse speed:",
         "alice": "Alice", "bob": "Bob", "eve_label": "Eve",
         "pulse_heading": "Transmitted pulses — each row shows Alice’s polarization",
+        "table_privacy_note": "Teaching view: the table reveals Alice's and Bob's private results, including key bits, to explain each round. In real BB84, they reveal only the test sample for comparison and keep key bits private.",
         "result_heading": "Exchange results", "back": "◀ Back",
         "ready": "Enter text and run the local BB84 demonstration.",
         "empty": "Enter a word or short phrase first.",
-        "too_long": "This demo accepts at most 24 UTF-8 bytes. Try a shorter phrase.",
+        "too_long": "This demo supports up to 24 characters (up to 96 UTF-8 bytes). Try a shorter phrase.",
         "columns": ["Pulse", "Alice bit", "Alice basis", "Polarized pulse", "Eve", "Bob basis", "Bob result", "Round"],
         "horizontal": "Horizontal (0°)", "vertical": "Vertical (90°)",
         "diagonal": "Diagonal (+45°)", "antidiagonal": "Diagonal (135°)",
@@ -1181,7 +1235,7 @@ CRYPTO_COPY = {
         "key": "Kept for shared key", "protocol_abort": "Key exchange aborted",
         "success": "Message: {message}\nMessage length: {bits} bits\nPolarized pulses sent: {pulses}\nMatching measurement bases: {matched}\nPublic error-check sample: {sample} rounds; {errors} errors ({error_rate:.0%})\nShared key bits used once: {key_bits}\nOne-time-pad ciphertext (hex): {ciphertext}\n\nBob decrypted: {recovered}\n\nThe example assumes idealized key reconciliation after the sample check.",
         "abort": "Eavesdropping check found {errors} errors in {sample} publicly compared rounds ({error_rate:.0%}). Alice and Bob abort and do not use a key or decrypt the message.",
-        "citation": "Protocol reference: <a href='https://doi.org/10.1016/j.tcs.2014.05.025'>Bennett & Brassard, “Quantum cryptography: Public key distribution and coin tossing” (1984)</a>.",
+        "citation": "Protocol source: <a href='https://doi.org/10.1016/j.tcs.2014.05.025'>Bennett & Brassard, “Quantum cryptography: Public key distribution and coin tossing,” originally published in 1984 and reprinted in Theoretical Computer Science 560 (2014), pp. 7–11</a>.",
     },
     "Español": {
         "window": "Criptografía cuántica — BB84 y cifrado de un solo uso",
@@ -1192,16 +1246,18 @@ CRYPTO_COPY = {
         "input_label": "Palabra o frase corta:", "input_hint": "Escribe hasta 24 caracteres",
         "eve": "Añadir a Eve (interceptar y reenviar pulsos)", "run": "▶ Intercambiar claves y cifrar",
         "live_heading": "Flujo de pulsos en directo",
+        "live_note": "La animación recorre hasta los primeros {preview_limit} pulsos; la tabla muestra todos los pulsos enviados.",
         "animation_play": "▶ Reproducir animación", "animation_pause": "Ⅱ Pausar animación",
         "animation_empty": "Ejecuta un intercambio para ver los pulsos viajar de Alice a Bob.",
-        "animation_status": "Pulso {index} de {total} • bit {bit} • {basis}",
+        "animation_status": "Pulso {index} de {total} • bit {bit} de {actor} • {basis}",
         "speed_slow": "Más lento", "speed_fast": "Más rápido", "speed_label": "Velocidad del pulso:",
         "alice": "Alice", "bob": "Bob", "eve_label": "Eve",
         "pulse_heading": "Pulsos transmitidos — cada fila muestra la polarización de Alice",
+        "table_privacy_note": "Vista educativa: la tabla revela los resultados privados de Alice y Bob, incluidos los bits de la clave, para explicar cada ronda. En el BB84 real solo se revela la muestra de prueba para compararla; los bits de la clave se mantienen en privado.",
         "result_heading": "Resultados del intercambio", "back": "◀ Atrás",
         "ready": "Escribe un texto y ejecuta la demostración local de BB84.",
         "empty": "Escribe primero una palabra o frase corta.",
-        "too_long": "La demostración acepta hasta 24 bytes UTF-8. Prueba una frase más corta.",
+        "too_long": "La demostración admite hasta 24 caracteres (hasta 96 bytes UTF-8). Prueba una frase más corta.",
         "columns": ["Pulso", "Bit Alice", "Base Alice", "Pulso polarizado", "Eve", "Base Bob", "Resultado Bob", "Ronda"],
         "horizontal": "Horizontal (0°)", "vertical": "Vertical (90°)",
         "diagonal": "Diagonal (+45°)", "antidiagonal": "Diagonal (135°)",
@@ -1211,7 +1267,7 @@ CRYPTO_COPY = {
         "key": "Se conserva para la clave compartida", "protocol_abort": "Intercambio de claves cancelado",
         "success": "Mensaje: {message}\nLongitud del mensaje: {bits} bits\nPulsos polarizados enviados: {pulses}\nBases de medición coincidentes: {matched}\nMuestra pública: {sample} rondas; {errors} errores ({error_rate:.0%})\nBits de clave usados una sola vez: {key_bits}\nTexto cifrado con el método de un solo uso (hex): {ciphertext}\n\nMensaje descifrado por Bob: {recovered}\n\nEl ejemplo supone una reconciliación idealizada de la clave después de comprobar la muestra.",
         "abort": "La comprobación detectó {errors} errores en {sample} rondas comparadas públicamente ({error_rate:.0%}). Alice y Bob cancelan el intercambio y no usan una clave ni descifran el mensaje.",
-        "citation": "Referencia del protocolo: <a href='https://doi.org/10.1016/j.tcs.2014.05.025'>Bennett y Brassard, “Quantum cryptography: Public key distribution and coin tossing” (1984)</a>.",
+        "citation": "Fuente del protocolo: <a href='https://doi.org/10.1016/j.tcs.2014.05.025'>Bennett y Brassard, “Quantum cryptography: Public key distribution and coin tossing”, publicado originalmente en 1984 y reeditado en Theoretical Computer Science 560 (2014), pp. 7–11</a>.",
     },
     "العربية": {
         "window": "التشفير الكمي — BB84 ودفتر الاستخدام الواحد",
@@ -1222,16 +1278,18 @@ CRYPTO_COPY = {
         "input_label": "كلمة أو عبارة قصيرة:", "input_hint": "اكتب حتى 24 محرفًا",
         "eve": "إضافة إيف (اعتراض النبضات وإعادة إرسالها)", "run": "▶ تبادل المفتاح وتشفير الرسالة",
         "live_heading": "مسار النبضات المباشر",
+        "live_note": "تعرض الحركة أول {preview_limit} نبضة كحد أقصى، بينما يعرض الجدول أدناه كل النبضات المرسلة.",
         "animation_play": "▶ تشغيل الحركة", "animation_pause": "Ⅱ إيقاف الحركة مؤقتًا",
         "animation_empty": "شغّل التبادل لمشاهدة انتقال النبضات من أليس إلى بوب.",
-        "animation_status": "النبضة {index} من {total} • البت {bit} • {basis}",
+        "animation_status": "النبضة {index} من {total} • بت {actor}: {bit} • {basis}",
         "speed_slow": "أبطأ", "speed_fast": "أسرع", "speed_label": "سرعة النبضة:",
         "alice": "أليس", "bob": "بوب", "eve_label": "إيف",
         "pulse_heading": "النبضات المرسلة — يعرض كل صف استقطاب أليس",
+        "table_privacy_note": "عرض تعليمي: يكشف الجدول نتيجتي أليس وبوب الخاصتين، بما فيهما بتات المفتاح، لشرح كل جولة. في BB84 الحقيقي يكشفان عينة الفحص فقط للمقارنة، ويحافظان على سرية بتات المفتاح.",
         "result_heading": "نتائج التبادل", "back": "◀ رجوع",
         "ready": "أدخل نصًا ثم شغّل تجربة BB84 المحلية.",
         "empty": "أدخل كلمة أو عبارة قصيرة أولًا.",
-        "too_long": "تقبل التجربة حتى 24 بايتًا بترميز UTF-8. جرّب عبارة أقصر.",
+        "too_long": "تقبل التجربة حتى 24 محرفًا (حتى 96 بايتًا بترميز UTF-8). جرّب عبارة أقصر.",
         "columns": ["النبضة", "بت أليس", "قاعدة أليس", "نبضة مستقطبة", "إيف", "قاعدة بوب", "نتيجة بوب", "الجولة"],
         "horizontal": "أفقي (0°)", "vertical": "عمودي (90°)",
         "diagonal": "قطري (+45°)", "antidiagonal": "قطري (135°)",
@@ -1241,9 +1299,200 @@ CRYPTO_COPY = {
         "key": "تُحفظ ضمن المفتاح المشترك", "protocol_abort": "أُلغي تبادل المفتاح",
         "success": "الرسالة: {message}\nطول الرسالة: {bits} بتًا\nالنبضات المستقطبة المرسلة: {pulses}\nقواعد القياس المتطابقة: {matched}\nعينة الفحص العلني: {sample} جولة؛ {errors} أخطاء ({error_rate:.0%})\nبتات المفتاح المستخدمة مرة واحدة: {key_bits}\nالنص المشفّر بطريقة الاستخدام الواحد (ست عشري): {ciphertext}\n\nفكّ بوب التشفير: {recovered}\n\nيفترض المثال تسوية مثالية للمفتاح بعد فحص العينة.",
         "abort": "كشف الفحص {errors} أخطاء ضمن {sample} جولة قورنت علنًا ({error_rate:.0%}). يلغي أليس وبوب التبادل ولا يستخدمان مفتاحًا أو يفكان الرسالة.",
-        "citation": "مرجع البروتوكول: <a href='https://doi.org/10.1016/j.tcs.2014.05.025'>Bennett وBrassard، “Quantum cryptography: Public key distribution and coin tossing” (1984)</a>.",
+        "citation": "مصدر البروتوكول: <a href='https://doi.org/10.1016/j.tcs.2014.05.025'>Bennett وBrassard، “Quantum cryptography: Public key distribution and coin tossing”، نُشر أصلًا عام 1984 وأُعيد نشره في Theoretical Computer Science، المجلد 560 (2014)، الصفحات 7–11</a>.",
     },
 }
+
+MAX_CRYPTO_MESSAGE_CHARS = 24
+MAX_CRYPTO_MESSAGE_BYTES = 96
+MAX_ANIMATED_PULSES = 32
+
+PLAYGROUND_COPY = {
+    "English": {
+        "window": "Two-Qubit Circuit Playground",
+        "title": "🧩 Build a two-qubit circuit",
+        "intro": "Drag gates onto either wire. Exact probabilities update as you build. Then run local measurements to compare the sampled results with the prediction.",
+        "single_heading": "One-qubit gates",
+        "two_heading": "Two-qubit gates",
+        "wire_zero": "Qubit 0", "wire_one": "Qubit 1",
+        "canvas_accessible": "Two-qubit circuit canvas with draggable gate slots",
+        "canvas_empty_accessible": "The circuit is empty.",
+        "canvas_gate_accessible": "Time step {step}: {gate} on {wire}.",
+        "canvas_both_wires": "both qubits",
+        "audio_qubit_join": "and",
+        "canvas_hint": "Drop a gate in a column to set its place in the circuit. Click a gate to remove it. The canvas allows up to 20 time steps.",
+        "palette_hint": "Click a gate to select it for keyboard-accessible placement, or drag it onto a wire. Rotation gates use a preset angle of π/2. CX uses Qubit 0 as control and Qubit 1 as target. Both qubits are measured at the end.",
+        "target_wire": "Place a one-qubit gate on:", "add_gate": "Add selected gate",
+        "selected_gate": "Selected: {gate}", "select_gate": "Select a gate from the palette first.",
+        "clear": "Clear circuit", "undo": "Undo last gate", "run": "▶ Run local measurements",
+        "bell_example": "Load Bell-state example (H → CX)",
+        "bell_example_tooltip": "Available when the circuit is empty. Clear current gates to enable it.",
+        "bell_example_loaded": "Bell-state example loaded: H then CX creates correlated outcomes.",
+        "show_all_gates": "Show all gates", "show_basic_gates": "Show only H, X, and CX",
+        "beginner_palette_hint": "Start with H, X, and CX. Select this control to reveal the other gates.",
+        "nothing_to_undo": "There are no gates to remove.",
+        "back": "◀ Back", "shots": "Number of circuit runs:",
+        "result_heading": "Exact prediction and local results",
+        "probability_hint": "Exact probability is the ideal chance for an outcome. Observed share is its count divided by the number of runs. More runs usually bring the observed share closer to the prediction.",
+        "outcome": "Measurement result", "exact": "Exact probability",
+        "count": "Sample count", "observed": "Observed share",
+        "ready": "Add gates to see the exact prediction, then run local measurements to compare.",
+        "empty": "No gates yet: both qubits start at 0.",
+        "local_note": "The built-in simulator runs on this computer with ideal gates and no device noise. No cloud service or quantum hardware is used. Results are listed in Qubit 1, then Qubit 0 order.",
+        "added": "Added {gate} to time step {step}.",
+        "removed": "Removed {gate}.", "cleared": "Circuit cleared.",
+        "full": "The circuit has reached its 20 time-step limit. Remove a gate or clear the circuit.",
+        "gate_names": {
+            "H": "Hadamard", "X": "Bit flip", "Y": "Y rotation", "Z": "Phase flip",
+            "S": "S phase", "T": "T phase", "RX": "X rotation (π/2)",
+            "RY": "Y rotation (π/2)", "RZ": "Z rotation (π/2)",
+            "CX": "Controlled X", "CZ": "Controlled Z", "SWAP": "Swap qubits",
+        },
+    },
+    "Español": {
+        "window": "Zona de circuitos de dos qubits",
+        "title": "🧩 Crea un circuito de dos qubits",
+        "intro": "Arrastra puertas a cualquiera de las líneas. Las probabilidades exactas se actualizan mientras construyes. Después ejecuta mediciones locales para comparar los resultados con la predicción.",
+        "single_heading": "Puertas de un qubit",
+        "two_heading": "Puertas de dos qubits",
+        "wire_zero": "Qubit 0", "wire_one": "Qubit 1",
+        "canvas_accessible": "Lienzo del circuito de dos qubits con espacios para puertas",
+        "canvas_empty_accessible": "El circuito está vacío.",
+        "canvas_gate_accessible": "Paso {step}: {gate} en {wire}.",
+        "canvas_both_wires": "ambos qubits",
+        "audio_qubit_join": "y",
+        "canvas_hint": "Suelta una puerta en una columna para elegir su posición. Haz clic en una puerta para quitarla. El circuito admite hasta 20 pasos.",
+        "palette_hint": "Haz clic en una puerta para seleccionarla y añadirla con el teclado, o arrástrala a una línea. Las rotaciones usan un ángulo fijo de π/2. CX usa el qubit 0 como control y el qubit 1 como objetivo. Ambos qubits se miden al final.",
+        "target_wire": "Añadir la puerta de un qubit a:", "add_gate": "Añadir puerta seleccionada",
+        "selected_gate": "Seleccionada: {gate}", "select_gate": "Selecciona primero una puerta de la lista.",
+        "clear": "Vaciar circuito", "undo": "Deshacer última puerta", "run": "▶ Ejecutar mediciones locales",
+        "bell_example": "Cargar ejemplo de estado Bell (H → CX)",
+        "bell_example_tooltip": "Disponible cuando el circuito está vacío. Vacía las puertas actuales para activarlo.",
+        "bell_example_loaded": "Ejemplo Bell cargado: H y después CX crean resultados correlacionados.",
+        "show_all_gates": "Mostrar todas las puertas", "show_basic_gates": "Mostrar solo H, X y CX",
+        "beginner_palette_hint": "Empieza con H, X y CX. Pulsa este control para mostrar las demás puertas.",
+        "nothing_to_undo": "No hay puertas que quitar.",
+        "back": "◀ Atrás", "shots": "Número de mediciones:",
+        "result_heading": "Predicción exacta y resultados locales",
+        "probability_hint": "La probabilidad exacta es la oportunidad ideal de cada resultado. La proporción observada es su conteo dividido por el número de mediciones. Con más mediciones, suele acercarse a la predicción.",
+        "outcome": "Resultado de medición", "exact": "Probabilidad exacta",
+        "count": "Conteo", "observed": "Proporción observada",
+        "ready": "Añade puertas para ver la predicción exacta y ejecuta mediciones locales para compararla.",
+        "empty": "Aún no hay puertas: ambos qubits empiezan en 0.",
+        "local_note": "El simulador integrado funciona en este equipo con puertas ideales y sin ruido del dispositivo. No se usa la nube ni hardware cuántico. Los resultados se muestran primero para el qubit 1 y después para el qubit 0.",
+        "added": "Se añadió {gate} en el paso {step}.",
+        "removed": "Se quitó {gate}.", "cleared": "Se vació el circuito.",
+        "full": "El circuito alcanzó el límite de 20 pasos. Quita una puerta o vacía el circuito.",
+        "gate_names": {
+            "H": "Hadamard", "X": "Cambio de bit", "Y": "Rotación Y", "Z": "Cambio de fase",
+            "S": "Fase S", "T": "Fase T", "RX": "Rotación X (π/2)",
+            "RY": "Rotación Y (π/2)", "RZ": "Rotación Z (π/2)",
+            "CX": "X controlada", "CZ": "Z controlada", "SWAP": "Intercambio de qubits",
+        },
+    },
+    "العربية": {
+        "window": "مساحة بناء دائرة بكيوبتين",
+        "title": "🧩 ابنِ دائرة بكيوبتين",
+        "intro": "اسحب البوابات إلى أي من السلكين. تتحدّث الاحتمالات الدقيقة أثناء البناء. ثم شغّل قياسات محلية لمقارنة النتائج بالتوقع.",
+        "single_heading": "بوابات كيوبت واحد",
+        "two_heading": "بوابات كيوبتين",
+        "wire_zero": "الكيوبت 0", "wire_one": "الكيوبت 1",
+        "canvas_accessible": "مساحة دائرة بكيوبتين وخانات لإضافة البوابات بالسحب",
+        "canvas_empty_accessible": "الدائرة فارغة.",
+        "canvas_gate_accessible": "الخطوة {step}: {gate} على {wire}.",
+        "canvas_both_wires": "الكيوبتين معًا",
+        "audio_qubit_join": "و",
+        "canvas_hint": "أفلِت البوابة في عمود لتحديد موضعها. انقر بوابة لإزالتها. تستوعب الدائرة 20 خطوة كحد أقصى.",
+        "palette_hint": "انقر بوابة لتحديدها وإضافتها بلوحة المفاتيح، أو اسحبها إلى سلك. تستخدم بوابات الدوران زاوية ثابتة π/2. تستخدم CX الكيوبت 0 للتحكم وتستهدف الكيوبت 1. يُقاس الكيوبتان في نهاية الدائرة.",
+        "target_wire": "أضف بوابة الكيوبت الواحد إلى:", "add_gate": "أضف البوابة المحددة",
+        "selected_gate": "المحدد: {gate}", "select_gate": "حدّد بوابة من القائمة أولًا.",
+        "clear": "امسح الدائرة", "undo": "تراجع عن آخر بوابة", "run": "▶ شغّل قياسات محلية",
+        "bell_example": "حمّل مثال حالة بيل (H ثم CX)",
+        "bell_example_tooltip": "يتاح المثال عندما تكون الدائرة فارغة. امسح البوابات الحالية لتفعيله.",
+        "bell_example_loaded": "حُمّل مثال بيل: تنشئ H ثم CX نتائج مترابطة.",
+        "show_all_gates": "اعرض كل البوابات", "show_basic_gates": "اعرض H وX وCX فقط",
+        "beginner_palette_hint": "ابدأ بالبوابات H وX وCX. استخدم هذا الزر لإظهار بقية البوابات.",
+        "nothing_to_undo": "لا توجد بوابات لإزالتها.",
+        "back": "◀ رجوع", "shots": "عدد القياسات:",
+        "result_heading": "التوقع الدقيق والنتائج المحلية",
+        "probability_hint": "الاحتمال الدقيق هو فرصة النتيجة في الحالة المثالية. النسبة المرصودة هي عدد ظهورها مقسومًا على عدد القياسات. غالبًا ما تقترب النسبة من التوقع عند زيادة القياسات.",
+        "outcome": "نتيجة القياس", "exact": "الاحتمال الدقيق",
+        "count": "عدد مرات الظهور", "observed": "النسبة المرصودة",
+        "ready": "أضف بوابات لعرض التوقع الدقيق، ثم شغّل قياسات محلية للمقارنة.",
+        "empty": "لا توجد بوابات بعد؛ يبدأ الكيوبتان عند 0.",
+        "local_note": "يعمل المحاكي المدمج على هذا الجهاز ببوابات مثالية ومن دون إضافة ضوضاء الأجهزة. لا تُستخدم خدمة سحابية أو أجهزة كمية. تُعرض النتائج بترتيب الكيوبت 1 ثم الكيوبت 0.",
+        "added": "أُضيفت {gate} في الخطوة {step}.",
+        "removed": "أُزيلت: {gate}.", "cleared": "مُسحت الدائرة.",
+        "full": "بلغت الدائرة حد 20 خطوة. أزل بوابة أو امسح الدائرة.",
+        "gate_names": {
+            "H": "بوابة هادامارد", "X": "قلب البت", "Y": "دوران Y", "Z": "قلب الطور",
+            "S": "طور S", "T": "طور T", "RX": "دوران X (π/2)",
+            "RY": "دوران Y (π/2)", "RZ": "دوران Z (π/2)",
+            "CX": "بوابة X المتحكَّم بها", "CZ": "بوابة Z المتحكَّم بها", "SWAP": "تبادل الكيوبتين",
+        },
+    },
+}
+
+PLAYGROUND_SINGLE_GATES = ("H", "X", "Y", "Z", "S", "T", "RX", "RY", "RZ")
+PLAYGROUND_TWO_QUBIT_GATES = ("CX", "CZ", "SWAP")
+
+
+def simulate_two_qubit_circuit(slots):
+    """Return exact Qubit-1/Qubit-0 probabilities for supported playground gates."""
+    # The array index stores Qubit 0 in its low bit and Qubit 1 in its high bit.
+    state = [1 + 0j, 0j, 0j, 0j]
+    angle = math.pi / 2
+    cosine, sine = math.cos(angle / 2), math.sin(angle / 2)
+    single_qubit_gates = {
+        "H": ((1 / math.sqrt(2), 1 / math.sqrt(2)),
+              (1 / math.sqrt(2), -1 / math.sqrt(2))),
+        "X": ((0, 1), (1, 0)),
+        "Y": ((0, -1j), (1j, 0)),
+        "Z": ((1, 0), (0, -1)),
+        "S": ((1, 0), (0, 1j)),
+        "T": ((1, 0), (0, complex(math.cos(math.pi / 4), math.sin(math.pi / 4)))),
+        "RX": ((cosine, -1j * sine), (-1j * sine, cosine)),
+        "RY": ((cosine, -sine), (sine, cosine)),
+        "RZ": ((complex(math.cos(-angle / 2), math.sin(-angle / 2)), 0),
+               (0, complex(math.cos(angle / 2), math.sin(angle / 2)))),
+    }
+
+    def apply_single(gate, qubit):
+        matrix = single_qubit_gates[gate]
+        mask = 1 << qubit
+        for index in range(4):
+            if index & mask:
+                continue
+            zero, one = state[index], state[index | mask]
+            state[index] = matrix[0][0] * zero + matrix[0][1] * one
+            state[index | mask] = matrix[1][0] * zero + matrix[1][1] * one
+
+    for slot in slots:
+        if "both" in slot:
+            gate = slot["both"]
+            if gate == "CX":
+                for index in range(4):
+                    if (index & 0b01) and not (index & 0b10):
+                        partner = index | 2
+                        state[index], state[partner] = state[partner], state[index]
+            elif gate == "CZ":
+                state[3] *= -1
+            elif gate == "SWAP":
+                state[1], state[2] = state[2], state[1]
+            continue
+        # Operations on separate wires in the same column commute.
+        for qubit in (0, 1):
+            gate = slot.get(qubit)
+            if gate is not None:
+                apply_single(gate, qubit)
+
+    probabilities = {
+        format(index, "02b"): abs(amplitude) ** 2
+        for index, amplitude in enumerate(state)
+    }
+    normalization = sum(probabilities.values())
+    return {outcome: probability / normalization
+            for outcome, probability in probabilities.items()}
 
 
 # ─────────────────────────────────────────────
@@ -1627,6 +1876,57 @@ def configure_combo(combo):
     combo.view().setMinimumWidth(width)
 
 
+def feedback_source_label(source, language):
+    """Translate the screen context recorded with a submitted issue."""
+    source_names = FEEDBACK_SOURCE_LABELS[language]
+    source_ids = {
+        "Welcome": "welcome", "Experience selection": "experience",
+        "Circuit selection": "circuit", "Two-qubit circuit playground": "playground",
+        "Quantum cryptography / BB84": "cryptography",
+    }
+    source_label = source_names.get(source_ids.get(source, ""), source)
+    source_prefixes = (
+        ("Operator guide: ", "operator"),
+        ("Operator explanation: ", "operator_detail"),
+        ("Simulation: ", "simulation"),
+    )
+    for prefix, source_key in source_prefixes:
+        if not source.startswith(prefix):
+            continue
+        source_label = source_names[source_key]
+        detail = source[len(prefix):]
+        localized_circuit = (CIRCUIT_LOCALIZATIONS
+                             .get(language, {})
+                             .get(detail, {}).get("title", detail))
+        if source_key in {"operator", "simulation"}:
+            source_label = f"{source_label}: {localized_circuit}"
+        elif source_key == "operator_detail":
+            if language == "English":
+                gate_name = next((name for _, gates in OPERATORS
+                                  for symbol, name, *_ in gates
+                                  if symbol == detail), detail)
+            else:
+                gate_name = OPERATOR_LOCALIZATIONS[language]["gates"].get(
+                    detail, (detail, []))[0]
+            source_label = f"{source_label}: {gate_name}"
+        break
+    return source_label
+
+
+def build_feedback_issue(source, language, submitted, feedback):
+    """Format a localized Markdown issue without performing filesystem I/O."""
+    strings = TRANSLATIONS[language]
+    return (
+        f"# {strings['feedback_issue_title']}\n\n"
+        f"- {strings['feedback_status_label']}: {strings['feedback_open_label']}\n"
+        f"- {strings['feedback_submitted_label']}: {submitted.isoformat(timespec='seconds')}\n"
+        f"- {strings['feedback_screen_label']}: {feedback_source_label(source, language)}\n"
+        f"- {strings['feedback_language_label']}: {language}\n\n"
+        f"## {strings['feedback_text_heading']}\n\n"
+        f"{feedback}\n"
+    )
+
+
 def create_feedback_page(language, source):
     """Create a translated form that saves a local Markdown issue."""
     copy = TRANSLATIONS[language]
@@ -1659,6 +1959,7 @@ def create_feedback_page(language, source):
         heading.setText(strings["feedback_title"])
         prompt.setText(strings["feedback_prompt"])
         editor.setPlaceholderText(strings["feedback_prompt"])
+        editor.setAccessibleName(strings["feedback_title"])
         send_button.setText(strings["feedback_send"])
         if status.text() in {
             TRANSLATIONS["English"]["feedback_empty"],
@@ -1683,15 +1984,8 @@ def create_feedback_page(language, source):
         issue_folder = Path(__file__).resolve().parent / "Feedback"
         issue_path = issue_folder / (
             f"feedback-{submitted.strftime('%Y%m%d-%H%M%S-%f')}.md")
-        issue_text = (
-            "# Feedback issue\n\n"
-            "- Status: Open\n"
-            f"- Submitted: {submitted.isoformat(timespec='seconds')}\n"
-            f"- Screen: {source}\n"
-            f"- Interface language: {selected_language}\n\n"
-            "## Feedback\n\n"
-            f"{feedback}\n"
-        )
+        issue_text = build_feedback_issue(
+            source, selected_language, submitted, feedback)
         try:
             issue_folder.mkdir(parents=True, exist_ok=True)
             issue_path.write_text(issue_text, encoding="utf-8")
@@ -1785,6 +2079,41 @@ def audio_walkthrough_lines(qc, language):
     return lines
 
 
+def playground_audio_walkthrough_lines(slots, language):
+    """Narrate the gates in a student-built circuit without requiring Qiskit."""
+    copy = AUDIO_COPY[language]
+    playground_copy = PLAYGROUND_COPY[language]
+    operations = []
+    for slot in slots:
+        if "both" in slot:
+            qubits = f"{playground_copy['wire_zero']} " \
+                     f"{playground_copy['audio_qubit_join']} " \
+                     f"{playground_copy['wire_one']}"
+            operations.append((slot["both"], qubits))
+            continue
+        for wire in (0, 1):
+            if wire in slot:
+                qubit = playground_copy["wire_zero" if wire == 0 else "wire_one"]
+                operations.append((slot[wire], qubit))
+    lines = [copy["intro"].format(count=len(operations))]
+    for index, (symbol, qubits) in enumerate(operations, start=1):
+        name = BRAND_NEW_OPERATOR_EXPLANATIONS[language][symbol]
+        lines.append(copy["step"].format(
+            step=index, count=len(operations),
+            gate=playground_copy["gate_names"][symbol],
+            qubits=qubits, description=name, parameters="",
+        ))
+    probabilities = simulate_two_qubit_circuit(slots)
+    results = ", ".join(
+        f"{outcome}: {probability:.0%}"
+        for outcome, probability in probabilities.items()
+        if probability > 1e-9
+    )
+    lines.append(copy["playground_results"].format(results=results))
+    lines.append(copy["complete"])
+    return lines
+
+
 # ─────────────────────────────────────────────
 # WINDOW 1 - QUESTIONNAIRE
 # ─────────────────────────────────────────────
@@ -1874,11 +2203,13 @@ class QuestionnaireDialog(QDialog):
             "English": "Not applicable", "Español": "No aplica",
             "العربية": "لا ينطبق",
         }.get(language, "Not applicable")
+        region_labels = REGION_LABELS.get(language, {})
         self.region.clear()
         regions = COUNTRIES.get(country, ["Not applicable"])
         self.region.addItems([
             other_label if item == "Other / N/A" else
-            not_applicable if item == "Not applicable" else item
+            not_applicable if item == "Not applicable" else
+            region_labels.get(item, item)
             for item in regions
         ])
         configure_combo(self.region)
@@ -1960,6 +2291,689 @@ class MainWindow(QMainWindow):
             QApplication.quit()
 
 
+class GateDragButton(QToolButton):
+    """Palette button that starts a drag carrying a gate symbol."""
+    def __init__(self, symbol, name, concept, parent=None):
+        super().__init__(parent)
+        self.symbol = symbol
+        self.press_position = None
+        self.setText(name)
+        self.setIcon(QIcon(render_operator_icon(symbol)))
+        self.setIconSize(QSize(74, 50))
+        self.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
+        self.setCheckable(True)
+        self.setToolTip(f"{name}\n\n{concept}")
+        self.setAccessibleName(f"{symbol}: {name}")
+        self.setAccessibleDescription(concept)
+        self.setCursor(Qt.CursorShape.OpenHandCursor)
+        label_width = self.fontMetrics().horizontalAdvance(name)
+        self.setFixedSize(max(142, label_width + 26), 98)
+        self.setStyleSheet(
+            "QToolButton { background: white; border: 1px solid #dfe7e8; "
+            "border-radius: 8px; padding: 4px; }"
+            "QToolButton:hover { background: #f0f8f7; border-color: #247f78; }"
+            "QToolButton:checked { background: #e1f1ee; border: 2px solid #176b65; }"
+        )
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.press_position = event.position().toPoint()
+        super().mousePressEvent(event)
+
+    def mouseMoveEvent(self, event):
+        if (self.press_position is None or
+                not (event.buttons() & Qt.MouseButton.LeftButton) or
+                (event.position().toPoint() - self.press_position).manhattanLength()
+                < QApplication.startDragDistance()):
+            return
+        drag = QDrag(self)
+        mime_data = QMimeData()
+        mime_data.setData("application/x-quantum-gate", self.symbol.encode("ascii"))
+        drag.setMimeData(mime_data)
+        drag.setPixmap(self.icon().pixmap(self.iconSize()))
+        drag.exec(Qt.DropAction.CopyAction)
+        self.press_position = None
+
+
+class TwoQubitCircuitCanvas(QWidget):
+    """Paint a small two-wire circuit and accept palette gate drops."""
+    circuit_changed = Signal()
+    notice_changed = Signal(str)
+    MAX_STEPS = 20
+
+    def __init__(self, copy, parent=None):
+        super().__init__(parent)
+        self.copy = copy
+        self.slots = [{} for _ in range(6)]
+        self.gate_history = []
+        self.setAcceptDrops(True)
+        self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.setAccessibleName(copy["canvas_accessible"])
+        self.setMinimumHeight(222)
+        self.setMinimumWidth(self.sizeHint().width())
+        self.resize(self.sizeHint())
+        self._update_accessible_summary()
+        self.setStyleSheet(
+            "background: #ffffff; border: 1px solid #dfe7e8; border-radius: 8px;")
+
+    def sizeHint(self):
+        return QSize(max(720, 154 + max(6, len(self.slots)) * 88), 222)
+
+    def _update_extent(self):
+        self.setMinimumWidth(self.sizeHint().width())
+        self.resize(self.sizeHint())
+        self.updateGeometry()
+        self.update()
+        self._update_accessible_summary()
+
+    def _update_accessible_summary(self):
+        entries = []
+        for index, slot in enumerate(self.slots):
+            if "both" in slot:
+                entries.append(self.copy["canvas_gate_accessible"].format(
+                    step=index + 1,
+                    gate=self.copy["gate_names"][slot["both"]],
+                    wire=self.copy["canvas_both_wires"],
+                ))
+            else:
+                for wire in (0, 1):
+                    if wire in slot:
+                        entries.append(self.copy["canvas_gate_accessible"].format(
+                            step=index + 1,
+                            gate=self.copy["gate_names"][slot[wire]],
+                            wire=self.copy["wire_zero" if wire == 0 else "wire_one"],
+                        ))
+        self.setAccessibleDescription(" ".join(entries) if entries else
+                                       self.copy["canvas_empty_accessible"])
+
+    def clear_circuit(self):
+        self.slots = [{} for _ in range(6)]
+        self.gate_history.clear()
+        self._update_extent()
+        self.circuit_changed.emit()
+        self.notice_changed.emit(self.copy["cleared"])
+
+    def _trim_empty_columns(self):
+        while len(self.slots) > 6 and not self.slots[-1]:
+            self.slots.pop()
+
+    def remove_last_gate(self):
+        while self.gate_history:
+            step, wire, symbol = self.gate_history.pop()
+            if (step >= len(self.slots) or
+                    self.slots[step].get(wire) != symbol):
+                continue
+            del self.slots[step][wire]
+            self._trim_empty_columns()
+            self._update_extent()
+            self.circuit_changed.emit()
+            self.notice_changed.emit(self.copy["removed"].format(
+                gate=self.copy["gate_names"][symbol]))
+            return
+        self.notice_changed.emit(self.copy["nothing_to_undo"])
+
+    def append_gate(self, symbol, target_wire=0):
+        latest_step = max(
+            (index for index, slot in enumerate(self.slots) if slot), default=-1)
+        start_step = max(0, latest_step)
+        step = next((index for index in range(start_step, self.MAX_STEPS)
+                     if self._can_place(symbol, target_wire, index)), None)
+        if step is None:
+            self.notice_changed.emit(self.copy["full"])
+            return False
+        while len(self.slots) <= step:
+            self.slots.append({})
+        if symbol in PLAYGROUND_TWO_QUBIT_GATES:
+            self.slots[step]["both"] = symbol
+            wire = "both"
+        else:
+            self.slots[step][target_wire] = symbol
+            wire = target_wire
+        self.gate_history.append((step, wire, symbol))
+        self._update_extent()
+        self.circuit_changed.emit()
+        self.notice_changed.emit(self.copy["added"].format(
+            gate=self.copy["gate_names"][symbol], step=step + 1))
+        return True
+
+    def dragEnterEvent(self, event):
+        mime = event.mimeData()
+        if mime.hasFormat("application/x-quantum-gate"):
+            symbol = bytes(mime.data("application/x-quantum-gate")).decode(
+                "ascii", errors="ignore")
+            if symbol in PLAYGROUND_SINGLE_GATES + PLAYGROUND_TWO_QUBIT_GATES:
+                event.acceptProposedAction()
+                return
+        event.ignore()
+
+    def dragMoveEvent(self, event):
+        if event.mimeData().hasFormat("application/x-quantum-gate"):
+            event.acceptProposedAction()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event):
+        mime = event.mimeData()
+        if not mime.hasFormat("application/x-quantum-gate"):
+            event.ignore()
+            return
+        symbol = bytes(mime.data("application/x-quantum-gate")).decode(
+            "ascii", errors="ignore")
+        if symbol not in PLAYGROUND_SINGLE_GATES + PLAYGROUND_TWO_QUBIT_GATES:
+            event.ignore()
+            return
+
+        position = event.position().toPoint()
+        requested_step = max(0, round((position.x() - 140) / 88))
+        target_wire = 0 if position.y() < self.height() / 2 else 1
+        step = next((index for index in range(requested_step, self.MAX_STEPS)
+                     if self._can_place(symbol, target_wire, index)), None)
+        if step is None:
+            self.notice_changed.emit(self.copy["full"])
+            event.ignore()
+            return
+        while len(self.slots) <= step:
+            self.slots.append({})
+        if symbol in PLAYGROUND_TWO_QUBIT_GATES:
+            self.slots[step]["both"] = symbol
+            wire = "both"
+        else:
+            self.slots[step][target_wire] = symbol
+            wire = target_wire
+        self.gate_history.append((step, wire, symbol))
+        self._update_extent()
+        self.circuit_changed.emit()
+        self.notice_changed.emit(self.copy["added"].format(
+            gate=self.copy["gate_names"][symbol], step=step + 1))
+        event.acceptProposedAction()
+
+    def _can_place(self, symbol, wire, step):
+        if step >= self.MAX_STEPS:
+            return False
+        slot = self.slots[step] if step < len(self.slots) else {}
+        if symbol in PLAYGROUND_TWO_QUBIT_GATES:
+            return not slot
+        return "both" not in slot and wire not in slot
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.MouseButton.LeftButton:
+            position = event.position().toPoint()
+            requested_step = round((position.x() - 140) / 88)
+            wire = 0 if position.y() < self.height() / 2 else 1
+            if 0 <= requested_step < len(self.slots):
+                slot = self.slots[requested_step]
+                x_center = 140 + requested_step * 88
+                removed = None
+                if "both" in slot and abs(position.x() - x_center) <= 20:
+                    if 54 <= position.y() <= 188:
+                        removed = slot.pop("both")
+                        removed_wire = "both"
+                elif abs(position.x() - x_center) <= 30:
+                    y_center = 82 if wire == 0 else 160
+                    if abs(position.y() - y_center) <= 24:
+                        removed = slot.pop(wire, None)
+                        removed_wire = wire
+                if removed:
+                    for history_index in range(len(self.gate_history) - 1, -1, -1):
+                        if self.gate_history[history_index] == (
+                                requested_step, removed_wire, removed):
+                            self.gate_history.pop(history_index)
+                            break
+                    self._trim_empty_columns()
+                    self._update_extent()
+                    self.circuit_changed.emit()
+                    self.notice_changed.emit(self.copy["removed"].format(
+                        gate=self.copy["gate_names"][removed]))
+                    return
+        super().mousePressEvent(event)
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        painter.fillRect(self.rect(), QColor("#ffffff"))
+        y_positions = (82, 160)
+        painter.setFont(QFont("Arial", 10, QFont.Weight.DemiBold))
+        painter.setPen(QColor("#44575a"))
+        painter.drawText(16, y_positions[0] + 4, self.copy["wire_zero"])
+        painter.drawText(16, y_positions[1] + 4, self.copy["wire_one"])
+        painter.setPen(QPen(QColor("#e6eeee"), 1, Qt.PenStyle.DashLine))
+        for step in range(max(6, len(self.slots))):
+            x = 140 + step * 88
+            painter.drawLine(x, 45, x, 194)
+        painter.setPen(QPen(QColor("#8aa5a3"), 2))
+        painter.drawLine(100, y_positions[0], self.width() - 20, y_positions[0])
+        painter.drawLine(100, y_positions[1], self.width() - 20, y_positions[1])
+
+        for step in range(max(6, len(self.slots))):
+            x = 140 + step * 88
+            painter.setPen(QColor("#91a3a5"))
+            painter.setFont(QFont("Arial", 8))
+            painter.drawText(x - 12, 35, str(step + 1))
+            slot = self.slots[step] if step < len(self.slots) else {}
+            if "both" in slot:
+                self._paint_two_qubit_gate(painter, slot["both"], x, y_positions)
+            else:
+                for wire in (0, 1):
+                    if wire in slot:
+                        self._paint_single_gate(
+                            painter, slot[wire], x, y_positions[wire])
+        painter.end()
+
+    @staticmethod
+    def _paint_single_gate(painter, symbol, x, y):
+        rect = (x - 29, y - 22, 58, 44)
+        painter.setPen(QPen(QColor("#247f78"), 2))
+        painter.setBrush(QColor("#e8f3f1"))
+        painter.drawRoundedRect(*rect, 7, 7)
+        painter.setPen(QColor("#176b65"))
+        painter.setFont(QFont("Arial", 12, QFont.Weight.Bold))
+        painter.drawText(*rect, Qt.AlignmentFlag.AlignCenter, symbol)
+
+    @staticmethod
+    def _paint_two_qubit_gate(painter, symbol, x, ys):
+        top, bottom = ys
+        painter.setPen(QPen(QColor("#247f78"), 2))
+        if symbol == "CX":
+            painter.drawLine(x, top, x, bottom)
+            painter.setBrush(QColor("#176b65"))
+            painter.drawEllipse(x - 7, top - 7, 14, 14)
+            painter.setBrush(QColor("#ffffff"))
+            painter.drawEllipse(x - 17, bottom - 17, 34, 34)
+            painter.drawLine(x - 11, bottom, x + 11, bottom)
+            painter.drawLine(x, bottom - 11, x, bottom + 11)
+        elif symbol == "CZ":
+            painter.drawLine(x, top, x, bottom)
+            painter.setBrush(QColor("#176b65"))
+            painter.drawEllipse(x - 7, top - 7, 14, 14)
+            painter.drawEllipse(x - 7, bottom - 7, 14, 14)
+        else:  # SWAP
+            painter.drawLine(x, top, x, bottom)
+            for y in ys:
+                painter.drawLine(x - 10, y - 10, x + 10, y + 10)
+                painter.drawLine(x - 10, y + 10, x + 10, y - 10)
+
+
+class TwoQubitPlaygroundWindow(QMainWindow):
+    back_requested = Signal()
+
+    def __init__(self, answers):
+        super().__init__()
+        self.answers = answers
+        self.language = answers["language"]
+        self.copy = PLAYGROUND_COPY[self.language]
+        experience_text = answers.get(
+            "experience", TRANSLATIONS[self.language]["novice"])
+        self.brand_new_mode = experience_index(
+            experience_text, TRANSLATIONS[self.language]) == 0
+        self.audio_copy = AUDIO_COPY[self.language]
+        self._speech = None
+        self._audio_active = False
+        self._audio_lines = []
+        self._audio_index = 0
+        self._closing_for_navigation = False
+        set_language_direction(self, self.language)
+        self.setWindowTitle(self.copy["window"])
+        self.setMinimumSize(980, 760)
+        self.resize(1180, 940)
+
+        root = QWidget()
+        self.setCentralWidget(root)
+        outer = QVBoxLayout(root)
+        outer.setContentsMargins(20, 16, 20, 16)
+        outer.setSpacing(10)
+        title = QLabel(self.copy["title"])
+        title.setFont(QFont("Arial", 19, QFont.Weight.Bold))
+        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        outer.addWidget(title)
+
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        outer.addWidget(scroll, 1)
+        content = QWidget()
+        body = QVBoxLayout(content)
+        body.setSpacing(10)
+        scroll.setWidget(content)
+
+        intro = QLabel(self.copy["intro"])
+        intro.setWordWrap(True)
+        body.addWidget(intro)
+        self.bell_example_button = QPushButton(self.copy["bell_example"])
+        self.bell_example_button.setStyleSheet(BUTTON_STYLE_BACK)
+        self.bell_example_button.setToolTip(self.copy["bell_example_tooltip"])
+        self.bell_example_button.clicked.connect(self.load_bell_example)
+        example_row = QHBoxLayout()
+        example_row.addStretch(1)
+        example_row.addWidget(self.bell_example_button)
+        example_row.addStretch(1)
+        body.addLayout(example_row)
+        self.selected_palette_gate = None
+        self.palette_buttons = {}
+        self.advanced_palette_buttons = []
+        self._add_palette(body, self.copy["single_heading"], PLAYGROUND_SINGLE_GATES)
+        self._add_palette(body, self.copy["two_heading"], PLAYGROUND_TWO_QUBIT_GATES)
+        if self.brand_new_mode:
+            self.gate_filter_button = QPushButton(self.copy["show_all_gates"])
+            self.gate_filter_button.setCheckable(True)
+            self.gate_filter_button.setStyleSheet(BUTTON_STYLE_BACK)
+            self.gate_filter_button.setToolTip(self.copy["beginner_palette_hint"])
+            self.gate_filter_button.toggled.connect(self.toggle_advanced_gates)
+            filter_row = QHBoxLayout()
+            filter_row.addStretch(1)
+            filter_row.addWidget(self.gate_filter_button)
+            filter_row.addStretch(1)
+            body.addLayout(filter_row)
+            self.toggle_advanced_gates(False)
+        palette_hint = QLabel(self.copy["palette_hint"])
+        palette_hint.setWordWrap(True)
+        palette_hint.setStyleSheet("color: #5c6264;")
+        body.addWidget(palette_hint)
+
+        keyboard_row = QHBoxLayout()
+        keyboard_row.addWidget(QLabel(self.copy["target_wire"]))
+        self.target_wire = QComboBox()
+        self.target_wire.addItem(self.copy["wire_zero"], 0)
+        self.target_wire.addItem(self.copy["wire_one"], 1)
+        configure_combo(self.target_wire)
+        keyboard_row.addWidget(self.target_wire)
+        self.add_selected_button = QPushButton(self.copy["add_gate"])
+        self.add_selected_button.setStyleSheet(
+            BUTTON_STYLE_GREEN +
+            "QPushButton:disabled { background: #d8e2e1; color: #536261; }")
+        self.add_selected_button.setEnabled(False)
+        self.add_selected_button.clicked.connect(self.add_selected_gate)
+        keyboard_row.addWidget(self.add_selected_button)
+        body.addLayout(keyboard_row)
+
+        canvas_hint = QLabel(self.copy["canvas_hint"])
+        canvas_hint.setWordWrap(True)
+        body.addWidget(canvas_hint)
+        self.canvas_scroll = QScrollArea()
+        self.canvas_scroll.setWidgetResizable(True)
+        self.canvas_scroll.setHorizontalScrollBarPolicy(
+            Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.canvas = TwoQubitCircuitCanvas(self.copy)
+        self.canvas_scroll.setWidget(self.canvas)
+        body.addWidget(self.canvas_scroll)
+        self.status = QLabel(self.copy["ready"])
+        self.status.setWordWrap(True)
+        body.addWidget(self.status)
+        self.canvas.circuit_changed.connect(self._circuit_changed)
+        self.canvas.notice_changed.connect(self.status.setText)
+
+        controls = QHBoxLayout()
+        controls.addWidget(QLabel(self.copy["shots"]))
+        self.shots = QComboBox()
+        self.shots.addItems(["100", "1,000", "10,000"])
+        configure_combo(self.shots)
+        self.shots.setCurrentIndex(1)
+        controls.addWidget(self.shots)
+        clear_button = QPushButton(self.copy["clear"])
+        clear_button.setStyleSheet(
+            "QPushButton { background: #e7edef; color: #243238; border: 1px solid #d1dcde; "
+            "border-radius: 7px; padding: 9px 14px; }"
+            "QPushButton:hover { background: #dbe6e8; }")
+        clear_button.clicked.connect(self.canvas.clear_circuit)
+        controls.addWidget(clear_button)
+        self.undo_button = QPushButton(self.copy["undo"])
+        self.undo_button.setStyleSheet(
+            "QPushButton { background: #e7edef; color: #243238; border: 1px solid #d1dcde; "
+            "border-radius: 7px; padding: 9px 14px; }"
+            "QPushButton:hover { background: #dbe6e8; }"
+            "QPushButton:disabled { color: #586667; background: #e4eaeb; }")
+        self.undo_button.setEnabled(False)
+        self.undo_button.clicked.connect(self.canvas.remove_last_gate)
+        controls.addWidget(self.undo_button)
+        run_button = QPushButton(self.copy["run"])
+        run_button.setStyleSheet(BUTTON_STYLE_GREEN)
+        run_button.clicked.connect(self.run_local_simulation)
+        controls.addWidget(run_button)
+        body.addLayout(controls)
+
+        self.audio_button = QPushButton(self.audio_copy["off"])
+        self.audio_button.setCheckable(True)
+        self.audio_button.setStyleSheet(BUTTON_STYLE_BACK)
+        self.audio_button.toggled.connect(self.toggle_audio_walkthrough)
+        audio_row = QHBoxLayout()
+        audio_row.addStretch(1)
+        audio_row.addWidget(self.audio_button)
+        audio_row.addStretch(1)
+        body.addLayout(audio_row)
+
+        heading = QLabel(self.copy["result_heading"])
+        heading.setFont(QFont("Arial", 13, QFont.Weight.Bold))
+        body.addWidget(heading)
+        probability_hint = QLabel(self.copy["probability_hint"])
+        probability_hint.setWordWrap(True)
+        probability_hint.setStyleSheet("color: #5c6264;")
+        body.addWidget(probability_hint)
+        self.results_table = QTableWidget(4, 4)
+        self.results_table.setHorizontalHeaderLabels([
+            self.copy["outcome"], self.copy["exact"],
+            self.copy["count"], self.copy["observed"],
+        ])
+        self.results_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        self.results_table.verticalHeader().setVisible(False)
+        self.results_table.horizontalHeader().setSectionResizeMode(
+            QHeaderView.ResizeMode.ResizeToContents)
+        body.addWidget(self.results_table)
+        local_note = QLabel(self.copy["local_note"])
+        local_note.setWordWrap(True)
+        local_note.setStyleSheet("color: #5c6264;")
+        body.addWidget(local_note)
+
+        back = QPushButton(self.copy["back"])
+        back.setStyleSheet(BUTTON_STYLE_BACK)
+        back.clicked.connect(self.go_back)
+        outer.addWidget(back)
+        self._set_result_table([0.0] * 4, None, None)
+        self.refresh_exact_probabilities()
+        install_feedback_tab(self, self.language, "Two-qubit circuit playground")
+
+    def _circuit_changed(self):
+        if self._audio_active:
+            self._stop_audio_walkthrough()
+        self.undo_button.setEnabled(any(self.canvas.slots))
+        self.bell_example_button.setEnabled(not any(self.canvas.slots))
+        self.refresh_exact_probabilities()
+
+    def load_bell_example(self):
+        if any(self.canvas.slots):
+            return
+        self.canvas.slots[0][0] = "H"
+        self.canvas.slots[1]["both"] = "CX"
+        self.canvas.gate_history = [(0, 0, "H"), (1, "both", "CX")]
+        self.canvas._update_extent()
+        self.canvas.circuit_changed.emit()
+        self.canvas.notice_changed.emit(self.copy["bell_example_loaded"])
+
+    def _add_palette(self, layout, heading_text, symbols):
+        heading = QLabel(heading_text)
+        heading.setFont(QFont("Arial", 12, QFont.Weight.Bold))
+        layout.addWidget(heading)
+        host = QWidget()
+        grid = QGridLayout(host)
+        grid.setContentsMargins(0, 0, 0, 0)
+        grid.setHorizontalSpacing(8)
+        grid.setVerticalSpacing(8)
+        grid.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+        for index, symbol in enumerate(symbols):
+            name = self.copy["gate_names"][symbol]
+            concept = BRAND_NEW_OPERATOR_EXPLANATIONS[self.language][symbol]
+            button = GateDragButton(symbol, name, concept)
+            button.clicked.connect(
+                lambda _checked=False, gate=symbol: self.select_palette_gate(gate))
+            self.palette_buttons[symbol] = button
+            grid.addWidget(button, index // 5, index % 5)
+            basic_gates = {"H", "X", "CX"}
+            if self.brand_new_mode and symbol not in basic_gates:
+                button.setVisible(False)
+                self.advanced_palette_buttons.append(button)
+        layout.addWidget(host)
+
+    def toggle_advanced_gates(self, show_all):
+        for button in self.advanced_palette_buttons:
+            button.setVisible(show_all)
+        if (not show_all and self.selected_palette_gate not in
+                {None, "H", "X", "CX"} and hasattr(self, "add_selected_button")):
+            hidden_selection = self.selected_palette_gate
+            self.selected_palette_gate = None
+            self.palette_buttons[hidden_selection].setChecked(False)
+            self.add_selected_button.setEnabled(False)
+            if hasattr(self, "status"):
+                self.status.setText(
+                    self.copy["empty"] if not any(self.canvas.slots)
+                    else self.copy["ready"])
+        self.gate_filter_button.setText(
+            self.copy["show_basic_gates"] if show_all
+            else self.copy["show_all_gates"])
+
+    def select_palette_gate(self, symbol):
+        self.selected_palette_gate = symbol
+        for gate, button in self.palette_buttons.items():
+            button.setChecked(gate == symbol)
+        self.add_selected_button.setEnabled(True)
+        self.status.setText(self.copy["selected_gate"].format(
+            gate=self.copy["gate_names"][symbol]))
+
+    def add_selected_gate(self):
+        if self.selected_palette_gate is None:
+            self.status.setText(self.copy["select_gate"])
+            return
+        self.canvas.append_gate(
+            self.selected_palette_gate, self.target_wire.currentData())
+
+    def refresh_exact_probabilities(self):
+        probabilities = simulate_two_qubit_circuit(self.canvas.slots)
+        exact = [float(probabilities.get(outcome, 0.0))
+                 for outcome in ("00", "01", "10", "11")]
+        self._set_result_table(exact, None, None)
+        self.status.setText(self.copy["empty"] if not any(self.canvas.slots)
+                            else self.copy["ready"])
+
+    def _set_result_table(self, probabilities, counts, shots):
+        outcomes = ("00", "01", "10", "11")
+        self.results_table.setUpdatesEnabled(False)
+        for row, (outcome, probability) in enumerate(zip(outcomes, probabilities)):
+            values = [outcome, f"{probability:.1%}", "—", "—"]
+            if counts is not None and shots:
+                count = counts.get(outcome, 0)
+                values[2] = f"{count:,}"
+                values[3] = f"{count / shots:.1%}"
+            for column, value in enumerate(values):
+                self.results_table.setItem(row, column, QTableWidgetItem(value))
+        self.results_table.setUpdatesEnabled(True)
+
+    def run_local_simulation(self):
+        probabilities = simulate_two_qubit_circuit(self.canvas.slots)
+        shots = int(self.shots.currentText().replace(",", ""))
+        outcomes = tuple(probabilities)
+        sampled_outcomes = random.choices(
+            outcomes, weights=tuple(probabilities.values()), k=shots)
+        counts = Counter(sampled_outcomes)
+        exact = [float(probabilities.get(outcome, 0.0))
+                 for outcome in ("00", "01", "10", "11")]
+        self._set_result_table(exact, counts, shots)
+        self.status.setText(self.copy["local_note"])
+
+    def _set_audio_button(self, checked):
+        self.audio_button.blockSignals(True)
+        self.audio_button.setChecked(checked)
+        self.audio_button.setText(
+            self.audio_copy["on"] if checked else self.audio_copy["off"])
+        self.audio_button.blockSignals(False)
+
+    def _stop_audio_walkthrough(self):
+        self._audio_active = False
+        if self._speech is not None:
+            self._speech.stop()
+        self._set_audio_button(False)
+
+    def toggle_audio_walkthrough(self, enabled):
+        self.audio_button.setText(
+            self.audio_copy["on"] if enabled else self.audio_copy["off"])
+        if not enabled:
+            was_active = self._audio_active
+            self._stop_audio_walkthrough()
+            if was_active:
+                self.status.setText(self.audio_copy["stopped"])
+            return
+        if QTextToSpeech is None or QLocale is None:
+            self.status.setText(self.audio_copy["no_module"])
+            self._set_audio_button(False)
+            return
+        if not any(self.canvas.slots):
+            self.status.setText(self.audio_copy["no_circuit"])
+            self._set_audio_button(False)
+            return
+        try:
+            if self._speech is None:
+                self._speech = QTextToSpeech(self)
+                self._speech.stateChanged.connect(self._on_speech_state_changed)
+            locale_name = {
+                "English": "en_US", "Español": "es_ES", "العربية": "ar_SA",
+            }[self.language]
+            requested_locale = QLocale(locale_name)
+            self._speech.setLocale(requested_locale)
+            requested_language = requested_locale.language()
+            matching_voices = [
+                voice for voice in self._speech.availableVoices()
+                if voice.locale().language() == requested_language
+            ]
+            if not matching_voices:
+                self._speech.stop()
+                self.status.setText(self.audio_copy["no_voice"])
+                self._set_audio_button(False)
+                return
+            self._speech.setVoice(matching_voices[0])
+            self._audio_lines = playground_audio_walkthrough_lines(
+                self.canvas.slots, self.language)
+            self._audio_index = 0
+            self._audio_active = True
+            self.status.setText(self._audio_lines[0])
+            self._speak_next_audio_line()
+        except Exception:
+            self._audio_active = False
+            if self._speech is not None:
+                self._speech.stop()
+            self.status.setText(self.audio_copy["no_voice"])
+            self._set_audio_button(False)
+
+    def _on_speech_state_changed(self, state):
+        if self._audio_active and state == QTextToSpeech.State.Error:
+            self._audio_active = False
+            self.status.setText(self.audio_copy["no_voice"])
+            self._set_audio_button(False)
+            return
+        if self._audio_active and state == QTextToSpeech.State.Ready:
+            QTimer.singleShot(100, self._speak_next_audio_line)
+
+    def _speak_next_audio_line(self):
+        if not self._audio_active:
+            return
+        if self._audio_index >= len(self._audio_lines):
+            self._audio_active = False
+            self.status.setText(self.audio_copy["complete"])
+            self._set_audio_button(False)
+            return
+        line = self._audio_lines[self._audio_index]
+        self._audio_index += 1
+        self.status.setText(line)
+        self._speech.say(line)
+
+    def go_back(self):
+        self._closing_for_navigation = True
+        self.close()
+        self.back_requested.emit()
+
+    def closeEvent(self, event):
+        self._audio_active = False
+        if self._speech is not None:
+            self._speech.stop()
+        event.accept()
+        if not self._closing_for_navigation:
+            QApplication.quit()
+
+
 # ─────────────────────────────────────────────
 # WINDOW 3 - CIRCUIT SELECTION
 # ─────────────────────────────────────────────
@@ -1967,6 +2981,7 @@ class CircuitWindow(QMainWindow):
     back_requested = Signal()
     next_requested = Signal(str)
     cryptography_requested = Signal()
+    playground_requested = Signal()
 
     # ── Localized circuit names (index matches CIRCUITS key order) ──
     CIRCUIT_NAMES_BY_LANGUAGE = {
@@ -2024,6 +3039,11 @@ class CircuitWindow(QMainWindow):
         crypto.clicked.connect(self.open_cryptography)
         layout.addWidget(crypto)
 
+        playground = QPushButton(self.t["playground"])
+        playground.setStyleSheet(BUTTON_STYLE_GREEN)
+        playground.clicked.connect(self.open_playground)
+        layout.addWidget(playground)
+
         back = QPushButton(self.t["back"])
         back.setStyleSheet(BUTTON_STYLE_BACK)
         back.clicked.connect(self.go_back)
@@ -2049,6 +3069,10 @@ class CircuitWindow(QMainWindow):
     def open_cryptography(self):
         self._closing_for_navigation = True; self.close()
         self.cryptography_requested.emit()
+
+    def open_playground(self):
+        self._closing_for_navigation = True; self.close()
+        self.playground_requested.emit()
 
     def closeEvent(self, event):
         event.accept()
@@ -2085,7 +3109,8 @@ def render_operator_concept(symbol):
     teal, muted = QColor("#247f78"), QColor("#8aa5a3")
     painter.setPen(QPen(muted, 3, Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap))
     multi = symbol in {"CX", "CZ", "SWAP", "CCX", "CSWAP"}
-    ys = [45, 92] if multi else [69]
+    three_wire = symbol in {"CCX", "CSWAP"}
+    ys = [35, 69, 103] if three_wire else ([45, 92] if multi else [69])
     for y in ys:
         painter.drawLine(32, y, 488, y)
         painter.setBrush(QColor("#ffffff")); painter.setPen(QPen(teal, 2))
@@ -2107,29 +3132,39 @@ def render_operator_concept(symbol):
         painter.drawLine(295, 69, 488, 69)
         painter.setBrush(QColor("#dcefeb")); painter.setPen(QPen(teal, 2))
         painter.drawRoundedRect(225, 45, 70, 48, 10, 10)
-        painter.setPen(teal); painter.setFont(QFont("Arial", 18, QFont.Weight.Bold))
-        painter.drawText(225, 45, 70, 48, Qt.AlignmentFlag.AlignCenter,
-                         "?" if symbol == "Measure" else "↶")
         if symbol == "Measure":
+            painter.setPen(QPen(teal, 2))
+            painter.drawArc(238, 53, 44, 30, 0, 180 * 16)
+            painter.drawLine(260, 78, 270, 60)
+            painter.setBrush(teal); painter.drawEllipse(256, 74, 8, 8)
             painter.setPen(QPen(teal, 2)); painter.drawLine(260, 93, 260, 115)
             painter.drawLine(260, 115, 224, 125); painter.drawLine(260, 115, 296, 125)
             painter.setBrush(teal); painter.drawEllipse(218, 120, 10, 10)
             painter.drawEllipse(291, 120, 10, 10)
+        else:
+            painter.setPen(teal); painter.setFont(QFont("Arial", 18, QFont.Weight.Bold))
+            painter.drawText(225, 45, 70, 48, Qt.AlignmentFlag.AlignCenter, "↶")
     elif symbol in {"Barrier"}:
         painter.setPen(QPen(teal, 3, Qt.PenStyle.DashLine)); painter.drawLine(cx, 27, cx, 111)
     elif multi:
-        painter.setPen(QPen(teal, 3)); painter.drawLine(cx, 45, cx, 92)
+        painter.setPen(QPen(teal, 3)); painter.drawLine(cx, ys[0], cx, ys[-1])
         if symbol in {"CX", "CZ", "CCX", "CSWAP"}:
             painter.setBrush(teal); painter.setPen(QPen(teal, 2))
-            painter.drawEllipse(cx - 7, 38, 14, 14)
-        if symbol in {"CX", "CCX"}:
-            painter.setPen(QPen(teal, 3)); painter.drawLine(cx - 11, 92, cx + 11, 92)
-            painter.drawLine(cx, 81, cx, 103)
-            if symbol == "CCX":
-                painter.drawLine(cx - 70, 45, cx - 70, 92)
-                painter.setBrush(teal); painter.drawEllipse(cx - 77, 38, 14, 14)
+            painter.drawEllipse(cx - 7, ys[0] - 7, 14, 14)
+        if symbol == "CX":
+            painter.setPen(QPen(teal, 3)); painter.drawLine(cx - 11, ys[1], cx + 11, ys[1])
+            painter.drawLine(cx, ys[1] - 11, cx, ys[1] + 11)
+        elif symbol == "CCX":
+            painter.setBrush(teal); painter.drawEllipse(cx - 7, ys[1] - 7, 14, 14)
+            painter.setPen(QPen(teal, 3)); painter.drawLine(cx - 11, ys[2], cx + 11, ys[2])
+            painter.drawLine(cx, ys[2] - 11, cx, ys[2] + 11)
         elif symbol == "CZ":
-            painter.setBrush(teal); painter.drawEllipse(cx - 7, 85, 14, 14)
+            painter.setBrush(teal); painter.drawEllipse(cx - 7, ys[1] - 7, 14, 14)
+        elif symbol == "CSWAP":
+            for y in ys[1:]:
+                painter.setPen(QPen(teal, 3))
+                painter.drawLine(cx - 10, y - 9, cx + 10, y + 9)
+                painter.drawLine(cx - 10, y + 9, cx + 10, y - 9)
         else:
             for y in ys:
                 painter.setPen(QPen(teal, 3)); painter.drawLine(cx - 10, y - 9, cx + 10, y + 9)
@@ -2177,10 +3212,11 @@ class OperatorDetailDialog(QDialog):
         self.t = TRANSLATIONS[language]
         set_language_direction(self, language)
         self.setWindowTitle(f"{symbol} — {name}")
-        self.setMinimumSize(520, 320)
+        self.setMinimumSize(560, 430)
         self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
 
-        layout = QVBoxLayout(self)
+        page = QWidget()
+        layout = QVBoxLayout(page)
         layout.setContentsMargins(24, 22, 24, 22)
         layout.setSpacing(14)
         title = QLabel(f"{symbol} — {name}")
@@ -2227,6 +3263,18 @@ class OperatorDetailDialog(QDialog):
         close.setStyleSheet(BUTTON_STYLE_BACK)
         close.clicked.connect(self.accept)
         layout.addWidget(close)
+
+        main_tab = QScrollArea()
+        main_tab.setWidgetResizable(True)
+        main_tab.setWidget(page)
+        tabs = QTabWidget(self)
+        tabs.addTab(main_tab, self.t["tab_main"])
+        feedback_page, _ = create_feedback_page(
+            language, f"Operator explanation: {symbol}")
+        tabs.addTab(feedback_page, self.t["tab_feedback"])
+        dialog_layout = QVBoxLayout(self)
+        dialog_layout.setContentsMargins(0, 0, 0, 0)
+        dialog_layout.addWidget(tabs)
 
 
 class OperatorsWindow(QMainWindow):
@@ -2345,7 +3393,7 @@ class OperatorsWindow(QMainWindow):
         circuit_heading = QLabel(self.t["circuit"])
         circuit_heading.setFont(QFont("Arial", 13, QFont.Weight.Bold))
         circuit_heading.setStyleSheet(
-            "background: #e3f2fd; padding: 9px; border-radius: 5px; border: none;")
+            "background: #e8f3f1; padding: 9px; border-radius: 5px; border: none;")
         content_layout.addWidget(circuit_heading)
 
         if self.level == 0:
@@ -2441,6 +3489,8 @@ class OperatorsWindow(QMainWindow):
         self._closing_for_navigation = True; self.close(); QApplication.quit()
 
     def closeEvent(self, event):
+        for dialog in tuple(self.detail_windows):
+            dialog.close()
         event.accept()
         if not self._closing_for_navigation:
             QApplication.quit()
@@ -2459,6 +3509,8 @@ class PulseStreamWidget(QWidget):
         self.progress = 0.0
         self.step = 0.0158
         self.setMinimumHeight(142)
+        self.setAccessibleName(labels["accessible_name"])
+        self.setAccessibleDescription(labels["empty"])
         self.timer = QTimer(self)
         self.timer.setInterval(30)
         self.timer.timeout.connect(self.advance)
@@ -2467,6 +3519,7 @@ class PulseStreamWidget(QWidget):
         self.records = records
         self.index = 0
         self.progress = 0.0
+        self._update_accessible_description()
         self.update()
 
     def advance(self):
@@ -2476,7 +3529,25 @@ class PulseStreamWidget(QWidget):
         if self.progress >= 1.0:
             self.progress = 0.0
             self.index = (self.index + 1) % len(self.records)
+        self._update_accessible_description()
         self.update()
+
+    def _update_accessible_description(self):
+        if not self.records:
+            self.setAccessibleDescription(self.labels["empty"])
+            return
+        record = self.records[self.index]
+        resent_segment = (
+            record["eve_basis"] is not None and self.progress >= 0.5)
+        bit = record["eve_bit"] if resent_segment else record["alice_bit"]
+        actor = self.labels["eve"] if resent_segment else self.labels["alice"]
+        basis_name = "rect_basis" if (
+            (resent_segment and record["eve_basis"] == "rectilinear") or
+            (not resent_segment and record["alice_basis"] == "rectilinear")
+        ) else "diag_basis"
+        self.setAccessibleDescription(self.labels["status"].format(
+            index=self.index + 1, total=len(self.records),
+            actor=actor, bit=bit, basis=self.labels[basis_name]))
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -2504,6 +3575,7 @@ class PulseStreamWidget(QWidget):
             painter.drawRect(round(eve_x - 10), y - 10, 20, 20)
         if self.records:
             record = self.records[self.index]
+            resent_segment = eve_present and self.progress >= 0.5
             start = eve_x if eve_present and self.progress >= 0.5 else left
             end = right if not eve_present or self.progress >= 0.5 else eve_x
             local_progress = self.progress * 2 if eve_present and self.progress < 0.5 else (
@@ -2511,7 +3583,7 @@ class PulseStreamWidget(QWidget):
             x = start + (end - start) * local_progress
             painter.setBrush(QColor("#35a89d")); painter.setPen(QPen(QColor("#176b65"), 2))
             painter.drawEllipse(round(x - 12), y - 12, 24, 24)
-            angle = record["angle"]
+            angle = record["resent_angle"] if resent_segment else record["angle"]
             radians = math.radians(angle)
             dx, dy = 8 * math.cos(radians), -8 * math.sin(radians)
             painter.setPen(QPen(QColor("#ffffff"), 2.5, Qt.PenStyle.SolidLine,
@@ -2519,8 +3591,11 @@ class PulseStreamWidget(QWidget):
             painter.drawLine(round(x - dx), round(y - dy), round(x + dx), round(y + dy))
             status = self.labels["status"].format(
                 index=self.index + 1, total=len(self.records),
-                bit=record["alice_bit"], basis=self.labels[
-                    "rect_basis" if record["alice_basis"] == "rectilinear"
+                actor=self.labels["eve"] if resent_segment else self.labels["alice"],
+                bit=(record["eve_bit"] if resent_segment else record["alice_bit"]),
+                basis=self.labels[
+                    "rect_basis" if (resent_segment and record["eve_basis"] == "rectilinear")
+                    or (not resent_segment and record["alice_basis"] == "rectilinear")
                     else "diag_basis"])
             painter.setPen(QColor("#506269")); painter.setFont(QFont("Arial", 10))
             painter.drawText(self.rect().adjusted(8, 104, -8, -4),
@@ -2566,6 +3641,7 @@ class CryptographyWindow(QMainWindow):
         self.answers = answers
         self.language = answers["language"]
         self.copy = CRYPTO_COPY[self.language]
+        self._closing_for_navigation = False
         set_language_direction(self, self.language)
         self.setWindowTitle(self.copy["window"])
         self.setMinimumSize(980, 760)
@@ -2613,7 +3689,11 @@ class CryptographyWindow(QMainWindow):
         input_row = QHBoxLayout()
         input_row.addWidget(QLabel(self.copy["input_label"]))
         self.message_input = QLineEdit()
-        self.message_input.setMaxLength(24)
+        # Qt counts UTF-16 code units; reserve two per Python code point,
+        # then enforce the code-point limit below.
+        self.message_input.setMaxLength(MAX_CRYPTO_MESSAGE_CHARS * 2)
+        self.message_input.textEdited.connect(self.limit_message_characters)
+        self.message_input.textEdited.connect(self._on_message_edited)
         self.message_input.setPlaceholderText(self.copy["input_hint"])
         input_row.addWidget(self.message_input, 1)
         body.addLayout(input_row)
@@ -2630,10 +3710,16 @@ class CryptographyWindow(QMainWindow):
         animation_heading = QLabel(self.copy["live_heading"])
         animation_heading.setFont(QFont("Arial", 13, QFont.Weight.Bold))
         body.addWidget(animation_heading)
+        animation_note = QLabel(self.copy["live_note"].format(
+            preview_limit=MAX_ANIMATED_PULSES))
+        animation_note.setWordWrap(True)
+        animation_note.setStyleSheet("color: #5c6264; padding: 2px 4px;")
+        body.addWidget(animation_note)
         self.pulse_animation = PulseStreamWidget({
             "alice": self.copy["alice"], "bob": self.copy["bob"],
             "eve": self.copy["eve_label"],
             "empty": self.copy["animation_empty"],
+            "accessible_name": self.copy["live_heading"],
             "status": self.copy["animation_status"],
             "rect_basis": self.copy["rect_basis"],
             "diag_basis": self.copy["diag_basis"],
@@ -2644,6 +3730,7 @@ class CryptographyWindow(QMainWindow):
         self.animation_button = QPushButton(self.copy["animation_play"])
         self.animation_button.setStyleSheet(BUTTON_STYLE_BACK)
         self.animation_button.setCheckable(True)
+        self.animation_button.setEnabled(False)
         self.animation_button.toggled.connect(self.toggle_animation)
         animation_controls = QHBoxLayout()
         animation_controls.addWidget(self.animation_button)
@@ -2677,6 +3764,10 @@ class CryptographyWindow(QMainWindow):
         pulse_heading = QLabel(self.copy["pulse_heading"])
         pulse_heading.setFont(QFont("Arial", 13, QFont.Weight.Bold))
         body.addWidget(pulse_heading)
+        privacy_note = QLabel(self.copy["table_privacy_note"])
+        privacy_note.setWordWrap(True)
+        privacy_note.setStyleSheet("color: #5c6264; padding: 2px 4px;")
+        body.addWidget(privacy_note)
         self.pulse_table = QTableWidget(0, len(self.copy["columns"]))
         self.pulse_table.setHorizontalHeaderLabels(self.copy["columns"])
         self.pulse_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
@@ -2710,14 +3801,43 @@ class CryptographyWindow(QMainWindow):
             return encoded_bit
         return secrets.randbits(1)
 
+    def limit_message_characters(self, text):
+        if len(text) <= MAX_CRYPTO_MESSAGE_CHARS:
+            return
+        limited = text[:MAX_CRYPTO_MESSAGE_CHARS]
+        cursor_units = len(limited.encode("utf-16-le")) // 2
+        cursor_position = self.message_input.cursorPosition()
+        self.message_input.blockSignals(True)
+        self.message_input.setText(limited)
+        self.message_input.setCursorPosition(min(
+            cursor_position, cursor_units))
+        self.message_input.blockSignals(False)
+
+    def _clear_previous_exchange_view(self):
+        self.pulse_animation.timer.stop()
+        self.pulse_animation.set_records([])
+        self.animation_button.blockSignals(True)
+        self.animation_button.setChecked(False)
+        self.animation_button.setEnabled(False)
+        self.animation_button.setText(self.copy["animation_play"])
+        self.animation_button.blockSignals(False)
+        self.pulse_table.setRowCount(0)
+
+    def _on_message_edited(self, _text):
+        if self.pulse_animation.records or self.pulse_table.rowCount():
+            self._clear_previous_exchange_view()
+            self.results.setPlainText(self.copy["ready"])
+
     def run_exchange(self):
+        self._clear_previous_exchange_view()
         message = self.message_input.text()
         if not message:
             self.results.setPlainText(self.copy["empty"])
             return
 
         message_bytes = message.encode("utf-8")
-        if len(message_bytes) > 24:
+        if (len(message) > MAX_CRYPTO_MESSAGE_CHARS or
+                len(message_bytes) > MAX_CRYPTO_MESSAGE_BYTES):
             self.results.setPlainText(self.copy["too_long"])
             return
         message_bits = [
@@ -2749,6 +3869,8 @@ class CryptographyWindow(QMainWindow):
 
                 bob_basis = secrets.choice(("rectilinear", "diagonal"))
                 bob_bit = self._measure(resent_bit, resent_basis, bob_basis)
+                resent_angle = self.POLARIZATION_STATES[
+                    (resent_basis, resent_bit)][1]
                 records.append({
                     "alice_bit": alice_bit,
                     "alice_basis": alice_basis,
@@ -2758,6 +3880,7 @@ class CryptographyWindow(QMainWindow):
                     "eve_bit": eve_bit,
                     "bob_basis": bob_basis,
                     "bob_bit": bob_bit,
+                    "resent_angle": resent_angle,
                 })
 
             matched = [
@@ -2781,7 +3904,8 @@ class CryptographyWindow(QMainWindow):
 
         self._populate_pulse_table(records, matched, sample_indices,
                                    eavesdropping_detected)
-        self.pulse_animation.set_records(records)
+        self.pulse_animation.set_records(records[:MAX_ANIMATED_PULSES])
+        self.animation_button.setEnabled(True)
         self.animation_button.setChecked(True)
 
         if eavesdropping_detected:
@@ -2790,9 +3914,8 @@ class CryptographyWindow(QMainWindow):
             return
 
         alice_key = [records[index]["alice_bit"] for index in key_indices]
-        bob_raw_key = [records[index]["bob_bit"] for index in key_indices]
         # This teaching model treats classical key reconciliation as ideal.
-        bob_key = list(alice_key)
+        bob_key = alice_key
         one_time_pad = bob_key[:required_message_bits]
         cipher_bits = [bit ^ key_bit for bit, key_bit in zip(message_bits, one_time_pad)]
         cipher_bytes = bytes(
@@ -2865,6 +3988,10 @@ class CryptographyWindow(QMainWindow):
             self.animation_button.setText(self.copy["animation_pause"])
         else:
             self.pulse_animation.timer.stop()
+            if playing:
+                self.animation_button.blockSignals(True)
+                self.animation_button.setChecked(False)
+                self.animation_button.blockSignals(False)
             self.animation_button.setText(self.copy["animation_play"])
 
     def set_animation_speed(self, value):
@@ -2904,14 +4031,18 @@ class SimulationWindow(QMainWindow):
         self._audio_lines = []
         self._audio_index = 0
         self._closing_for_navigation = False
-        self.setWindowTitle(self.copy["window"])
+        self.setWindowTitle(
+            self.copy["beginner_window"] if self.level == 0
+            else self.copy["window"])
         self.setMinimumSize(940, 720); self.resize(1080, 880)
 
         root  = QWidget(); self.setCentralWidget(root)
         outer = QVBoxLayout(root)
         outer.setContentsMargins(20, 18, 20, 18); outer.setSpacing(10)
 
-        title = QLabel(self.copy["title"])
+        title = QLabel(
+            self.copy["beginner_title"] if self.level == 0
+            else self.copy["title"])
         title.setFont(QFont("Arial", 19, QFont.Weight.Bold))
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         outer.addWidget(title)
@@ -2920,7 +4051,9 @@ class SimulationWindow(QMainWindow):
                      .get(answers["language"], {})
                      .get(circuit_name, CIRCUITS[circuit_name])
                      .get("title", circuit_name))
-        intro = QLabel(self.copy["intro"].format(name=loc_title))
+        intro_copy = (self.copy["beginner_intro"] if self.level == 0
+                      else self.copy["intro"])
+        intro = QLabel(intro_copy.format(name=loc_title))
         intro.setWordWrap(True); outer.addWidget(intro)
 
         scroll = QScrollArea(); scroll.setWidgetResizable(True)
@@ -2982,7 +4115,7 @@ class SimulationWindow(QMainWindow):
 
         # ── Simulation controls ──
         ctrl = QHBoxLayout()
-        ctrl.addWidget(QLabel(self.t.get("shots", "Number of measurement shots:")))
+        ctrl.addWidget(QLabel(self.t.get("shots", "Number of circuit runs:")))
         self.shots = QComboBox()
         self.shots.addItems(["100", "1,000", "10,000"])
         configure_combo(self.shots)
@@ -3151,27 +4284,51 @@ class SimulationWindow(QMainWindow):
         for outcome in all_outcomes:
             prob  = float(probabilities.get(outcome, 0.0))
             count = counts.get(outcome, 0)
-            rows.append(
-                f"{outcome:<10} {prob:>10.1%} {count:>12} {count/shots:>12.1%}")
+            rows.append((outcome, f"{prob:.1%}", f"{count:,}", f"{count/shots:.1%}"))
         result_title = (
             self.copy["beginner_result_title"] if self.level == 0
             else self.copy["result_title"]
         ).format(shots=shots)
-        result_text = result_title + "\n\n"
+        result_html = [
+            "<html><body style='font-family: sans-serif; color: #243238;'>",
+            f"<h3>{html_escape(result_title)}</h3>",
+        ]
         if self.level > 0:
             state_lines = [
                 f"|{lbl}⟩: {amp.real:+.4f}{amp.imag:+.4f}i"
                 for lbl, amp in state.to_dict().items()
                 if abs(amp) > 1e-10
             ]
-            result_text += (
-                f"{self.copy['amplitudes']}\n  " + "\n  ".join(state_lines) + "\n\n")
-        result_text += (
-            f"{self.copy['outcome']:<14} {self.copy['theory_column']:>10} "
-            f"{self.copy['count']:>12} {self.copy['observed']:>14}\n"
-            f"{'-'*48}\n" + "\n".join(rows) + "\n\n" +
-            self.copy["result_note"])
-        self.result.setPlainText(result_text)
+            result_html.extend([
+                f"<p><b>{html_escape(self.copy['amplitudes'])}</b></p>",
+                f"<pre>{html_escape(chr(10).join(state_lines))}</pre>",
+            ])
+        headers = (self.copy["outcome"], self.copy["theory_column"],
+                   self.copy["count"], self.copy["observed"])
+        cell_alignment = (
+            "right" if self.answers["language"] == "العربية" else "left")
+        result_html.append(
+            "<table style='border-collapse: collapse; width: 100%;'>"
+            "<thead><tr>" + "".join(
+                f"<th style='text-align: {cell_alignment}; background: #e8f3f1; "
+                f"padding: 8px; border-bottom: 1px solid #cbdedb;'>"
+                f"{html_escape(header)}</th>" for header in headers
+            ) + "</tr></thead><tbody>"
+        )
+        for row in rows:
+            result_html.append(
+                "<tr>" + "".join(
+                    f"<td style='text-align: {cell_alignment}; padding: 7px 8px; "
+                    f"border-bottom: 1px solid #e6eeee;'>"
+                    f"{html_escape(value)}</td>" for value in row
+                ) + "</tr>"
+            )
+        result_html.extend([
+            "</tbody></table>",
+            f"<p style='color: #5c6264;'>{html_escape(self.copy['result_note'])}</p>",
+            "</body></html>",
+        ])
+        self.result.setHtml("".join(result_html))
         self.status.setText(self.copy["complete"].format(shots=shots))
 
     def go_back(self):
@@ -3215,6 +4372,8 @@ def launch_circuit(answers):
         lambda cname: launch_operators(answers, cname))
     window.cryptography_requested.connect(
         lambda: launch_cryptography(answers))
+    window.playground_requested.connect(
+        lambda: launch_playground(answers))
     window.show(); app._circuit_window = window
 
 
@@ -3222,6 +4381,12 @@ def launch_cryptography(answers):
     window = CryptographyWindow(answers)
     window.back_requested.connect(lambda: launch_circuit(answers))
     window.show(); app._cryptography_window = window
+
+
+def launch_playground(answers):
+    window = TwoQubitPlaygroundWindow(answers)
+    window.back_requested.connect(lambda: launch_circuit(answers))
+    window.show(); app._playground_window = window
 
 
 def launch_operators(answers, circuit_name):

@@ -1,14 +1,24 @@
-# EC601_Project_001
-This document describes what the files in this repo are, and how to execute code for project<br>
-Here are repo files and what they are for:
-- PLAN.md : this contains the PLAN for the project including Mission Statement, User, User Stories, etc.
-- SPRINT1.md : this contains the near-term milestones to achieve a presentable deliverable between September 28 - October 09
-- TEAM.md : this contains the link to SLACK channel which will contain dates which we are aiming to meet certain project requirements by
-- brainstormingPart0xx.md is used for tracking thoughts and links on one source file.
--  \docs : this folder will contain any documents such as references used for information
--  firstQiskitScript.py : this is the deliverable for the end of Sprint 1
--  gettingStarted.md: software needed and how to set up environment on laptop to execute prototype.py
--  prototype.py: code for SPRINT1
+# Quantum Circuit Builder
 
-Here is how to run the project for yourself:
-- download bash file to setup your environment and then run code? 
+A desktop learning prototype for exploring quantum gates, example circuits, local simulations, and a BB84 plus one-time-pad teaching demonstration. The interface currently supports English, Spanish, and Arabic.
+
+## Run the prototype
+
+From macOS or Linux, in the repository root:
+
+```bash
+./install_dependencies.bash
+source .venv/bin/activate
+python prototype.py
+```
+
+See [gettingStarted.md](gettingStarted.md) for setup notes and the optional IBM Quantum hardware example.
+
+## Repository contents
+
+- `prototype.py` — desktop application and local demonstrations.
+- `firstQiskitScript.py` — optional Bell-state job submitted to IBM Quantum hardware.
+- `install_dependencies.bash` — creates `.venv` and installs dependencies for the local prototype.
+- `Feedback/` — feedback submitted in the application is saved here as local Markdown issues.
+- `docs/` — project documentation and references.
+- `SPRINT1.md`, `TEAM.md`, and `brainstormingPart*.md` — project planning and notes.
