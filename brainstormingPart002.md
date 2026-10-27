@@ -77,3 +77,8 @@ https://construct.psiquantum.com/qdk
 
 # 2026-09-19  Final Project 1 Deliverables: 
 - All deliverables located in the EC601 Google drive under Christopher_Lemus/First Project
+
+#2026-10-26 New additions to document
+	•	Node.js v22.23.4 to /usr/local/bin/node
+	•	npm v10.9.9 to /usr/local/bin/npm
+  The plan with these is to implement AI Agent to do the work for me
