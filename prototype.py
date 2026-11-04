@@ -12,6 +12,8 @@
 # IMPORTS
 # ─────────────────────────────────────────────
 import sys
+import os
+import json
 import re
 import random
 import secrets
@@ -21,8 +23,10 @@ from collections import Counter
 from datetime import datetime
 from io import BytesIO
 from pathlib import Path
+from urllib.request import Request, urlopen
+from urllib.error import URLError, HTTPError
 
-from PySide6.QtCore import Qt, Signal, QTimer, QSize, QMimeData
+from PySide6.QtCore import Qt, Signal, QTimer, QSize, QMimeData, QThread
 from PySide6.QtGui  import QFont, QPixmap, QPainter, QPen, QColor, QIcon, QDrag
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QDialog, QLabel, QComboBox,
@@ -182,6 +186,9 @@ TRANSLATIONS = {
         "feedback_send": "Submit feedback", "feedback_empty": "Write a few words before submitting.",
         "feedback_saved": "Saved as an open issue in Feedback/.",
         "feedback_error": "Could not save feedback. Check that this folder is writable.",
+        "feedback_sending": "Sending feedback…",
+        "feedback_sent": "Feedback sent to GitHub. Issue: {url}",
+        "feedback_offline": "Could not reach the feedback service. Your text is still in the form; please try again later.",
         "feedback_issue_title": "Feedback issue", "feedback_status_label": "Status",
         "feedback_open_label": "Open", "feedback_submitted_label": "Submitted",
         "feedback_screen_label": "Screen", "feedback_language_label": "Interface language",
@@ -213,6 +220,9 @@ TRANSLATIONS = {
         "feedback_send": "Enviar comentarios", "feedback_empty": "Escribe un comentario antes de enviarlo.",
         "feedback_saved": "Guardado como incidencia abierta en Feedback/.",
         "feedback_error": "No se pudieron guardar los comentarios. Comprueba que la carpeta permita escritura.",
+        "feedback_sending": "Enviando comentarios…",
+        "feedback_sent": "Comentarios enviados a GitHub. Incidencia: {url}",
+        "feedback_offline": "No se pudo conectar con el servicio. El texto sigue en el formulario; inténtalo de nuevo más tarde.",
         "feedback_issue_title": "Incidencia de comentarios", "feedback_status_label": "Estado",
         "feedback_open_label": "Abierta", "feedback_submitted_label": "Enviada",
         "feedback_screen_label": "Pantalla", "feedback_language_label": "Idioma de la interfaz",
@@ -311,6 +321,9 @@ TRANSLATIONS["العربية"] = {
     "feedback_send": "إرسال الملاحظات", "feedback_empty": "اكتب ملاحظاتك قبل الإرسال.",
     "feedback_saved": "حُفظت الملاحظات كمسألة مفتوحة في مجلد Feedback/.",
     "feedback_error": "تعذّر حفظ الملاحظات. تحقّق من صلاحية الكتابة في المجلد.",
+    "feedback_sending": "جارٍ إرسال الملاحظات…",
+    "feedback_sent": "أُرسلت الملاحظات إلى GitHub. المسألة: {url}",
+    "feedback_offline": "تعذّر الاتصال بالخدمة. ما زال النص في النموذج؛ حاول مرة أخرى لاحقًا.",
     "feedback_issue_title": "ملاحظة المستخدم", "feedback_status_label": "الحالة",
     "feedback_open_label": "مفتوحة", "feedback_submitted_label": "تاريخ الإرسال",
     "feedback_screen_label": "الشاشة", "feedback_language_label": "لغة الواجهة",
@@ -1927,6 +1940,49 @@ def build_feedback_issue(source, language, submitted, feedback):
     )
 
 
+class FeedbackSender(QThread):
+    """Post feedback to the configured HTTPS endpoint without blocking the UI."""
+    completed = Signal(bool, str)
+
+    def __init__(self, endpoint, payload, parent=None):
+        super().__init__(parent)
+        self.endpoint = endpoint
+        self.payload = payload
+
+    def run(self):
+        try:
+            request = Request(
+                self.endpoint,
+                data=json.dumps(self.payload, ensure_ascii=False).encode("utf-8"),
+                headers={"Content-Type": "application/json", "Accept": "application/json"},
+                method="POST",
+            )
+            with urlopen(request, timeout=12) as response:
+                result = json.loads(response.read(65536).decode("utf-8"))
+            issue_url = result.get("url", "") if isinstance(result, dict) else ""
+            if not isinstance(issue_url, str):
+                issue_url = ""
+            self.completed.emit(True, issue_url)
+        except (HTTPError, URLError, TimeoutError, OSError, ValueError) as exc:
+            self.completed.emit(False, str(exc))
+
+
+def feedback_api_endpoint():
+    """Read the endpoint from the launch environment or adjacent app config."""
+    configured = os.environ.get("QCB_FEEDBACK_API_URL", "").strip()
+    if configured:
+        return configured
+    app_dir = (Path(sys.executable).resolve().parent
+               if getattr(sys, "frozen", False)
+               else Path(__file__).resolve().parent)
+    try:
+        config = json.loads((app_dir / "feedback_config.json").read_text(encoding="utf-8"))
+        value = config.get("feedback_api_url", "") if isinstance(config, dict) else ""
+        return value.strip() if isinstance(value, str) else ""
+    except (OSError, json.JSONDecodeError):
+        return ""
+
+
 def create_feedback_page(language, source):
     """Create a translated form that saves a local Markdown issue."""
     copy = TRANSLATIONS[language]
@@ -1945,6 +2001,7 @@ def create_feedback_page(language, source):
     send_button.setStyleSheet(BUTTON_STYLE_GREEN)
     status = QLabel()
     active_language = [language]
+    sender_refs = []
     status.setWordWrap(True)
 
     layout.addWidget(heading)
@@ -1990,10 +2047,45 @@ def create_feedback_page(language, source):
             issue_folder.mkdir(parents=True, exist_ok=True)
             issue_path.write_text(issue_text, encoding="utf-8")
         except OSError:
-            status.setText(TRANSLATIONS[selected_language]["feedback_error"])
+            local_save_failed = True
+        else:
+            local_save_failed = False
+        endpoint = feedback_api_endpoint()
+        if not endpoint:
+            if local_save_failed:
+                status.setText(TRANSLATIONS[selected_language]["feedback_error"])
+                return
+            editor.clear()
+            status.setText(TRANSLATIONS[selected_language]["feedback_saved"])
             return
-        editor.clear()
-        status.setText(TRANSLATIONS[selected_language]["feedback_saved"])
+        if not endpoint.lower().startswith("https://"):
+            status.setText(TRANSLATIONS[selected_language]["feedback_offline"])
+            return
+
+        payload = {
+            "source": source,
+            "language": selected_language,
+            "submitted": submitted.isoformat(timespec="seconds"),
+            "feedback": feedback,
+        }
+        sender = FeedbackSender(endpoint, payload, page)
+        sender_refs.append(sender)
+
+        def finished(success, detail):
+            if success:
+                editor.clear()
+                message = TRANSLATIONS[selected_language]["feedback_sent"]
+                status.setText(message.format(url=detail) if detail else message.format(url=""))
+            else:
+                status.setText(TRANSLATIONS[selected_language]["feedback_offline"])
+            sender_refs.remove(sender)
+            sender.deleteLater()
+
+        sender.completed.connect(finished)
+        send_button.setEnabled(False)
+        status.setText(TRANSLATIONS[selected_language]["feedback_sending"])
+        sender.finished.connect(lambda: send_button.setEnabled(True))
+        sender.start()
 
     send_button.clicked.connect(submit_feedback)
     refresh_text(language)

@@ -33,4 +33,10 @@ The script reads the token from the environment and does not save it to the loca
 
 ## Feedback
 
-Feedback submitted in the application is saved as a local Markdown issue in `Feedback/`. The prototype does not send it to a remote issue tracker.
+Feedback submitted in the application is saved as a local Markdown copy in
+`Feedback/`. To also send it to GitHub Issues, deploy `feedback_backend.py`
+behind HTTPS, configure its `GITHUB_TOKEN` secret, then set
+`QCB_FEEDBACK_API_URL` to the deployed `/feedback` endpoint
+or add the URL to `feedback_config.json` alongside the script or executable.
+The GitHub token belongs only on the backend. See the Remote feedback section
+in `README.md` for details.

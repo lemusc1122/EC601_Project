@@ -19,6 +19,25 @@ See [gettingStarted.md](gettingStarted.md) for setup notes and the optional IBM 
 - `prototype.py` — desktop application and local demonstrations.
 - `firstQiskitScript.py` — optional Bell-state job submitted to IBM Quantum hardware.
 - `install_dependencies.bash` — creates `.venv` and installs dependencies for the local prototype.
-- `Feedback/` — feedback submitted in the application is saved here as local Markdown issues.
+- `Feedback/` — local Markdown copies of feedback submissions.
+- `feedback_backend.py` — optional HTTPS-proxyable service that files feedback as GitHub issues.
+
+## Remote feedback
+
+To send feedback to GitHub Issues, deploy `feedback_backend.py` behind an HTTPS
+reverse proxy. Configure `GITHUB_TOKEN` with a fine-grained token that has
+**Issues: write** access to this repository. The backend defaults to
+`lemusc1122/EC601_Project`; set `GITHUB_REPOSITORY` to `owner/name` only if
+using a different repository. Set `QCB_FEEDBACK_API_URL` to the deployed endpoint URL ending in
+`/feedback`, or put that URL in `feedback_config.json` next to the script or
+executable. Copy `feedback_config.example.json` as a starting point and set
+the real service URL before packaging. Keep the GitHub token on the server;
+never include it in the desktop app.
+
+The app continues to save a local Markdown copy and sends the same feedback to
+the endpoint in the background. If no endpoint URL is configured, submissions
+remain local. The backend uses a small per-process rate limit; put additional
+rate limiting at the hosting proxy before exposing it publicly. Configure the
+proxy to overwrite `X-Forwarded-For` if using that header for per-student limits.
 - `docs/` — project documentation and references.
 - `SPRINT1.md`, `TEAM.md`, and `brainstormingPart*.md` — project planning and notes.
