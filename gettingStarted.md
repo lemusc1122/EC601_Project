@@ -1,12 +1,42 @@
-VS Code <br>
-Python version 3.11.5 <br>
-numpy = 1.26.4 and qiskit=2.4.2 mandatory for compatability. Newer version have conflicts <br>
-PySide6 for Python GUI creation <br>
+# Getting started
 
-How to get started. <br>
-A. Clone this repository into a location of your preference. <br>
-B. In the IDE of your choice, execute the following commands to install the required Dependancies <br>
-    - chmod +x install_dependencies.bash <br>
-    - ./install_dependencies.bash <br>
-    - Note: what you should notice is that all the packages above will install and report 'Installation complete.' <br>
-C. Run the prototype.py script in the IDE of your choice. Happy navigating! <br>
+## Local prototype
+
+The prototype uses Python 3.11 and the dependencies listed in `install_dependencies.bash`. From the repository root on macOS or Linux:
+
+```bash
+./install_dependencies.bash
+source .venv/bin/activate
+python prototype.py
+```
+
+The installer creates a project-local `.venv`; activate it again in each new terminal before launching the app. Audio narration is optional and uses the operating system's installed text-to-speech voices. Voice availability varies by system.
+
+## Optional IBM Quantum hardware example
+
+`firstQiskitScript.py` submits a Bell-state circuit to a real IBM Quantum device. It is separate from the local prototype and requires an IBM Quantum API key, an internet connection, and `qiskit-ibm-runtime`. Hardware use may be subject to account or usage limits.
+
+Activate `.venv`, then install the optional runtime package:
+
+```bash
+python -m pip install qiskit-ibm-runtime
+```
+
+Set `IBM_QUANTUM_TOKEN` for the current terminal session, then run the script:
+
+- macOS / Linux: `export IBM_QUANTUM_TOKEN="your-api-key"`
+- Windows PowerShell: `$env:IBM_QUANTUM_TOKEN = "your-api-key"`
+
+If your IBM Quantum account has multiple service instances, set `IBM_QUANTUM_INSTANCE` to the instance CRN to select one explicitly. This setting is optional when your account can select an instance automatically.
+
+The script reads the token from the environment and does not save it to the local Qiskit account configuration. Never commit or paste an API key into source code. If a key has been shared or committed, revoke it and create a replacement in IBM Quantum before using the example.
+
+## Feedback
+
+Feedback submitted in the application is saved as a local Markdown copy in
+`Feedback/`. To also send it to GitHub Issues, deploy `feedback_backend.py`
+behind HTTPS, configure its `GITHUB_TOKEN` secret, then set
+`QCB_FEEDBACK_API_URL` to the deployed `/feedback` endpoint
+or add the URL to `feedback_config.json` alongside the script or executable.
+The GitHub token belongs only on the backend. See the Remote feedback section
+in `README.md` for details.
