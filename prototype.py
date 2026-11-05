@@ -184,12 +184,12 @@ TRANSLATIONS = {
         "tab_main": "App", "tab_feedback": "Feedback",
         "feedback_title": "Send feedback", "feedback_prompt": "Tell us what worked, what was confusing, or what you would like changed.",
         "feedback_send": "Submit feedback", "feedback_empty": "Write a few words before submitting.",
-        "feedback_saved": "Saved as an open issue in Feedback/.",
+        "feedback_saved": "Saved locally in Feedback/. Configure the feedback service to send it to GitHub.",
         "feedback_error": "Could not save feedback. Check that this folder is writable.",
         "feedback_sending": "Sending feedback…",
-        "feedback_sent": "Feedback sent to GitHub. Issue: {url}",
+        "feedback_sent": "Feedback saved to GitHub/EC601_Project/Feedback. File: {url}",
         "feedback_offline": "Could not reach the feedback service. Your text is still in the form; please try again later.",
-        "feedback_issue_title": "Feedback issue", "feedback_status_label": "Status",
+        "feedback_issue_title": "Feedback submission", "feedback_status_label": "Status",
         "feedback_open_label": "Open", "feedback_submitted_label": "Submitted",
         "feedback_screen_label": "Screen", "feedback_language_label": "Interface language",
         "feedback_text_heading": "Feedback",
@@ -218,12 +218,12 @@ TRANSLATIONS = {
         "tab_main": "Aplicación", "tab_feedback": "Comentarios",
         "feedback_title": "Enviar comentarios", "feedback_prompt": "Cuéntanos qué funcionó, qué resultó confuso o qué te gustaría cambiar.",
         "feedback_send": "Enviar comentarios", "feedback_empty": "Escribe un comentario antes de enviarlo.",
-        "feedback_saved": "Guardado como incidencia abierta en Feedback/.",
+        "feedback_saved": "Guardado localmente en Feedback/. Configura el servicio para enviarlo a GitHub.",
         "feedback_error": "No se pudieron guardar los comentarios. Comprueba que la carpeta permita escritura.",
         "feedback_sending": "Enviando comentarios…",
-        "feedback_sent": "Comentarios enviados a GitHub. Incidencia: {url}",
+        "feedback_sent": "Comentarios guardados en GitHub/EC601_Project/Feedback. Archivo: {url}",
         "feedback_offline": "No se pudo conectar con el servicio. El texto sigue en el formulario; inténtalo de nuevo más tarde.",
-        "feedback_issue_title": "Incidencia de comentarios", "feedback_status_label": "Estado",
+        "feedback_issue_title": "Comentario enviado", "feedback_status_label": "Estado",
         "feedback_open_label": "Abierta", "feedback_submitted_label": "Enviada",
         "feedback_screen_label": "Pantalla", "feedback_language_label": "Idioma de la interfaz",
         "feedback_text_heading": "Comentarios",
@@ -319,12 +319,12 @@ TRANSLATIONS["العربية"] = {
     "tab_main": "التطبيق", "tab_feedback": "الملاحظات",
     "feedback_title": "أرسل ملاحظاتك", "feedback_prompt": "أخبرنا بما أعجبك، وما كان مربكًا، وما الذي تقترح تغييره.",
     "feedback_send": "إرسال الملاحظات", "feedback_empty": "اكتب ملاحظاتك قبل الإرسال.",
-    "feedback_saved": "حُفظت الملاحظات كمسألة مفتوحة في مجلد Feedback/.",
+    "feedback_saved": "حُفظت الملاحظات محليًا في Feedback/. أعدّ خدمة الملاحظات لإرسالها إلى GitHub.",
     "feedback_error": "تعذّر حفظ الملاحظات. تحقّق من صلاحية الكتابة في المجلد.",
     "feedback_sending": "جارٍ إرسال الملاحظات…",
-    "feedback_sent": "أُرسلت الملاحظات إلى GitHub. المسألة: {url}",
+    "feedback_sent": "حُفظت الملاحظات في GitHub/EC601_Project/Feedback. الملف: {url}",
     "feedback_offline": "تعذّر الاتصال بالخدمة. ما زال النص في النموذج؛ حاول مرة أخرى لاحقًا.",
-    "feedback_issue_title": "ملاحظة المستخدم", "feedback_status_label": "الحالة",
+    "feedback_issue_title": "إرسال ملاحظات", "feedback_status_label": "الحالة",
     "feedback_open_label": "مفتوحة", "feedback_submitted_label": "تاريخ الإرسال",
     "feedback_screen_label": "الشاشة", "feedback_language_label": "لغة الواجهة",
     "feedback_text_heading": "الملاحظات",
@@ -1926,12 +1926,11 @@ def feedback_source_label(source, language):
     return source_label
 
 
-def build_feedback_issue(source, language, submitted, feedback):
-    """Format a localized Markdown issue without performing filesystem I/O."""
+def build_feedback_record(source, language, submitted, feedback):
+    """Format a localized Markdown feedback file without filesystem I/O."""
     strings = TRANSLATIONS[language]
     return (
         f"# {strings['feedback_issue_title']}\n\n"
-        f"- {strings['feedback_status_label']}: {strings['feedback_open_label']}\n"
         f"- {strings['feedback_submitted_label']}: {submitted.isoformat(timespec='seconds')}\n"
         f"- {strings['feedback_screen_label']}: {feedback_source_label(source, language)}\n"
         f"- {strings['feedback_language_label']}: {language}\n\n"
@@ -1984,7 +1983,7 @@ def feedback_api_endpoint():
 
 
 def create_feedback_page(language, source):
-    """Create a translated form that saves a local Markdown issue."""
+    """Create a translated form that saves a local Markdown feedback record."""
     copy = TRANSLATIONS[language]
     page = QWidget()
     layout = QVBoxLayout(page)
@@ -2038,14 +2037,14 @@ def create_feedback_page(language, source):
             status.setText(TRANSLATIONS[selected_language]["feedback_empty"])
             return
         submitted = datetime.now().astimezone()
-        issue_folder = Path(__file__).resolve().parent / "Feedback"
-        issue_path = issue_folder / (
+        feedback_folder = Path(__file__).resolve().parent / "Feedback"
+        feedback_path = feedback_folder / (
             f"feedback-{submitted.strftime('%Y%m%d-%H%M%S-%f')}.md")
-        issue_text = build_feedback_issue(
+        feedback_text = build_feedback_record(
             source, selected_language, submitted, feedback)
         try:
-            issue_folder.mkdir(parents=True, exist_ok=True)
-            issue_path.write_text(issue_text, encoding="utf-8")
+            feedback_folder.mkdir(parents=True, exist_ok=True)
+            feedback_path.write_text(feedback_text, encoding="utf-8")
         except OSError:
             local_save_failed = True
         else:

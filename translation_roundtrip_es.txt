@@ -1,0 +1,22 @@
+MODEL-BASED ROUND-TRIP TRANSLATION — SPANISH
+Scope: selected primary interface strings from prototype.py. This is a qualitative
+LLM round trip, not output from an independent translation engine or a full audit
+of all educational copy. English pass and back-translation were generated in one
+model session, so the comparison is useful for spotting wording drift, not for
+proving translation accuracy.
+
+KEY | ORIGINAL SPANISH | ENGLISH PASS | BACK-TRANSLATED SPANISH
+title | Constructor de Circuitos Cuánticos Qiskit | Qiskit Quantum Circuit Builder | Constructor de circuitos cuánticos de Qiskit
+main | ⚛️ Constructor de Circuitos Cuánticos | ⚛️ Quantum Circuit Builder | ⚛️ Creador de circuitos cuánticos
+ready | Estado: Listo ✅ | Status: Ready ✅ | Estado: Preparado ✅
+running | Seleccionado: {value} | Selected: {value} | Elección: {value}
+choose_circuit | Elige un circuito para explorar: | Choose a circuit to explore: | Selecciona un circuito para explorar:
+circuit_help | Resumen del circuito | Circuit overview | Descripción general del circuito
+matrix_label | Matriz de la Puerta: | Gate Matrix: | Matriz de la compuerta:
+simulation | ▶ Teoría y simulación local | ▶ Theory and local simulation | ▶ Teoría y simulación en el equipo
+diagram_tooltip | Diagrama visual del circuito cuántico | Graphical quantum circuit diagram | Diagrama gráfico del circuito cuántico
+diagram_error | Para ver diagramas, instala 'qiskit[visualization]' y matplotlib. | To view diagrams, install 'qiskit[visualization]' and matplotlib. | Para visualizar diagramas, instala 'qiskit[visualization]' y matplotlib.
+feedback_prompt | Cuéntanos qué funcionó, qué resultó confuso o qué te gustaría cambiar. | Tell us what worked, what was confusing, or what you would like changed. | Cuéntanos qué salió bien, qué fue confuso y qué cambiarías.
+feedback_offline | No se pudo conectar con el servicio. El texto sigue en el formulario; inténtalo de nuevo más tarde. | Could not connect to the service. Your text is still in the form; try again later. | No fue posible conectar con el servicio. El texto permanece en el formulario; vuelve a intentarlo más tarde.
+operator_chart_hint | Selecciona la imagen de una puerta para ver su explicación. | Select a gate image to see its explanation. | Elige la imagen de una compuerta para consultar su explicación.
+playground | 🧩 Zona de dos qubits | 🧩 Two-qubit playground | 🧩 Espacio de práctica con dos qubits

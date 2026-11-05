@@ -1,0 +1,22 @@
+MODEL-BASED ROUND-TRIP TRANSLATION — ARABIC
+Scope: selected primary interface strings from prototype.py. This is a qualitative
+LLM round trip, not output from an independent translation engine or a full audit
+of all educational copy. English pass and back-translation were generated in one
+model session, so the comparison is useful for spotting wording drift, not for
+proving translation accuracy.
+
+KEY | ORIGINAL ARABIC | ENGLISH PASS | BACK-TRANSLATED ARABIC
+title | منشئ الدوائر الكمية | Quantum Circuit Builder | منشئ الدوائر الكمومية
+main | ⚛️ منشئ الدوائر الكمية | ⚛️ Quantum Circuit Builder | ⚛️ منشئ الدوائر الكمومية
+country | البلد: | Country: | الدولة:
+language | اللغة المفضلة: | Preferred language: | اللغة التي تفضلها:
+ready | الحالة: جاهز ✅ | Status: Ready ✅ | الحالة: مستعد ✅
+choose_circuit | اختر دائرة لاستكشافها: | Choose a circuit to explore: | اختر دائرة لاكتشافها:
+circuit_help | نظرة عامة على الدائرة | Circuit overview | ملخص عن الدائرة
+matrix_label | مصفوفة البوابة: | Gate matrix: | مصفوفة البوابة:
+simulation | ▶ النظرية والمحاكاة المحلية | ▶ Theory and local simulation | ▶ النظرية والمحاكاة على الجهاز
+diagram_tooltip | مخطط مرئي للدائرة الكمية | Graphical quantum circuit diagram | رسم تخطيطي مرئي للدائرة الكمومية
+feedback_prompt | أخبرنا بما أعجبك، وما كان مربكًا، وما الذي تقترح تغييره. | Tell us what you liked, what was confusing, and what you suggest changing. | أخبرنا عما نال إعجابك وما كان غير واضح وما التغييرات التي تقترحها.
+feedback_offline | تعذّر الاتصال بالخدمة. ما زال النص في النموذج؛ حاول مرة أخرى لاحقًا. | Could not connect to the service. The text is still in the form; try again later. | لم نتمكن من الاتصال بالخدمة. لا يزال النص في النموذج؛ حاول مجددًا لاحقًا.
+operator_chart_hint | اختر صورة بوابة لفتح شرحها. | Select a gate image to open its explanation. | اختر صورة للبوابة لعرض شرحها.
+playground | 🧩 مساحة بناء دائرة بكيوبتين | 🧩 Two-qubit circuit-building space | 🧩 مساحة لإنشاء دائرة من كيوبتين

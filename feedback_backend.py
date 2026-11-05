@@ -1,4 +1,4 @@
-"""Small HTTPS-proxyable endpoint that turns prototype feedback into GitHub issues.
+"""Small HTTPS-proxyable endpoint that saves feedback in GitHub's Feedback folder.
 
 Configure GITHUB_TOKEN, then run this behind an HTTPS reverse proxy. The
 repository defaults to lemusc1122/EC601_Project and can be overridden with
@@ -7,7 +7,10 @@ GITHUB_REPOSITORY. Never put the GitHub token in the desktop application.
 
 import json
 import os
+import base64
+import secrets
 import time
+from datetime import datetime, timezone
 from collections import defaultdict, deque
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.error import HTTPError, URLError
@@ -77,16 +80,20 @@ class FeedbackHandler(BaseHTTPRequestHandler):
             return
 
         owner, repo = repository.split("/", 1)
-        title = f"Student feedback: {source[:100]} ({language[:40]})"
+        title = f"feedback-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}-{secrets.token_hex(3)}.md"
         body = (
-            f"**Screen:** {source}\n\n"
-            f"**Interface language:** {language}\n\n"
-            f"**Submitted:** {submitted}\n\n"
-            f"### Feedback\n\n{feedback}\n"
+            f"# Feedback submission\n\n"
+            f"- Submitted: {submitted}\n"
+            f"- Screen: {source}\n"
+            f"- Interface language: {language}\n\n"
+            f"## Feedback\n\n{feedback}\n"
         )
         request = Request(
-            f"https://api.github.com/repos/{owner}/{repo}/issues",
-            data=json.dumps({"title": title, "body": body}).encode("utf-8"),
+            f"https://api.github.com/repos/{owner}/{repo}/contents/Feedback/{title}",
+            data=json.dumps({
+                "message": f"Add feedback submission ({source[:80]})",
+                "content": base64.b64encode(body.encode("utf-8")).decode("ascii"),
+            }).encode("utf-8"),
             headers={
                 "Accept": "application/vnd.github+json",
                 "Authorization": f"Bearer {token}",
@@ -94,7 +101,7 @@ class FeedbackHandler(BaseHTTPRequestHandler):
                 "User-Agent": "Quantum-Circuit-Builder-Feedback",
                 "Content-Type": "application/json",
             },
-            method="POST",
+            method="PUT",
         )
         try:
             with urlopen(request, timeout=12) as response:
@@ -105,6 +112,13 @@ class FeedbackHandler(BaseHTTPRequestHandler):
             self._reply(502, {"error": f"GitHub returned HTTP {exc.code}"})
         except (URLError, TimeoutError, OSError, ValueError):
             self._reply(502, {"error": "GitHub could not be reached"})
+
+    def do_GET(self):
+        # Hosting platforms use this endpoint to confirm the service is alive.
+        if self.path == "/health":
+            self._reply(200, {"status": "ok"})
+        else:
+            self._reply(404, {"error": "not found"})
 
     def log_message(self, format, *args):
         # Avoid logging submitted feedback or other request data.
