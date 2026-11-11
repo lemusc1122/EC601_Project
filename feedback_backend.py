@@ -105,7 +105,13 @@ class FeedbackHandler(BaseHTTPRequestHandler):
             self._reply(502, {"error": f"GitHub returned HTTP {exc.code}"})
         except (URLError, TimeoutError, OSError, ValueError):
             self._reply(502, {"error": "GitHub could not be reached"})
-
+    
+    def do_GET(self):
+        if self.path == "/health":
+            self._reply(200, {"status": "ok"})
+        else:
+            self._reply(404, {"error": "not found"})
+    
     def log_message(self, format, *args):
         # Avoid logging submitted feedback or other request data.
         return
