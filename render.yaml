@@ -1,1 +1,13 @@
+services:
+  - type: web
+    name: qcb-feedback-api
+    runtime: python
+    buildCommand: ""
+    startCommand: python feedback_backend.py
+    healthCheckPath: /health
+    envVars:
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: GITHUB_REPOSITORY
+        value: lemusc1122/EC601_Project
 
