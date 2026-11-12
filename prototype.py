@@ -1968,19 +1968,28 @@ class FeedbackSender(QThread):
 
 
 def feedback_api_endpoint():
-    """Read the endpoint from the launch environment or adjacent app config."""
+    """Read the endpoint from the environment or packaged/user-side config."""
     configured = os.environ.get("QCB_FEEDBACK_API_URL", "").strip()
     if configured:
         return configured
-    app_dir = (Path(sys.executable).resolve().parent
-               if getattr(sys, "frozen", False)
-               else Path(__file__).resolve().parent)
-    try:
-        config = json.loads((app_dir / "feedback_config.json").read_text(encoding="utf-8"))
+    source_dir = Path(__file__).resolve().parent
+    executable_dir = Path(sys.executable).resolve().parent
+    # py2app places bundled data in Contents/Resources, while a user may also
+    # keep an override beside the .app executable (or beside the source file).
+    candidates = (
+        executable_dir / "feedback_config.json",
+        executable_dir.parent / "Resources" / "feedback_config.json",
+        source_dir / "feedback_config.json",
+    )
+    for config_path in dict.fromkeys(candidates):
+        try:
+            config = json.loads(config_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
         value = config.get("feedback_api_url", "") if isinstance(config, dict) else ""
-        return value.strip() if isinstance(value, str) else ""
-    except (OSError, json.JSONDecodeError):
-        return ""
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+    return ""
 
 
 def create_feedback_page(language, source):
