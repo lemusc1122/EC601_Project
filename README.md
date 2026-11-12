@@ -29,10 +29,10 @@ reverse proxy. Configure `GITHUB_TOKEN` with a fine-grained token that has
 **Issues: write** access to this repository. The backend defaults to
 `lemusc1122/EC601_Project`; set `GITHUB_REPOSITORY` to `owner/name` only if
 using a different repository. Set `QCB_FEEDBACK_API_URL` to the deployed endpoint URL ending in
-`/feedback`, or put that URL in `feedback_config.json` next to the script or
-executable. Copy `feedback_config.example.json` as a starting point and set
-the real service URL before packaging. Keep the GitHub token on the server;
-never include it in the desktop app.
+`/feedback`, or update `feedback_config.json` in the project before packaging.
+`setup.py` includes this file in the macOS app bundle; a config beside the app
+executable can override it. Keep the GitHub token on the server; never include
+it in the desktop app.
 
 The app continues to save a local Markdown copy and sends the same feedback to
 the endpoint in the background. If no endpoint URL is configured, submissions

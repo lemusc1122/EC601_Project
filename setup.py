@@ -28,5 +28,6 @@ OPTIONS = {
 setup(
     name="PrototypeApp",
     app=APP,
+    data_files=[(".", ["feedback_config.json"])],
     options={"py2app": OPTIONS},
 )
