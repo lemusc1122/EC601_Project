@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="180" viewBox="0 0 440 180">
+<rect width="440" height="180" rx="14" fill="#f8fbfb"/>
+<text x="220" y="30" text-anchor="middle" font-family="Arial" font-size="18" fill="#243238">One qubit, two possible results</text>
+<circle cx="220" cy="66" r="24" fill="#dcefeb" stroke="#247f78" stroke-width="3"/>
+<text x="220" y="73" text-anchor="middle" font-family="Arial" font-size="19" font-weight="bold" fill="#176b65">Q</text>
+<path d="M220 91 V112 M220 112 H115 V130 M220 112 H325 V130" fill="none" stroke="#247f78" stroke-width="3"/>
+<rect x="80" y="130" width="70" height="34" rx="8" fill="#fff" stroke="#89bdb6" stroke-width="2"/><text x="115" y="153" text-anchor="middle" font-family="Arial" font-size="18" fill="#243238">0</text>
+<rect x="290" y="130" width="70" height="34" rx="8" fill="#fff" stroke="#89bdb6" stroke-width="2"/><text x="325" y="153" text-anchor="middle" font-family="Arial" font-size="18" fill="#243238">1</text>
+</svg>

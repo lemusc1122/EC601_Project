@@ -1352,6 +1352,11 @@ PLAYGROUND_COPY = {
         "ready": "Add gates to see the exact prediction, then run local measurements to compare.",
         "empty": "No gates yet: both qubits start at 0.",
         "local_note": "The built-in simulator runs on this computer with ideal gates and no device noise. No cloud service or quantum hardware is used. Results are listed in Qubit 1, then Qubit 0 order.",
+        "ec_heading": "Bit-flip error-correction demo",
+        "ec_intro": "Send logical 0 through an independent bit-flip channel, then compare one physical qubit with a three-qubit repetition code and majority-vote correction.",
+        "ec_rate": "Bit-flip probability per qubit:", "ec_run": "▶ Run error-correction demo",
+        "ec_result": "Unencoded: {plain:.2%} chance of an incorrect bit. Encoded and corrected: {corrected:.2%} chance of an incorrect bit. Sampled errors in {shots:,} trials: unencoded {plain_count:,}; corrected {corrected_count:,}.",
+        "ec_note": "This models independent bit flips and perfect encoding, syndrome correction, and decoding. It corrects bit flips only; it does not model gate or measurement faults and is not fault-tolerant.",
         "added": "Added {gate} to time step {step}.",
         "removed": "Removed {gate}.", "cleared": "Circuit cleared.",
         "full": "The circuit has reached its 20 time-step limit. Remove a gate or clear the circuit.",
@@ -1393,6 +1398,11 @@ PLAYGROUND_COPY = {
         "ready": "Añade puertas para ver la predicción exacta y ejecuta mediciones locales para compararla.",
         "empty": "Aún no hay puertas: ambos qubits empiezan en 0.",
         "local_note": "El simulador integrado funciona en este equipo con puertas ideales y sin ruido del dispositivo. No se usa la nube ni hardware cuántico. Los resultados se muestran primero para el qubit 1 y después para el qubit 0.",
+        "ec_heading": "Demostración de corrección de errores de bit",
+        "ec_intro": "Envía el 0 lógico por un canal con cambios de bit independientes y compara un qubit físico con un código de repetición de tres qubits y corrección por mayoría.",
+        "ec_rate": "Probabilidad de cambio por qubit:", "ec_run": "▶ Ejecutar demostración",
+        "ec_result": "Sin codificar: {plain:.2%} de error. Codificado y corregido: {corrected:.2%}. Errores en {shots:,} pruebas: sin codificar {plain_count:,}; corregido {corrected_count:,}.",
+        "ec_note": "Modelo de cambios independientes y codificación, corrección de síndrome y decodificación perfectas. Solo corrige cambios de bit; no modela fallos de puertas ni mediciones y no es tolerante a fallos.",
         "added": "Se añadió {gate} en el paso {step}.",
         "removed": "Se quitó {gate}.", "cleared": "Se vació el circuito.",
         "full": "El circuito alcanzó el límite de 20 pasos. Quita una puerta o vacía el circuito.",
@@ -1434,6 +1444,11 @@ PLAYGROUND_COPY = {
         "ready": "أضف بوابات لعرض التوقع الدقيق، ثم شغّل قياسات محلية للمقارنة.",
         "empty": "لا توجد بوابات بعد؛ يبدأ الكيوبتان عند 0.",
         "local_note": "يعمل المحاكي المدمج على هذا الجهاز ببوابات مثالية ومن دون إضافة ضوضاء الأجهزة. لا تُستخدم خدمة سحابية أو أجهزة كمية. تُعرض النتائج بترتيب الكيوبت 1 ثم الكيوبت 0.",
+        "ec_heading": "عرض تصحيح أخطاء قلب البت",
+        "ec_intro": "أرسل الصفر المنطقي عبر قناة ذات أخطاء قلب مستقلة، وقارن كيوبتًا واحدًا برمز تكرار من ثلاثة كيوبتات وتصحيح بتصويت الأغلبية.",
+        "ec_rate": "احتمال قلب البت لكل كيوبت:", "ec_run": "▶ شغّل عرض تصحيح الأخطاء",
+        "ec_result": "من دون ترميز: احتمال الخطأ {plain:.2%}. بعد الترميز والتصحيح: {corrected:.2%}. الأخطاء في {shots:,} تجربة: دون ترميز {plain_count:,}؛ بعد التصحيح {corrected_count:,}.",
+        "ec_note": "يحاكي هذا أخطاء قلب مستقلة وترميزًا وتصحيحًا وفك ترميز مثالية. يصحح قلب البت فقط، ولا يحاكي أخطاء البوابات أو القياس، وليس تحمّلًا للأخطاء.",
         "added": "أُضيفت {gate} في الخطوة {step}.",
         "removed": "أُزيلت: {gate}.", "cleared": "مُسحت الدائرة.",
         "full": "بلغت الدائرة حد 20 خطوة. أزل بوابة أو امسح الدائرة.",
@@ -1508,6 +1523,12 @@ def simulate_two_qubit_circuit(slots):
             for outcome, probability in probabilities.items()}
 
 
+def repetition_code_error_probability(bit_flip_probability):
+    """Probability that majority vote fails under independent bit flips."""
+    p = float(bit_flip_probability)
+    return 3 * p * p * (1 - p) + p ** 3
+
+
 # ─────────────────────────────────────────────
 # GATE MATRICES
 # Tuple: (display_label, prefactor, rows)
@@ -1552,8 +1573,90 @@ GATE_MATRICES = {
                                       ["0","0","0","1"]]),
 }
 
+BEGINNER_GATE_EXPLANATIONS = {
+    "English": {
+        "H": "Makes the two basic outcomes equally likely when used on a qubit prepared as 0.",
+        "X": "Switches the qubit between 0 and 1, like a tiny on/off switch.",
+        "Y": "Switches the qubit between 0 and 1 while also changing its phase pattern.",
+        "Z": "Changes the qubit's phase pattern, which can affect later steps in the circuit.",
+        "S": "Adds a small, quarter-turn change to the qubit's phase.",
+        "T": "Adds a smaller phase change than the S gate.",
+        "SX": "A half-step version of the X gate; using it twice has the effect of X.",
+        "RX": "Turns the qubit state around the X direction by a chosen amount.",
+        "RY": "Turns the qubit state around the Y direction by a chosen amount.",
+        "RZ": "Turns the qubit state around the Z direction, changing its phase pattern.",
+        "P": "Lets you choose how much phase change to add to the qubit.",
+        "CX": "Flips a target qubit only when the control qubit is 1.",
+        "CZ": "Changes the phase only when both qubits are 1; it does not flip their values.",
+        "SWAP": "Exchanges the states held by two qubits.",
+    },
+    "Español": {
+        "H": "Hace que los dos resultados básicos sean igual de probables si el qubit empieza en 0.",
+        "X": "Cambia el qubit entre 0 y 1, como un pequeño interruptor.",
+        "Y": "Cambia el qubit entre 0 y 1 y también modifica su patrón de fase.",
+        "Z": "Modifica el patrón de fase del qubit, lo que puede afectar a pasos posteriores.",
+        "S": "Añade un pequeño cambio de fase de un cuarto de vuelta.",
+        "T": "Añade un cambio de fase menor que la puerta S.",
+        "SX": "Es medio paso de la puerta X; al usarla dos veces se obtiene el efecto de X.",
+        "RX": "Gira el estado del qubit alrededor de la dirección X en una cantidad elegida.",
+        "RY": "Gira el estado del qubit alrededor de la dirección Y en una cantidad elegida.",
+        "RZ": "Gira el estado del qubit alrededor de Z y cambia su patrón de fase.",
+        "P": "Permite elegir cuánto cambia la fase del qubit.",
+        "CX": "Cambia el qubit objetivo solo cuando el qubit de control vale 1.",
+        "CZ": "Cambia la fase solo cuando ambos qubits valen 1; no cambia sus valores.",
+        "SWAP": "Intercambia los estados guardados en dos qubits.",
+    },
+    "العربية": {
+        "H": "يجعل النتيجتين الأساسيتين متساويتين في الاحتمال إذا بدأ الكيوبت عند 0.",
+        "X": "يبدّل الكيوبت بين 0 و1، مثل مفتاح صغير.",
+        "Y": "يبدّل الكيوبت بين 0 و1 ويغيّر نمط طوره أيضًا.",
+        "Z": "يغيّر نمط طور الكيوبت، وقد يؤثر ذلك في الخطوات اللاحقة.",
+        "S": "يضيف تغييرًا صغيرًا في الطور بمقدار ربع دورة.",
+        "T": "يضيف تغييرًا في الطور أصغر من بوابة S.",
+        "SX": "نصف خطوة من بوابة X؛ واستخدامها مرتين يعطي تأثير X.",
+        "RX": "يدير حالة الكيوبت حول اتجاه X بمقدار تختاره.",
+        "RY": "يدير حالة الكيوبت حول اتجاه Y بمقدار تختاره.",
+        "RZ": "يدير حالة الكيوبت حول اتجاه Z ويغيّر نمط طوره.",
+        "P": "تتيح اختيار مقدار التغيير في طور الكيوبت.",
+        "CX": "يبدّل الكيوبت الهدف فقط عندما تكون قيمة كيوبت التحكم 1.",
+        "CZ": "يغيّر الطور فقط عندما تكون قيمة الكيوبتين 1؛ ولا يبدّل القيمتين.",
+        "SWAP": "يبدّل الحالتين المخزنتين في كيوبتين.",
+    },
+}
+
 # Cache so each matrix image is only rendered once
 _MATRIX_CACHE = {}
+
+
+def load_wiki_image(filename):
+    """Load a local wiki image from source files or a py2app Resources folder."""
+    source_dir = Path(__file__).resolve().parent
+    executable_dir = Path(sys.executable).resolve().parent
+    candidates = (
+        source_dir / "assets" / "wiki" / filename,
+        executable_dir.parent / "Resources" / "assets" / "wiki" / filename,
+    )
+    image_path = next((path for path in candidates if path.is_file()), None)
+    if image_path is None:
+        return QPixmap()
+    if image_path.suffix.lower() != ".svg":
+        return QPixmap(str(image_path))
+    try:
+        from PySide6.QtSvg import QSvgRenderer
+        renderer = QSvgRenderer(str(image_path))
+        if not renderer.isValid():
+            return QPixmap()
+        size = renderer.defaultSize()
+        if size.isEmpty():
+            size = QSize(640, 480)
+        pixmap = QPixmap(size)
+        pixmap.fill(Qt.GlobalColor.white)
+        painter = QPainter(pixmap)
+        renderer.render(painter)
+        painter.end()
+        return pixmap
+    except ImportError:
+        return QPixmap()
 
 
 # ─────────────────────────────────────────────
@@ -1819,6 +1922,35 @@ def render_circuit_pixmap(qc):
             except Exception:
                 pass
     return None
+
+
+class ResponsiveCircuitLabel(QLabel):
+    """Show the complete circuit image scaled to the label's available width."""
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._source_pixmap = QPixmap()
+        self.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.setMinimumHeight(90)
+
+    def set_source_pixmap(self, pixmap):
+        self._source_pixmap = pixmap
+        self._fit_pixmap()
+
+    def _fit_pixmap(self):
+        if self._source_pixmap.isNull():
+            return
+        available_width = max(160, self.contentsRect().width() - 12)
+        scaled = self._source_pixmap.scaled(
+            available_width, 280,
+            Qt.AspectRatioMode.KeepAspectRatio,
+            Qt.TransformationMode.SmoothTransformation,
+        )
+        QLabel.setPixmap(self, scaled)
+        self.setMinimumHeight(scaled.height() + 16)
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self._fit_pixmap()
 
 
 def generate_qiskit_code(circuit_name, language="English"):
@@ -2348,12 +2480,6 @@ class MainWindow(QMainWindow):
         title.setFont(QFont("Arial", 20, QFont.Weight.Bold))
         layout.addWidget(title)
 
-        summary = QLabel(
-            f"📍 {answers['state']}, {answers['country']}  |  🌐 {answers['language']}")
-        summary.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        summary.setStyleSheet("color: #666666;")
-        layout.addWidget(summary)
-
         self.experience = QComboBox()
         self.experience.addItems(
             [self.t["novice"], self.t["school"], self.t["university"]])
@@ -2375,7 +2501,6 @@ class MainWindow(QMainWindow):
 
         self.status = QLabel(self.t["ready"])
         self.status.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(self.status)
         install_feedback_tab(self, answers["language"], "Experience selection")
 
     def go_back(self):
@@ -2797,7 +2922,6 @@ class TwoQubitPlaygroundWindow(QMainWindow):
         body.addWidget(self.canvas_scroll)
         self.status = QLabel(self.copy["ready"])
         self.status.setWordWrap(True)
-        body.addWidget(self.status)
         self.canvas.circuit_changed.connect(self._circuit_changed)
         self.canvas.notice_changed.connect(self.status.setText)
 
@@ -2861,6 +2985,32 @@ class TwoQubitPlaygroundWindow(QMainWindow):
         local_note.setWordWrap(True)
         local_note.setStyleSheet("color: #5c6264;")
         body.addWidget(local_note)
+
+        ec_heading = QLabel(self.copy["ec_heading"])
+        ec_heading.setFont(QFont("Arial", 13, QFont.Weight.Bold))
+        body.addWidget(ec_heading)
+        ec_intro = QLabel(self.copy["ec_intro"])
+        ec_intro.setWordWrap(True)
+        body.addWidget(ec_intro)
+        ec_controls = QHBoxLayout()
+        ec_controls.addWidget(QLabel(self.copy["ec_rate"]))
+        self.ec_rate = QComboBox()
+        self.ec_rate.addItems(["1%", "5%", "10%", "20%"])
+        self.ec_rate.setCurrentText("10%")
+        configure_combo(self.ec_rate)
+        ec_controls.addWidget(self.ec_rate)
+        ec_button = QPushButton(self.copy["ec_run"])
+        ec_button.setStyleSheet(BUTTON_STYLE_GREEN)
+        ec_button.clicked.connect(self.run_error_correction_demo)
+        ec_controls.addWidget(ec_button)
+        body.addLayout(ec_controls)
+        self.ec_result = QLabel(self.copy["ec_intro"])
+        self.ec_result.setWordWrap(True)
+        body.addWidget(self.ec_result)
+        ec_note = QLabel(self.copy["ec_note"])
+        ec_note.setWordWrap(True)
+        ec_note.setStyleSheet("color: #5c6264;")
+        body.addWidget(ec_note)
 
         back = QPushButton(self.copy["back"])
         back.setStyleSheet(BUTTON_STYLE_BACK)
@@ -2975,6 +3125,21 @@ class TwoQubitPlaygroundWindow(QMainWindow):
                  for outcome in ("00", "01", "10", "11")]
         self._set_result_table(exact, counts, shots)
         self.status.setText(self.copy["local_note"])
+
+    def run_error_correction_demo(self):
+        p = int(self.ec_rate.currentText().rstrip("%")) / 100
+        shots = int(self.shots.currentText().replace(",", ""))
+        plain_probability = p
+        corrected_probability = repetition_code_error_probability(p)
+        plain_errors = sum(random.random() < plain_probability for _ in range(shots))
+        corrected_errors = 0
+        for _ in range(shots):
+            flips = sum(random.random() < p for _ in range(3))
+            corrected_errors += flips >= 2
+        self.ec_result.setText(self.copy["ec_result"].format(
+            plain=plain_probability, corrected=corrected_probability,
+            shots=shots, plain_count=plain_errors,
+            corrected_count=corrected_errors))
 
     def _set_audio_button(self, checked):
         self.audio_button.blockSignals(True)
@@ -3104,31 +3269,391 @@ class CircuitWindow(QMainWindow):
         self.t = TRANSLATIONS.get(answers["language"], TRANSLATIONS["English"])
         set_language_direction(self, answers["language"])
         self._closing_for_navigation = False
-        self.setWindowTitle(self.t["title"]); self.setMinimumSize(760, 470)
+        self.setWindowTitle(self.t["title"])
+        self.setMinimumSize(760, 470)
 
-        central = QWidget(); self.setCentralWidget(central)
-        layout  = QVBoxLayout(central)
-        layout.setContentsMargins(35, 30, 35, 30); layout.setSpacing(18)
+        central = QWidget()
+        self.setCentralWidget(central)
+        layout = QVBoxLayout(central)
+        layout.setContentsMargins(35, 30, 35, 30)
+        layout.setSpacing(18)
 
         title = QLabel(self.t["main"])
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         title.setFont(QFont("Arial", 20, QFont.Weight.Bold))
         layout.addWidget(title)
 
-        summary = QLabel(
-            f"📍 {answers['state']}, {answers['country']}  |  "
-            f"🌐 {answers['language']}  |  🎓 {answers['experience']}")
-        summary.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        summary.setStyleSheet("color: #666666;")
-        layout.addWidget(summary)
+        left_scroll = QScrollArea()
+        left_scroll.setWidgetResizable(True)
+        left_content = QWidget()
+        left_layout = QVBoxLayout(left_content)
+        wiki_titles = {
+            "English": ("Core Concepts", "Quantum gate matrices"),
+            "Español": ("Conceptos fundamentales", "Matrices de puertas cuánticas"),
+            "العربية": ("مفاهيم أساسية", "مصفوفات البوابات الكمية"),
+        }
+        left_title, matrix_title = wiki_titles.get(
+            answers["language"], wiki_titles["English"])
+        concept_heading = QLabel(left_title)
+        concept_heading.setFont(QFont("Arial", 15, QFont.Weight.Bold))
+        left_layout.addWidget(concept_heading)
+        level = experience_index(answers["experience"], self.t)
+        if level == 0:
+            matrix_title = {
+                "English": "Gate explanations",
+                "Español": "Explicaciones de las puertas",
+                "العربية": "شرح البوابات",
+            }.get(answers["language"], "Gate explanations")
+        advanced_core = {
+            "English": [
+                "A qubit is a normalized state α|0⟩+β|1⟩. Measurement probabilities are |α|² and |β|², whose sum is 1.",
+                "A quantum state is a unit vector in a complex Hilbert space. Measurement probabilities follow the Born rule; global phase is unobservable.",
+                "Superposition means a state can combine basis states. The amplitudes are complex values, and their relative phase affects later interference.",
+                "Superposition is a linear combination of basis states. Relative phase determines interference, while global phase has no observable effect.",
+                "A quantum gate changes a qubit state. Reversible gates are represented by unitary matrices.",
+                "A quantum gate applies a unitary operator to the state vector, preserving normalization and inner products.",
+                "Entanglement is a joint state that cannot be factored into independent states for each qubit.",
+                "Entanglement means the composite state is nonseparable; local measurement outcomes can be correlated beyond any product-state description.",
+                "Coherence preserves the phase relationship between possibilities, allowing interference to change outcome chances.",
+                "Coherence preserves relative phase; interference combines amplitudes constructively or destructively before probabilities are calculated.",
+                "Measurement returns a classical result sampled from the state’s probability distribution and changes the state accordingly.",
+                "Projective measurement in the computational basis samples the Born distribution and conditions the post-measurement state on the observed result.",
+            ],
+            "Español": [
+                "Un qubit es un estado normalizado α|0⟩+β|1⟩. Las probabilidades de medir son |α|² y |β|², y suman 1.",
+                "Un estado cuántico es un vector unitario en un espacio de Hilbert complejo. Las probabilidades siguen la regla de Born; la fase global no es observable.",
+                "La superposición combina estados de base. Las amplitudes son complejas y su fase relativa afecta a la interferencia posterior.",
+                "La superposición es una combinación lineal de estados de base. La fase relativa determina la interferencia; la fase global no es observable.",
+                "Una puerta cuántica transforma el estado de un qubit. Las puertas reversibles se representan con matrices unitarias.",
+                "Una puerta cuántica aplica un operador unitario al vector de estado y conserva la normalización y los productos internos.",
+                "El entrelazamiento es un estado conjunto que no puede separarse en estados independientes para cada qubit.",
+                "El entrelazamiento significa que el estado compuesto no es separable; las mediciones locales pueden presentar correlaciones que no describen estados producto.",
+                "La coherencia conserva la relación de fase entre posibilidades y permite que la interferencia cambie las probabilidades.",
+                "La coherencia conserva la fase relativa; la interferencia combina amplitudes de forma constructiva o destructiva antes de calcular probabilidades.",
+                "La medición devuelve un resultado clásico elegido según la distribución de probabilidad y cambia el estado en consecuencia.",
+                "La medición proyectiva en la base computacional muestrea la distribución de Born y condiciona el estado posterior al resultado observado.",
+            ],
+            "العربية": [
+                "الكيوبت حالة مطبّعة α|0⟩+β|1⟩. احتمالا القياس هما |α|² و|β|² ومجموعهما 1.",
+                "الحالة الكمية متجه وحدة في فضاء هيلبرت مركب. تتبع احتمالات القياس قاعدة بورن، ولا يمكن رصد الطور الكلي.",
+                "التراكب يجمع حالات أساس، وسعاته أعداد مركبة يؤثر طورها النسبي في التداخل اللاحق.",
+                "التراكب تركيب خطي لحالات الأساس. يحدد الطور النسبي التداخل، أما الطور الكلي فلا أثر قابل للرصد له.",
+                "تغيّر البوابة الكمية حالة الكيوبت. وتمثّل البوابات العكسية بمصفوفات وحدوية.",
+                "تطبّق البوابة الكمية مؤثرًا وحدويًا على متجه الحالة، فتحافظ على التطبيع والجداءات الداخلية.",
+                "التشابك حالة مشتركة لا يمكن فصلها إلى حالات مستقلة لكل كيوبت.",
+                "يعني التشابك أن الحالة المركبة غير قابلة للفصل؛ وقد تظهر القياسات المحلية ترابطات لا تصفها حالة حاصل ضرب.",
+                "يحافظ الترابط على العلاقة الطورية بين الاحتمالات، مما يسمح للتداخل بتغيير فرص النتائج.",
+                "يحافظ الترابط على الطور النسبي؛ ويجمع التداخل السعات جمعًا بنّاءً أو هدّامًا قبل حساب الاحتمالات.",
+                "يعطي القياس نتيجة كلاسيكية تُسحب من توزيع الاحتمالات ويغيّر الحالة تبعًا للنتيجة.",
+                "يسحب القياس الإسقاطي في القاعدة الحسابية عينة من توزيع بورن ويكيّف الحالة اللاحقة مع النتيجة المرصودة.",
+            ],
+        }
+        primer = BEGINNER_PRIMER.get(
+            answers["language"], BEGINNER_PRIMER["English"])
+        concepts = (primer.split("\n") if level == 0 else
+                    advanced_core.get(answers["language"], advanced_core["English"])
+                    [level - 1::2])
+        concept_names = {
+            "English": ["Qubit", "Superposition", "Quantum gates", "Entanglement", "Coherence", "Measurement"],
+            "Español": ["Qubit", "Superposición", "Puertas cuánticas", "Entrelazamiento", "Coherencia", "Medición"],
+            "العربية": ["الكيوبت", "التراكب", "البوابات الكمية", "التشابك", "الترابط", "القياس"],
+        }.get(answers["language"], ["Qubit", "Superposition", "Quantum gates", "Entanglement", "Coherence", "Measurement"])
+        if level == 0:
+            concept_visuals = [
+                ("new_qubit.svg", "A qubit can produce 0 or 1 when measured.", "Project illustration"),
+                ("new_superposition.svg", "More than one outcome can be possible before measurement.", "Project illustration"),
+                ("gate_sequence.svg", "Gates are steps that change a qubit's state.", "Project illustration"),
+                ("new_entanglement.svg", "Entangled qubits share a state and can give correlated results.", "Project illustration"),
+                ("new_interference.svg", "Possibilities can reinforce or cancel; waves are only a visual analogy.", "Project illustration"),
+                ("new_measurement.svg", "Each measurement run returns one result.", "Project illustration"),
+            ]
+        elif level == 1:
+            concept_visuals = [
+                ("secondary_qubit.svg", "A vector represents the qubit state; its direction sets outcome probabilities.", "Project illustration"),
+                ("secondary_superposition.svg", "A state combines basis states; relative phase affects interference.", "Project illustration"),
+                ("gate_sequence.svg", "Gates transform a state; unitary gates preserve total probability.", "Project illustration"),
+                ("secondary_entanglement.svg", "A Hadamard and CX prepare a Bell state with correlated outcomes.", "Project illustration"),
+                ("secondary_interference.svg", "Coherence preserves relative phase so amplitudes can interfere.", "Project illustration"),
+                ("secondary_measurement.svg", "The Born rule predicts outcome frequencies over repeated measurements.", "Project illustration"),
+            ]
+        else:
+            concept_visuals = [
+                ("bloch_sphere.svg", "Bloch sphere: a geometric representation of pure single-qubit states.", "Smite-Meister · CC BY-SA 3.0"),
+                ("double_slit.svg", "Superposition and path interference illustrated by a double-slit experiment.", "Inkwina · Public domain"),
+                ("gate_sequence.svg", "A circuit diagram showing gates applied in sequence.", "Project illustration"),
+                ("bell_entanglement.svg", "Bell-test setup illustrating correlated measurements on an entangled pair.", "Manwesulimo2004 · CC BY 3.0"),
+                ("double_slit.svg", "Interference pattern produced by overlapping paths.", "Inkwina · Public domain"),
+                ("measurement.png", "Schematic of obtaining a classical result from a quantum state.", "Q-istvan · CC BY-SA 3.0"),
+            ]
+        translated_visual_captions = {
+            "Español": [
+                "Al medir, un qubit puede dar 0 o 1.",
+                "Puede haber más de un resultado posible antes de medir.",
+                "Las puertas son pasos que cambian el estado de un qubit.",
+                "Los qubits entrelazados comparten un estado y pueden dar resultados correlacionados.",
+                "Las posibilidades pueden reforzarse o cancelarse; las ondas son solo una analogía visual.",
+                "Cada medición devuelve un solo resultado.",
+            ],
+            "العربية": [
+                "قد يعطي قياس الكيوبت النتيجة 0 أو 1.",
+                "قد توجد نتائج متعددة ممكنة قبل القياس.",
+                "البوابات خطوات تغيّر حالة الكيوبت.",
+                "تتشارك الكيوبتات المتشابكة حالة واحدة وقد تعطي نتائج مترابطة.",
+                "قد تتعزز الاحتمالات أو يلغي بعضها بعضًا؛ والموجات تشبيه بصري فقط.",
+                "يعطي كل قياس نتيجة واحدة.",
+            ],
+        }
+        if answers["language"] in translated_visual_captions:
+            concept_visuals = [
+                (filename, translated_visual_captions[answers["language"]][i], credit)
+                for i, (filename, _caption, credit) in enumerate(concept_visuals)
+            ]
+        card_grid_host = QWidget()
+        card_grid = QGridLayout(card_grid_host)
+        card_grid.setContentsMargins(0, 0, 0, 0)
+        card_grid.setHorizontalSpacing(12)
+        card_grid.setVerticalSpacing(12)
+        for index, (name, explanation, (image_file, caption_text, image_credit)) in enumerate(
+                zip(concept_names, concepts, concept_visuals)):
+            card = QPushButton()
+            card.setCheckable(True)
+            card.setMinimumHeight(150)
+            card.setAccessibleName(name)
+            card.setAccessibleDescription(name)
+            card.setToolTip({
+                "English": "Click to reveal the explanation; click again to return.",
+                "Español": "Pulsa para ver la explicación; pulsa de nuevo para volver.",
+                "العربية": "انقر لعرض الشرح، ثم انقر مجددًا للعودة.",
+            }.get(answers["language"], "Click to reveal the explanation; click again to return."))
+            card.setStyleSheet(
+                "QPushButton { background: #e8f3f1; color: #243238; "
+                "border: 1px solid #b9d6d2; border-radius: 10px; "
+                "padding: 14px; font-size: 14px; font-weight: 600; }"
+                "QPushButton:checked { background: #ffffff; border: 2px solid #247f78; }"
+                "QPushButton:hover { background: #f1f8f7; }"
+                "QPushButton:focus { border: 2px solid #176b65; }")
+            card_layout = QVBoxLayout(card)
+            card_layout.setContentsMargins(8, 8, 8, 8)
+            card_text = QLabel(name)
+            card_text.setWordWrap(True)
+            card_text.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            card_text.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+            card_layout.addWidget(card_text)
+            card_hint = QLabel({
+                "English": "Click to reveal",
+                "Español": "Pulsa para ver la explicación",
+                "العربية": "انقر لعرض الشرح",
+            }.get(answers["language"], "Click to reveal"))
+            card_hint.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            card_hint.setStyleSheet("color: #5c6264; font-size: 10px; font-weight: normal;")
+            card_hint.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+            card_layout.addWidget(card_hint)
+            back_image = QLabel()
+            back_image.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            back_image.setPixmap(load_wiki_image(image_file).scaled(
+                380, 160, Qt.AspectRatioMode.KeepAspectRatio,
+                Qt.TransformationMode.SmoothTransformation))
+            back_image.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+            card_layout.addWidget(back_image)
+            back_caption = QLabel(caption_text)
+            back_caption.setWordWrap(True)
+            back_caption.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            back_caption.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+            card_layout.addWidget(back_caption)
+            image_credit_label = QLabel(image_credit)
+            image_credit_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            image_credit_label.setStyleSheet("color: #5c6264; font-size: 10px; font-weight: normal;")
+            image_credit_label.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+            card_layout.addWidget(image_credit_label)
+            def flip_card(show_explanation, label=card_text, title=name,
+                          detail=explanation, button=card, hint=card_hint,
+                          image=back_image, caption=back_caption,
+                          credit=image_credit_label):
+                label.setText(detail if show_explanation else title)
+                hint.setText(({
+                    "English": "Click to return",
+                    "Español": "Pulsa para volver",
+                    "العربية": "انقر للعودة",
+                }.get(answers["language"], "Click to return")) if show_explanation else ({
+                    "English": "Click to reveal",
+                    "Español": "Pulsa para ver la explicación",
+                    "العربية": "انقر لعرض الشرح",
+                }.get(answers["language"], "Click to reveal")))
+                image.setVisible(show_explanation)
+                caption.setVisible(show_explanation)
+                credit.setVisible(show_explanation and level == 2)
+                button.setMinimumHeight(290 if show_explanation else 150)
+                button.setAccessibleDescription(
+                    detail if show_explanation else title)
+            back_image.hide()
+            back_caption.hide()
+            image_credit_label.hide()
+            card.toggled.connect(flip_card)
+            card_grid.addWidget(card, index // 2, index % 2)
+        left_layout.addWidget(card_grid_host)
+        left_layout.addStretch(1)
+        left_scroll.setWidget(left_content)
 
-        layout.addWidget(QLabel(self.t["choose_circuit"]))
-        self.circuit = QComboBox()
-        names = self.CIRCUIT_NAMES_BY_LANGUAGE.get(
-            answers["language"], self.CIRCUIT_NAMES_BY_LANGUAGE["English"])
-        self.circuit.addItems(names)
-        configure_combo(self.circuit)
-        layout.addWidget(self.circuit)
+        right_scroll = QScrollArea()
+        right_scroll.setWidgetResizable(True)
+        right_content = QWidget()
+        right_layout = QVBoxLayout(right_content)
+        matrix_heading = QLabel(matrix_title)
+        matrix_heading.setFont(QFont("Arial", 15, QFont.Weight.Bold))
+        right_layout.addWidget(matrix_heading)
+        gate_grid_host = QWidget()
+        gate_grid = QGridLayout(gate_grid_host)
+        gate_grid.setContentsMargins(0, 0, 0, 0)
+        gate_grid.setHorizontalSpacing(10)
+        gate_grid.setVerticalSpacing(10)
+        descriptions_by_symbol = {
+            symbol: (name, novice, school, university)
+            for _category, gates in OPERATORS
+            for symbol, name, novice, school, university in gates
+        }
+        localized_gates = OPERATOR_LOCALIZATIONS.get(
+            answers["language"], {}).get("gates", {})
+        for index, (symbol, (matrix_label, prefactor, rows)) in enumerate(
+                GATE_MATRICES.items()):
+            card = QPushButton()
+            card.setCheckable(True)
+            card.setMinimumHeight(185)
+            card.setToolTip({
+                "English": "Click to reveal the explanation; click again to return.",
+                "Español": "Pulsa para ver la explicación; pulsa de nuevo para volver.",
+                "العربية": "انقر لعرض الشرح، ثم انقر مجددًا للعودة.",
+            }.get(answers["language"], "Click to reveal the explanation; click again to return."))
+            card.setStyleSheet(
+                "QPushButton { background: #e8f3f1; color: #243238; "
+                "border: 1px solid #b9d6d2; border-radius: 10px; padding: 10px; }"
+                "QPushButton:checked { background: white; border: 2px solid #247f78; }"
+                "QPushButton:hover { background: #f1f8f7; }"
+                "QPushButton:focus { border: 2px solid #176b65; }")
+            card_layout = QVBoxLayout(card)
+            card_layout.setContentsMargins(8, 8, 8, 8)
+
+            if level == 0:
+                if symbol in localized_gates:
+                    display_name = localized_gates[symbol][0]
+                else:
+                    gate_data = descriptions_by_symbol.get(symbol)
+                    display_name = gate_data[0] if gate_data else matrix_label
+                explanation = BEGINNER_GATE_EXPLANATIONS.get(
+                    answers["language"], BEGINNER_GATE_EXPLANATIONS["English"]
+                ).get(symbol, "")
+            elif symbol in localized_gates:
+                display_name, descriptions = localized_gates[symbol]
+                explanation = descriptions[level]
+            else:
+                description = descriptions_by_symbol.get(symbol)
+                display_name = description[0] if description else matrix_label
+                explanation = description[level + 1] if description else ""
+            card.setAccessibleName(f"{symbol}: {display_name}")
+            card.setAccessibleDescription(display_name)
+
+            front = QWidget()
+            front.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+            front_layout = QVBoxLayout(front)
+            front_layout.setContentsMargins(0, 0, 0, 0)
+            front_image = QLabel()
+            front_image.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            front_image.setPixmap(render_operator_icon(symbol))
+            front_layout.addWidget(front_image)
+            front_name = QLabel(f"{symbol} — {display_name}")
+            front_name.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            front_name.setWordWrap(True)
+            front_name.setStyleSheet("font-weight: 600;")
+            front_layout.addWidget(front_name)
+            front_hint = QLabel({
+                "English": "Click to reveal",
+                "Español": "Pulsa para ver la explicación",
+                "العربية": "انقر لعرض الشرح",
+            }.get(answers["language"], "Click to reveal"))
+            front_hint.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            front_hint.setStyleSheet("color: #5c6264; font-size: 10px;")
+            front_layout.addWidget(front_hint)
+            card_layout.addWidget(front)
+
+            back = QWidget()
+            back.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+            back_layout = QVBoxLayout(back)
+            back_layout.setContentsMargins(0, 0, 0, 0)
+            back_visual = QLabel()
+            back_visual.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            visual = render_operator_concept(symbol)
+            back_visual.setPixmap(visual.scaled(
+                300, 80, Qt.AspectRatioMode.KeepAspectRatio,
+                Qt.TransformationMode.SmoothTransformation))
+            back_layout.addWidget(back_visual)
+            explanation_label = QLabel(explanation)
+            explanation_label.setWordWrap(True)
+            back_layout.addWidget(explanation_label)
+            if level > 0:
+                if prefactor:
+                    matrix_prefix = f"{html_escape(prefactor)} × "
+                else:
+                    matrix_prefix = ""
+                matrix_rows = "".join(
+                    "<tr>" + "".join(
+                        f"<td style='padding:1px 5px; text-align:center'>{html_escape(value)}</td>"
+                        for value in row) + "</tr>"
+                    for row in rows)
+                matrix_label_widget = QLabel(
+                    f"<div style='text-align:center;color:#506269'>{matrix_prefix}"
+                    f"<table align='center' cellspacing='0' style='border-left:1px solid #506269;"
+                    f"border-right:1px solid #506269;font-family:monospace'>{matrix_rows}</table></div>")
+                matrix_label_widget.setTextFormat(Qt.TextFormat.RichText)
+                matrix_label_widget.setStyleSheet("background: transparent;")
+                back_layout.addWidget(matrix_label_widget)
+            back_hint = QLabel({
+                "English": "Click to return",
+                "Español": "Pulsa para volver",
+                "العربية": "انقر للعودة",
+            }.get(answers["language"], "Click to return"))
+            back_hint.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            back_hint.setStyleSheet("color: #5c6264; font-size: 10px;")
+            back_layout.addWidget(back_hint)
+            back.hide()
+            card_layout.addWidget(back)
+
+            def flip_gate(show_details, button=card, face=front, reverse=back,
+                          name=matrix_label):
+                face.setVisible(not show_details)
+                reverse.setVisible(show_details)
+                button.setAccessibleDescription(
+                    "Gate explanation and matrix" if show_details else name)
+            card.toggled.connect(flip_gate)
+            gate_grid.addWidget(card, index // 3, index % 3)
+        right_layout.addWidget(gate_grid_host)
+        right_scroll.setWidget(right_content)
+        wiki_dialog = QDialog(self)
+        wiki_dialog.setWindowTitle({
+            "English": "Quantum Gates Wiki",
+            "Español": "Wiki de puertas cuánticas",
+            "العربية": "موسوعة البوابات الكمية",
+        }.get(answers["language"], "Quantum Gates Wiki"))
+        wiki_dialog.setMinimumSize(1040, 700)
+        wiki_dialog_layout = QVBoxLayout(wiki_dialog)
+        wiki_tabs = QTabWidget(wiki_dialog)
+        wiki_tabs.addTab(left_scroll, {
+            "English": "Core Concepts", "Español": "Conceptos fundamentales",
+            "العربية": "مفاهيم أساسية",
+        }.get(answers["language"], "Core Concepts"))
+        wiki_tabs.addTab(right_scroll, {
+            "English": "Quantum Gates", "Español": "Puertas cuánticas",
+            "العربية": "البوابات الكمية",
+        }.get(answers["language"], "Quantum Gates"))
+        wiki_dialog_layout.addWidget(wiki_tabs)
+        self.wiki_dialog = wiki_dialog
+
+        wiki_button = QPushButton({
+            "English": "Quantum Gates Wiki",
+            "Español": "Wiki de puertas cuánticas",
+            "العربية": "موسوعة البوابات الكمية",
+        }.get(answers["language"], "Quantum Gates Wiki"))
+        wiki_button.setStyleSheet(BUTTON_STYLE_GREEN)
+        wiki_button.clicked.connect(self.open_wiki)
+        layout.addWidget(wiki_button)
 
         explore = QPushButton(self.t["explore"])
         explore.setStyleSheet(BUTTON_STYLE_GREEN)
@@ -3152,20 +3677,19 @@ class CircuitWindow(QMainWindow):
 
         self.status = QLabel(self.t["ready"])
         self.status.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(self.status)
         install_feedback_tab(self, answers["language"], "Circuit selection")
 
-    def canonical_circuit_name(self):
-        idx = self.circuit.currentIndex()
-        return self.CANONICAL_NAMES[idx] if 0 <= idx < len(self.CANONICAL_NAMES) \
-               else self.CANONICAL_NAMES[0]
+    def open_wiki(self):
+        self.wiki_dialog.show()
+        self.wiki_dialog.raise_()
+        self.wiki_dialog.activateWindow()
 
     def go_back(self):
         self._closing_for_navigation = True; self.close(); self.back_requested.emit()
 
     def explore(self):
         self._closing_for_navigation = True; self.close()
-        self.next_requested.emit(self.canonical_circuit_name())
+        self.next_requested.emit(self.CANONICAL_NAMES[0])
 
     def open_cryptography(self):
         self._closing_for_navigation = True; self.close()
@@ -3380,7 +3904,7 @@ class OperatorDetailDialog(QDialog):
 
 class OperatorsWindow(QMainWindow):
     back_requested       = Signal()
-    simulation_requested = Signal()
+    simulation_requested = Signal(str)
 
     def __init__(self, answers, circuit_name):
         super().__init__()
@@ -3397,157 +3921,27 @@ class OperatorsWindow(QMainWindow):
         outer = QVBoxLayout(root)
         outer.setContentsMargins(20, 18, 20, 18); outer.setSpacing(12)
 
-        # ── Title ──
-        title = QLabel(self.t["operators"])
-        title.setFont(QFont("Arial", 20, QFont.Weight.Bold))
-        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        outer.addWidget(title)
-
-        summary = QLabel(
-            f"📍 {answers['state']}, {answers['country']}  |  "
-            f"🌐 {answers['language']}  |  🎓 {answers['experience']}")
-        summary.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        summary.setStyleSheet("color: #666666;")
-        outer.addWidget(summary)
+        selector_row = QHBoxLayout()
+        selector_row.addWidget(QLabel(self.t["choose_circuit"]))
+        self.circuit_selector = QComboBox()
+        circuit_names = CircuitWindow.CIRCUIT_NAMES_BY_LANGUAGE.get(
+            answers["language"], CircuitWindow.CIRCUIT_NAMES_BY_LANGUAGE["English"])
+        self.circuit_selector.addItems(circuit_names)
+        configure_combo(self.circuit_selector)
+        initial_index = CircuitWindow.CANONICAL_NAMES.index(circuit_name)
+        self.circuit_selector.setCurrentIndex(initial_index)
+        selector_row.addWidget(self.circuit_selector, 1)
+        outer.addLayout(selector_row)
 
         # ── Scrollable content ──
         scroll  = QScrollArea(); scroll.setWidgetResizable(True); outer.addWidget(scroll, 1)
         content = QWidget()
         content_layout = QVBoxLayout(content); content_layout.setSpacing(12)
         scroll.setWidget(content)
-
-        primer = QLabel(BEGINNER_PRIMER.get(answers["language"], BEGINNER_PRIMER["English"]))
-        primer.setWordWrap(True)
-        primer.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
-        primer.setStyleSheet(
-            "background: #e8f3f1; color: #243238; padding: 14px; "
-            "border: 1px solid #cbdedb; border-radius: 8px; line-height: 1.4;"
-        )
-        content_layout.addWidget(primer)
-        hint = QLabel(self.t["operator_chart_hint"])
-        hint.setStyleSheet("color: #506269; padding: 2px 4px;")
-        content_layout.addWidget(hint)
-
-        localized = OPERATOR_LOCALIZATIONS.get(answers["language"])
-        self.detail_windows = []
-        tile_columns = 4
-
-        for cat_idx, (_category, items) in enumerate(OPERATORS):
-            category_name = (
-                localized["categories"][cat_idx] if localized else _category)
-            heading = QLabel(category_name)
-            heading.setFont(QFont("Arial", 12, QFont.Weight.Bold))
-            heading.setStyleSheet(
-                "background: #e8f3f1; padding: 9px; border-radius: 6px; border: none;")
-            content_layout.addWidget(heading)
-
-            grid_host = QWidget()
-            grid = QGridLayout(grid_host)
-            grid.setContentsMargins(2, 2, 2, 8)
-            grid.setHorizontalSpacing(14)
-            grid.setVerticalSpacing(12)
-
-            for index, (symbol, name, _novice, school, university) in enumerate(items):
-                if localized and symbol in localized["gates"]:
-                    display_name, descriptions = localized["gates"][symbol]
-                    detailed_description = descriptions[self.level] if self.level else ""
-                else:
-                    display_name = name
-                    detailed_description = school if self.level == 1 else university
-
-                tile = QFrame()
-                tile.setStyleSheet(
-                    "QFrame { background: #ffffff; border: 1px solid #dfe7e8; "
-                    "border-radius: 8px; }"
-                )
-                tile_layout = QVBoxLayout(tile)
-                tile_layout.setContentsMargins(8, 8, 8, 8)
-                tile_layout.setSpacing(5)
-
-                image_button = QToolButton()
-                image_button.setIcon(QIcon(render_operator_icon(symbol)))
-                image_button.setIconSize(QSize(112, 78))
-                image_button.setFixedSize(132, 94)
-                image_button.setToolTip(display_name)
-                image_button.setAccessibleName(f"{symbol}: {display_name}")
-                image_button.setCursor(Qt.CursorShape.PointingHandCursor)
-                image_button.setStyleSheet(
-                    "QToolButton { background: transparent; border: none; padding: 0; }"
-                    "QToolButton:hover { background: #f0f8f7; border-radius: 6px; }"
-                    "QToolButton:focus { border: 2px solid #247f78; border-radius: 6px; }"
-                )
-                image_button.clicked.connect(
-                    lambda _checked=False, s=symbol, n=display_name, d=detailed_description:
-                    self.open_operator_detail(s, n, d))
-                tile_layout.addWidget(image_button, 0, Qt.AlignmentFlag.AlignCenter)
-
-                name_label = QLabel(display_name)
-                name_label.setWordWrap(True)
-                name_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-                name_label.setStyleSheet("background: transparent; border: none; font-weight: 600;")
-                tile_layout.addWidget(name_label)
-                grid.addWidget(tile, index // tile_columns, index % tile_columns)
-
-            content_layout.addWidget(grid_host)
-
-        # ── Selected circuit section ──
-        circuit_heading = QLabel(self.t["circuit"])
-        circuit_heading.setFont(QFont("Arial", 13, QFont.Weight.Bold))
-        circuit_heading.setStyleSheet(
-            "background: #e8f3f1; padding: 9px; border-radius: 5px; border: none;")
-        content_layout.addWidget(circuit_heading)
-
-        if self.level == 0:
-            display_circuit = BRAND_NEW_CIRCUITS[answers["language"]][circuit_name]
-            display_title = (CIRCUIT_LOCALIZATIONS
-                             .get(answers["language"], {})
-                             .get(circuit_name, CIRCUITS[circuit_name])
-                             .get("title", circuit_name))
-            circuit_description = display_circuit["description"]
-            circuit_steps = display_circuit["steps"]
-        else:
-            circuit_data = CIRCUITS[circuit_name]
-            localized_circuits = CIRCUIT_LOCALIZATIONS.get(answers["language"], {})
-            display_circuit = localized_circuits.get(circuit_name, circuit_data)
-            circuit_description = display_circuit["description"]
-            circuit_steps = display_circuit["steps"]
-            display_title = display_circuit.get("title", circuit_name)
-
-        circuit_text = QLabel(
-            f"{display_title}\n\n"
-            f"{text_without_rendered_equations(circuit_description)}\n\n"
-            f"{text_without_rendered_equations(circuit_steps)}")
-        circuit_text.setWordWrap(True)
-        circuit_text.setTextInteractionFlags(
-            Qt.TextInteractionFlag.TextSelectableByMouse)
-        content_layout.addWidget(circuit_text)
-        if self.level > 0:
-            add_equation_images(content_layout,
-                                f"{circuit_description}\n{circuit_steps}")
-
-        # ── Circuit diagram ──
-        qc = build_circuit(circuit_name)
-        if qc is not None:
-            cpix = render_circuit_pixmap(qc)
-            if cpix is not None:
-                diagram = QLabel()
-                diagram.setPixmap(cpix)
-                diagram.setAlignment(Qt.AlignmentFlag.AlignCenter)
-                diagram.setMinimumHeight(cpix.height() + 16)
-                diagram.setToolTip(self.t["diagram_tooltip"])
-            else:
-                diagram = QLabel(
-                    qc.draw(output="text", fold=-1).__str__()
-                    + "\n\n" + self.t["diagram_error"])
-                diagram.setFont(QFont("Menlo", 11))
-                diagram.setTextInteractionFlags(
-                    Qt.TextInteractionFlag.TextSelectableByMouse)
-        else:
-            diagram = QLabel(self.t["qiskit_missing"])
-        diagram.setWordWrap(True)
-        diagram.setStyleSheet(
-            "background: #f7f7f7; padding: 10px; border: 1px solid #e0e0e0;")
-        content_layout.addWidget(diagram)
+        self.circuit_content = content_layout
+        self.circuit_selector.currentIndexChanged.connect(
+            self.load_selected_circuit)
+        self.load_selected_circuit(initial_index)
 
         # ── Buttons ──
         buttons  = QHBoxLayout()
@@ -3569,29 +3963,76 @@ class OperatorsWindow(QMainWindow):
         install_feedback_tab(
             self, answers["language"], f"Operator guide: {circuit_name}")
 
-    def open_operator_detail(self, symbol, display_name, detailed_description):
-        dialog = OperatorDetailDialog(
-            self.answers["language"], symbol, display_name,
-            self.level, detailed_description)
-        self.detail_windows.append(dialog)
-        dialog.finished.connect(
-            lambda _result, window=dialog:
-            self.detail_windows.remove(window) if window in self.detail_windows else None)
-        dialog.show()
+    def load_selected_circuit(self, index):
+        if not 0 <= index < len(CircuitWindow.CANONICAL_NAMES):
+            return
+        self.circuit_name = CircuitWindow.CANONICAL_NAMES[index]
+        while self.circuit_content.count():
+            item = self.circuit_content.takeAt(0)
+            if item.widget() is not None:
+                item.widget().deleteLater()
+
+        if self.level == 0:
+            display_circuit = BRAND_NEW_CIRCUITS[self.answers["language"]][self.circuit_name]
+            display_title = (CIRCUIT_LOCALIZATIONS
+                             .get(self.answers["language"], {})
+                             .get(self.circuit_name, CIRCUITS[self.circuit_name])
+                             .get("title", self.circuit_name))
+        else:
+            display_circuit = CIRCUIT_LOCALIZATIONS.get(
+                self.answers["language"], {}).get(
+                    self.circuit_name, CIRCUITS[self.circuit_name])
+            display_title = display_circuit.get("title", self.circuit_name)
+        circuit_description = display_circuit["description"]
+        circuit_steps = display_circuit["steps"]
+        self.setWindowTitle(display_title)
+
+        circuit_text = QLabel(
+            f"{display_title}\n\n"
+            f"{text_without_rendered_equations(circuit_description)}\n\n"
+            f"{text_without_rendered_equations(circuit_steps)}")
+        circuit_text.setWordWrap(True)
+        circuit_text.setTextInteractionFlags(
+            Qt.TextInteractionFlag.TextSelectableByMouse)
+        self.circuit_content.addWidget(circuit_text)
+        if self.level > 0:
+            add_equation_images(self.circuit_content,
+                                f"{circuit_description}\n{circuit_steps}")
+
+        qc = build_circuit(self.circuit_name)
+        if qc is not None:
+            cpix = render_circuit_pixmap(qc)
+            if cpix is not None:
+                diagram = QLabel()
+                diagram.setPixmap(cpix)
+                diagram.setAlignment(Qt.AlignmentFlag.AlignCenter)
+                diagram.setMinimumHeight(cpix.height() + 16)
+                diagram.setToolTip(self.t["diagram_tooltip"])
+            else:
+                diagram = QLabel(
+                    qc.draw(output="text", fold=-1).__str__()
+                    + "\n\n" + self.t["diagram_error"])
+                diagram.setFont(QFont("Menlo", 11))
+                diagram.setTextInteractionFlags(
+                    Qt.TextInteractionFlag.TextSelectableByMouse)
+        else:
+            diagram = QLabel(self.t["qiskit_missing"])
+        diagram.setWordWrap(True)
+        diagram.setStyleSheet(
+            "background: #f7f7f7; padding: 10px; border: 1px solid #e0e0e0;")
+        self.circuit_content.addWidget(diagram)
 
     def go_back(self):
         self._closing_for_navigation = True; self.close(); self.back_requested.emit()
 
     def open_simulation(self):
         self._closing_for_navigation = True; self.close()
-        self.simulation_requested.emit()
+        self.simulation_requested.emit(self.circuit_name)
 
     def close_application(self):
         self._closing_for_navigation = True; self.close(); QApplication.quit()
 
     def closeEvent(self, event):
-        for dialog in tuple(self.detail_windows):
-            dialog.close()
         event.accept()
         if not self._closing_for_navigation:
             QApplication.quit()
@@ -4135,7 +4576,7 @@ class SimulationWindow(QMainWindow):
         self.setWindowTitle(
             self.copy["beginner_window"] if self.level == 0
             else self.copy["window"])
-        self.setMinimumSize(940, 720); self.resize(1080, 880)
+        self.setMinimumSize(900, 650); self.resize(1000, 760)
 
         root  = QWidget(); self.setCentralWidget(root)
         outer = QVBoxLayout(root)
@@ -4163,7 +4604,7 @@ class SimulationWindow(QMainWindow):
         body_layout.setSpacing(12); scroll.setWidget(body)
 
         theory = QTextBrowser()
-        theory.setOpenExternalLinks(False); theory.setMinimumHeight(260)
+        theory.setOpenExternalLinks(False); theory.setMinimumHeight(170)
 
         if circuit_name == BELL_CIRCUIT:
             theory_key = "bell"
@@ -4197,17 +4638,13 @@ class SimulationWindow(QMainWindow):
         circuit_heading = QLabel(self.copy["circuit_heading"])
         circuit_heading.setFont(QFont("Arial", 12, QFont.Weight.Bold))
         body_layout.addWidget(circuit_heading)
-        self.circuit_image = QLabel()
-        self.circuit_image.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.circuit_image.setMinimumHeight(90)
+        self.circuit_image = ResponsiveCircuitLabel()
         self.circuit_image.setStyleSheet(
-            "background: white; border: 1px solid #e0e0e0; padding: 6px;")
+            "background: white; border: 1px solid #e0e0e0; padding: 4px;")
         diagram_qc = build_circuit(self.circuit_name)
         diagram_pixmap = render_circuit_pixmap(diagram_qc)
         if diagram_pixmap is not None and not diagram_pixmap.isNull():
-            self.circuit_image.setPixmap(diagram_pixmap.scaled(
-                900, 180, Qt.AspectRatioMode.KeepAspectRatio,
-                Qt.TransformationMode.SmoothTransformation))
+            self.circuit_image.set_source_pixmap(diagram_pixmap)
         else:
             self.circuit_image.setText(
                 self.copy["diagram_error"])
@@ -4234,7 +4671,7 @@ class SimulationWindow(QMainWindow):
         body_layout.addLayout(ctrl)
 
         self.result = QTextBrowser()
-        self.result.setMinimumHeight(200)
+        self.result.setMinimumHeight(130)
         self.result.setPlaceholderText(self.copy["placeholder"])
         self.result.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         body_layout.addWidget(self.result)
@@ -4257,7 +4694,6 @@ class SimulationWindow(QMainWindow):
 
         self.status = QLabel(self.copy["ready"])
         self.status.setWordWrap(True)
-        outer.addWidget(self.status)
 
         # ── Buttons ──
         buttons = QHBoxLayout()
@@ -4494,7 +4930,7 @@ def launch_operators(answers, circuit_name):
     window = OperatorsWindow(answers, circuit_name)
     window.back_requested.connect(lambda: launch_circuit(answers))
     window.simulation_requested.connect(
-        lambda: launch_simulation(answers, circuit_name))
+        lambda selected_name: launch_simulation(answers, selected_name))
     window.show(); app._operators_window = window
 
 

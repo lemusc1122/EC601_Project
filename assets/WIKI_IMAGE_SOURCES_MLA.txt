@@ -1,0 +1,26 @@
+Quantum Circuit Builder: Wiki Image Sources
+
+Bloch sphere
+Smite-Meister. “Bloch Sphere.” Wikimedia Commons, 30 Jan. 2009,
+commons.wikimedia.org/wiki/File:Bloch_sphere.svg. Accessed 11 Nov. 2026.
+Licensed under Creative Commons Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0).
+
+Entanglement and Bell test
+Manwesulimo2004. “Bell Test for Entangled Qubits.” Wikimedia Commons, 27 June 2010,
+commons.wikimedia.org/wiki/File:Bell%27s_theorem.svg. Accessed 11 Nov. 2026.
+Licensed under Creative Commons Attribution 3.0 Unported (CC BY 3.0).
+
+Quantum measurement
+Q-istvan. “Scheme of Quantum Measurement Process.” Wikimedia Commons, 6 Nov. 2013,
+commons.wikimedia.org/wiki/File:Scheme_of_quantum_measurement_process.png. Accessed 11 Nov. 2026.
+Licensed under Creative Commons Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0).
+
+Interference
+Inkwina. “Double Slit Experiment.” Wikimedia Commons, 3 Mar. 2008,
+commons.wikimedia.org/wiki/File:Double_Slit_Experiment.svg. Accessed 11 Nov. 2026.
+Released into the public domain by the author.
+
+The Wikimedia diagrams are included locally in assets/wiki/ for offline use. The
+new and secondary level diagrams in the same folder were created for this project
+and are not based on an external image source. Captions identify each diagram's
+intended teaching connection; the images are visual aids rather than full models.

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="210" viewBox="0 0 440 210">
+<rect width="440" height="210" rx="14" fill="#f8fbfb"/>
+<text x="220" y="25" text-anchor="middle" font-family="Arial" font-size="17" fill="#243238">Bell-state preparation and correlated results</text>
+<path d="M55 82 H390 M55 145 H390" stroke="#506269" stroke-width="2"/><text x="24" y="87" font-family="Arial" font-size="14" fill="#243238">q₀</text><text x="24" y="150" font-family="Arial" font-size="14" fill="#243238">q₁</text>
+<rect x="110" y="61" width="45" height="42" rx="5" fill="#dcefeb" stroke="#247f78" stroke-width="2"/><text x="132" y="88" text-anchor="middle" font-family="Arial" font-size="17" fill="#176b65">H</text>
+<rect x="222" y="61" width="47" height="105" rx="5" fill="#dcefeb" stroke="#247f78" stroke-width="2"/><text x="245" y="120" text-anchor="middle" font-family="Arial" font-size="16" fill="#176b65">CX</text><circle cx="245" cy="82" r="5" fill="#247f78"/><circle cx="245" cy="145" r="5" fill="#247f78"/>
+<path d="M390 82 V145" stroke="#d28b37" stroke-width="3"/><text x="220" y="190" text-anchor="middle" font-family="Arial" font-size="15" fill="#506269">|00⟩ → (|00⟩+|11⟩)/√2 → 00 or 11</text>
+</svg>

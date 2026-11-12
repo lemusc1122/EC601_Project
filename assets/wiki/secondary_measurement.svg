@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="210" viewBox="0 0 440 210">
+<rect width="440" height="210" rx="14" fill="#f8fbfb"/>
+<text x="220" y="25" text-anchor="middle" font-family="Arial" font-size="17" fill="#243238">Born probabilities predict repeated measurements</text>
+<text x="78" y="77" font-family="Arial" font-size="18" fill="#243238">|ψ⟩=α|0⟩+β|1⟩</text><path d="M186 71 H227" stroke="#247f78" stroke-width="3"/><rect x="227" y="48" width="76" height="48" rx="7" fill="#dcefeb" stroke="#247f78" stroke-width="2"/><text x="265" y="78" text-anchor="middle" font-family="Arial" font-size="16" fill="#176b65">measure</text>
+<text x="129" y="126" text-anchor="middle" font-family="Arial" font-size="15" fill="#243238">P(0)=|α|²</text><text x="310" y="126" text-anchor="middle" font-family="Arial" font-size="15" fill="#243238">P(1)=|β|²</text>
+<rect x="77" y="142" width="105" height="18" rx="4" fill="#dcefeb"/><rect x="77" y="142" width="74" height="18" rx="4" fill="#247f78"/><rect x="258" y="142" width="105" height="18" rx="4" fill="#f5e6d0"/><rect x="258" y="142" width="31" height="18" rx="4" fill="#d28b37"/>
+<text x="220" y="188" text-anchor="middle" font-family="Arial" font-size="13" fill="#506269">Each run returns one result; frequencies approach these probabilities</text>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="180" viewBox="0 0 440 180">
+<rect width="440" height="180" rx="14" fill="#f8fbfb"/>
+<text x="220" y="27" text-anchor="middle" font-family="Arial" font-size="18" fill="#243238">Gates change a qubit's state</text>
+<path d="M35 95 H405" stroke="#506269" stroke-width="3"/>
+<rect x="80" y="69" width="75" height="52" rx="8" fill="#dcefeb" stroke="#247f78" stroke-width="2"/><text x="117" y="101" text-anchor="middle" font-family="Arial" font-size="19" font-weight="bold" fill="#176b65">H</text>
+<path d="M155 95 H268" stroke="#247f78" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="270" y="69" width="75" height="52" rx="8" fill="#dcefeb" stroke="#247f78" stroke-width="2"/><text x="307" y="101" text-anchor="middle" font-family="Arial" font-size="19" font-weight="bold" fill="#176b65">X</text>
+<text x="220" y="151" text-anchor="middle" font-family="Arial" font-size="14" fill="#506269">A gate is one step in a circuit</text>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#247f78"/></marker></defs>
+</svg>

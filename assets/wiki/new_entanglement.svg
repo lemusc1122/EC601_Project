@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="180" viewBox="0 0 440 180">
+<rect width="440" height="180" rx="14" fill="#f8fbfb"/>
+<text x="220" y="30" text-anchor="middle" font-family="Arial" font-size="18" fill="#243238">A shared state can link two qubits</text>
+<circle cx="115" cy="92" r="39" fill="#e8f3f1" stroke="#247f78" stroke-width="3"/><text x="115" y="99" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#176b65">Qubit A</text>
+<circle cx="325" cy="92" r="39" fill="#e8f3f1" stroke="#247f78" stroke-width="3"/><text x="325" y="99" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#176b65">Qubit B</text>
+<path d="M158 82 C195 48 245 48 282 82 M158 102 C195 136 245 136 282 102" fill="none" stroke="#d28b37" stroke-width="4"/>
+<text x="220" y="166" text-anchor="middle" font-family="Arial" font-size="14" fill="#506269">Correlated results; no message travels between them</text>
+</svg>

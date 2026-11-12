@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="180" viewBox="0 0 440 180">
+<rect width="440" height="180" rx="14" fill="#f8fbfb"/>
+<text x="220" y="27" text-anchor="middle" font-family="Arial" font-size="18" fill="#243238">Possibilities can reinforce or cancel</text>
+<path d="M35 70 C50 42 65 98 80 70 S110 42 125 70" fill="none" stroke="#247f78" stroke-width="3"/>
+<path d="M35 112 C50 84 65 140 80 112 S110 84 125 112" fill="none" stroke="#d28b37" stroke-width="3"/>
+<path d="M135 70 H215 M135 112 H215 M215 70 L270 91 M215 112 L270 91 M270 91 H335" fill="none" stroke="#506269" stroke-width="2.5"/>
+<text x="370" y="85" text-anchor="middle" font-family="Arial" font-size="14" fill="#176b65">more likely</text>
+<text x="370" y="105" text-anchor="middle" font-family="Arial" font-size="14" fill="#176b65">or less likely</text>
+<text x="220" y="158" text-anchor="middle" font-family="Arial" font-size="13" fill="#506269">The lines are a picture of amplitudes, not particle paths</text>
+</svg>
