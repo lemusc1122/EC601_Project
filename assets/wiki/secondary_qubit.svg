@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="210" viewBox="0 0 440 210">
+<rect width="440" height="210" rx="14" fill="#f8fbfb"/>
+<text x="220" y="25" text-anchor="middle" font-family="Arial" font-size="17" fill="#243238">A pure qubit state on the Bloch sphere</text>
+<ellipse cx="220" cy="118" rx="108" ry="50" fill="none" stroke="#8aa5a3" stroke-width="2"/><ellipse cx="220" cy="118" rx="108" ry="50" fill="none" stroke="#8aa5a3" stroke-width="2" transform="rotate(-55 220 118)"/>
+<path d="M220 169 V62 M220 118 L313 146" fill="none" stroke="#506269" stroke-width="2"/><path d="M220 118 L274 82" stroke="#247f78" stroke-width="4"/><circle cx="274" cy="82" r="5" fill="#247f78"/>
+<text x="220" y="49" text-anchor="middle" font-family="Arial" font-size="15" fill="#243238">|0⟩</text><text x="220" y="190" text-anchor="middle" font-family="Arial" font-size="15" fill="#243238">|1⟩</text>
+<text x="306" y="75" font-family="Arial" font-size="14" fill="#176b65">|ψ⟩</text><text x="329" y="151" font-family="Arial" font-size="14" fill="#506269">relative phase φ</text>
+<text x="72" y="102" font-family="Arial" font-size="14" fill="#506269">P(0)=|α|²</text><text x="72" y="124" font-family="Arial" font-size="14" fill="#506269">P(1)=|β|²</text>
+</svg>

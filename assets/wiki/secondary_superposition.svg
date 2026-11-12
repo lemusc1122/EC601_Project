@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="200" viewBox="0 0 440 200">
+<rect width="440" height="200" rx="14" fill="#f8fbfb"/>
+<text x="220" y="26" text-anchor="middle" font-family="Arial" font-size="17" fill="#243238">A state can combine two basis states</text>
+<circle cx="85" cy="105" r="34" fill="#e8f3f1" stroke="#247f78" stroke-width="2"/><text x="85" y="111" text-anchor="middle" font-family="Arial" font-size="17" fill="#243238">|0⟩</text>
+<circle cx="85" cy="165" r="22" fill="#f5e6d0" stroke="#d28b37" stroke-width="2"/><text x="85" y="171" text-anchor="middle" font-family="Arial" font-size="16" fill="#243238">|1⟩</text>
+<path d="M120 105 H190 M107 165 H190 M190 105 L253 132 M190 165 L253 132" fill="none" stroke="#506269" stroke-width="2.5"/>
+<circle cx="270" cy="132" r="9" fill="#247f78"/><path d="M270 132 L340 78" stroke="#247f78" stroke-width="4"/>
+<text x="348" y="71" font-family="Arial" font-size="16" fill="#176b65">|ψ⟩</text><text x="220" y="188" text-anchor="middle" font-family="Arial" font-size="13" fill="#506269">The relative phase affects later interference</text>
+</svg>

@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.1"
+   width="1000"
+   height="400"
+   id="svg2">
+  <defs
+     id="defs4">
+    <marker
+       refX="0"
+       refY="0"
+       orient="auto"
+       id="Arrow1Lstart"
+       style="overflow:visible">
+      <path
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         transform="matrix(0.8,0,0,0.8,10,0)"
+         id="path4052"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none" />
+    </marker>
+  </defs>
+  <g
+     transform="translate(211.5,-354.36218)"
+     id="layer1">
+    <text
+       x="-27.894531"
+       y="415.36218"
+       id="text2830"
+       xml:space="preserve"
+       style="font-size:36px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:Times New Roman"><tspan
+         x="-27.894531"
+         y="415.36218"
+         id="tspan2832"
+         style="font-size:24px;font-style:italic;-inkscape-font-specification:Bitstream Vera Sans Italic">X</tspan></text>
+    <text
+       x="-14.640625"
+       y="426.36218"
+       id="text2834"
+       xml:space="preserve"
+       style="font-size:36px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:Times New Roman"><tspan
+         x="-14.640625"
+         y="426.36218"
+         id="tspan2836"
+         style="font-size:18px">A</tspan></text>
+    <text
+       x="114.34375"
+       y="585.36218"
+       id="text2859"
+       xml:space="preserve"
+       style="font-size:36px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:Times New Roman"><tspan
+         x="114.34375"
+         y="585.36218"
+         id="tspan2861"
+         style="font-size:24px;font-style:italic;-inkscape-font-specification:Bitstream Vera Sans Italic">Y</tspan></text>
+    <text
+       x="123.35938"
+       y="596.36218"
+       id="text2863"
+       xml:space="preserve"
+       style="font-size:36px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:Times New Roman"><tspan
+         x="123.35938"
+         y="596.36218"
+         id="tspan2865"
+         style="font-size:18px">A</tspan></text>
+    <text
+       x="-15.71875"
+       y="719.03406"
+       id="text2893"
+       xml:space="preserve"
+       style="font-size:36px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:Bitstream Vera Sans"><tspan
+         x="-15.71875"
+         y="719.03406"
+         id="tspan2895"
+         style="font-size:24px;font-style:normal;text-align:center;text-anchor:middle;-inkscape-font-specification:Bitstream Vera Sans">Alice</tspan></text>
+    <text
+       x="254.75586"
+       y="497.9989"
+       id="text2897"
+       xml:space="preserve"
+       style="font-size:36px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:Bitstream Vera Sans"><tspan
+         x="254.75586"
+         y="497.9989"
+         id="tspan2899"
+         style="font-size:24px;font-style:normal;-inkscape-font-specification:Bitstream Vera Sans">Source</tspan></text>
+    <text
+       x="580.10156"
+       y="714.03406"
+       id="text2901"
+       xml:space="preserve"
+       style="font-size:36px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:Bitstream Vera Sans"><tspan
+         x="580.10156"
+         y="714.03406"
+         id="tspan2903"
+         style="font-size:24px;font-style:normal;-inkscape-font-specification:Bitstream Vera Sans">Bob</tspan></text>
+    <text
+       x="281.86133"
+       y="624.22937"
+       id="text2905"
+       xml:space="preserve"
+       style="font-size:36px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:Bitstream Vera Sans"><tspan
+         x="281.86133"
+         y="624.22937"
+         id="tspan2907"
+         style="font-size:24px;font-style:normal;-inkscape-font-specification:Bitstream Vera Sans">ɸ</tspan></text>
+    <text
+       x="469.34375"
+       y="448.36218"
+       id="text2922"
+       xml:space="preserve"
+       style="font-size:36px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:Times New Roman"><tspan
+         x="469.34375"
+         y="448.36218"
+         id="tspan2924"
+         style="font-size:24px;font-style:italic;-inkscape-font-specification:Bitstream Vera Sans Italic">Y</tspan></text>
+    <text
+       x="483.20117"
+       y="459.36218"
+       id="text2926"
+       xml:space="preserve"
+       style="font-size:36px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:Times New Roman"><tspan
+         x="483.20117"
+         y="459.36218"
+         id="tspan2928"
+         style="font-size:18px">B</tspan></text>
+    <text
+       x="473.10547"
+       y="666.36218"
+       id="text2930"
+       xml:space="preserve"
+       style="font-size:36px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:Times New Roman"><tspan
+         x="473.10547"
+         y="666.36218"
+         id="tspan2932"
+         style="font-size:24px;font-style:italic;-inkscape-font-specification:Bitstream Vera Sans Italic">X</tspan></text>
+    <text
+       x="491.20117"
+       y="677.36218"
+       id="text2934"
+       xml:space="preserve"
+       style="font-size:36px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:Times New Roman"><tspan
+         x="491.20117"
+         y="677.36218"
+         id="tspan2936"
+         style="font-size:18px">B</tspan></text>
+    <path
+       d="m 280.17857,239.71428 a 120.17857,120.35714 0 1 1 -240.357144,0 120.17857,120.35714 0 1 1 240.357144,0 z"
+       transform="matrix(0.99435373,0,0,0.99287847,-170.59658,316.35503)"
+       id="path3762"
+       style="fill:#ffc000;fill-opacity:1;stroke:#000000;stroke-width:2.01285028;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       d="m -11.499998,554.36217 0,-103"
+       id="path2982"
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       d="m -11.499994,554.36217 103,0"
+       id="path2984"
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       d="m 89,549.36217 18,5 -18,5 0,-10 z"
+       id="path2986"
+       style="fill:#000000;fill-opacity:1;stroke:none" />
+    <path
+       d="m -16.499994,453.86218 5,-18 5,18 -10,0 z"
+       id="path3760"
+       style="fill:#000000;fill-opacity:1;stroke:none" />
+    <path
+       d="m 280.17857,239.71428 a 120.17857,120.35714 0 1 1 -240.357144,0 120.17857,120.35714 0 1 1 240.357144,0 z"
+       transform="matrix(0.99435373,0,0,0.99287847,429.40342,316.35503)"
+       id="path3812"
+       style="fill:#ffc000;fill-opacity:1;stroke:#000000;stroke-width:2.01285028;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <text
+       x="511.10547"
+       y="537.36218"
+       id="text2951"
+       xml:space="preserve"
+       style="font-size:36px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:Times New Roman"><tspan
+         x="511.10547"
+         y="537.36218"
+         id="tspan2953"
+         style="font-size:24px;font-style:normal;-inkscape-font-specification:Bitstream Vera Sans">45°</tspan></text>
+    <path
+       d="m 247.5,554.36218 -124,0"
+       id="path3867"
+       style="fill:#ff0000;fill-opacity:1;stroke:#ff4000;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       d="m 127,549.36218 -18,5 18,5 0,-10 z"
+       id="path3869"
+       style="fill:#ff4000;fill-opacity:1;stroke:#ff4000;stroke-opacity:1" />
+    <path
+       d="m 329.5,554.36218 124,0"
+       id="path3971"
+       style="fill:#ff0000;fill-opacity:1;stroke:#ff4000;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       d="m 280.17857,239.71428 a 120.17857,120.35714 0 1 1 -240.357144,0 120.17857,120.35714 0 1 1 240.357144,0 z"
+       transform="matrix(0.34115736,0,0,0.34065121,233.91482,472.70322)"
+       id="path3881"
+       style="fill:#0040c0;fill-opacity:1;stroke:#000000;stroke-width:5.86789227;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       d="m 588.50001,554.3622 -72.832,72.832"
+       id="path3963"
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       d="m 543.5,549.36218 c 0,-10 3,-17 9,-23"
+       id="path3993"
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:none" />
+    <path
+       d="m 588.5,554.36219 -72.83199,-72.832"
+       id="path3965"
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       d="m 513.90024,486.83351 -9.19238,-16.26347 16.26345,9.19239 -7.07107,7.07108 z"
+       id="path3967"
+       style="fill:#000000;fill-opacity:1;stroke:none" />
+    <path
+       d="m 520.97131,628.96195 -16.26345,9.19238 9.19239,-16.26345 7.07106,7.07107 z"
+       id="path3969"
+       style="fill:#000000;fill-opacity:1;stroke:none" />
+    <path
+       d="m 450,549.36218 18,5 -18,5 0,-10 z"
+       id="path3973"
+       style="fill:#ff4000;fill-opacity:1;stroke:#ff4000;stroke-opacity:1" />
+    <path
+       d="m 681,200 238,0"
+       transform="translate(-211.5,354.36218)"
+       id="path3989"
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:6, 6;stroke-dashoffset:0" />
+    <path
+       d="m 546,545.36218 -2.5,9 -2.5,-9 5,0 z"
+       id="path4683"
+       style="fill:#000000;fill-opacity:1;stroke:none" />
+    <path
+       d="m 548,527.72664 8.13173,-4.59619 -4.59619,8.13173 L 548,527.72664 z"
+       id="path4685"
+       style="fill:#000000;fill-opacity:1;stroke:none" />
+  </g>
+</svg>

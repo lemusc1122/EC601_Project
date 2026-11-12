@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 
 sys.setrecursionlimit(10000)
 
@@ -28,6 +29,11 @@ OPTIONS = {
 setup(
     name="PrototypeApp",
     app=APP,
-    data_files=[(".", ["feedback_config.json"])],
+    data_files=[
+        (".", ["feedback_config.json"]),
+        ("assets", ["assets/WIKI_IMAGE_SOURCES_MLA.txt"]),
+        ("assets/wiki", [str(path) for path in Path("assets/wiki").iterdir()
+                          if path.is_file()]),
+    ],
     options={"py2app": OPTIONS},
 )

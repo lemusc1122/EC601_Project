@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="210" viewBox="0 0 440 210">
+<rect width="440" height="210" rx="14" fill="#f8fbfb"/>
+<text x="220" y="25" text-anchor="middle" font-family="Arial" font-size="17" fill="#243238">Amplitudes combine before probabilities</text>
+<path d="M72 126 H167" stroke="#247f78" stroke-width="5"/><path d="M167 126 L244 72 M167 126 L244 180" stroke="#d28b37" stroke-width="3"/>
+<text x="118" y="113" text-anchor="middle" font-family="Arial" font-size="16" fill="#176b65">a₁</text><text x="212" y="88" text-anchor="middle" font-family="Arial" font-size="16" fill="#9a6224">a₂</text>
+<path d="M252 72 L326 126 M252 180 L326 126" stroke="#506269" stroke-width="2"/><text x="286" y="105" text-anchor="middle" font-family="Arial" font-size="14" fill="#243238">a₁+a₂</text>
+<rect x="337" y="72" width="65" height="106" rx="6" fill="#fff" stroke="#89bdb6" stroke-width="2"/><rect x="350" y="126" width="13" height="39" fill="#247f78"/><rect x="374" y="92" width="13" height="73" fill="#d28b37"/>
+<text x="220" y="198" text-anchor="middle" font-family="Arial" font-size="14" fill="#506269">Probability is the squared magnitude of the combined amplitude</text>
+</svg>

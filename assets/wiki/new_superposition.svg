@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="180" viewBox="0 0 440 180">
+<rect width="440" height="180" rx="14" fill="#f8fbfb"/>
+<text x="220" y="28" text-anchor="middle" font-family="Arial" font-size="18" fill="#243238">More than one outcome is possible</text>
+<rect x="35" y="67" width="88" height="42" rx="8" fill="#e8f3f1" stroke="#247f78" stroke-width="2"/><text x="79" y="94" text-anchor="middle" font-family="Arial" font-size="16" fill="#243238">qubit</text>
+<path d="M123 88 H185 M185 88 V59 H237 M185 88 V119 H237" fill="none" stroke="#247f78" stroke-width="3"/>
+<rect x="237" y="42" width="65" height="34" rx="7" fill="#fff" stroke="#89bdb6" stroke-width="2"/><text x="269" y="65" text-anchor="middle" font-family="Arial" font-size="17" fill="#243238">0</text>
+<rect x="237" y="102" width="65" height="34" rx="7" fill="#fff" stroke="#89bdb6" stroke-width="2"/><text x="269" y="125" text-anchor="middle" font-family="Arial" font-size="17" fill="#243238">1</text>
+<text x="360" y="83" text-anchor="middle" font-family="Arial" font-size="14" fill="#506269">both are</text><text x="360" y="103" text-anchor="middle" font-family="Arial" font-size="14" fill="#506269">possible</text>
+</svg>
