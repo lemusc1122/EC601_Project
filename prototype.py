@@ -18,6 +18,7 @@ import re
 import random
 import secrets
 import math
+import threading
 from html import escape as html_escape
 from collections import Counter
 from datetime import datetime
@@ -26,7 +27,7 @@ from pathlib import Path
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 
-from PySide6.QtCore import Qt, Signal, QTimer, QSize, QMimeData, QThread
+from PySide6.QtCore import Qt, Signal, Slot, QObject, QTimer, QSize, QMimeData, QThread
 from PySide6.QtGui  import QFont, QPixmap, QPainter, QPen, QColor, QIcon, QDrag
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QDialog, QLabel, QComboBox,
@@ -2099,6 +2100,41 @@ class FeedbackSender(QThread):
             self.completed.emit(False, str(exc))
 
 
+class FeedbackResultHandler(QObject):
+    """Apply the worker result to feedback widgets on the UI thread."""
+
+    def __init__(self, sender, editor, status, send_button, active_language,
+                 submitted_feedback, sender_refs, parent=None):
+        super().__init__(parent)
+        self.sender = sender
+        self.editor = editor
+        self.status = status
+        self.send_button = send_button
+        self.active_language = active_language
+        self.submitted_feedback = submitted_feedback
+        self.sender_refs = sender_refs
+
+    @Slot(bool, str)
+    def handle_result(self, success, detail):
+        language = self.active_language[0]
+        if success:
+            if self.editor.toPlainText().strip() == self.submitted_feedback:
+                self.editor.clear()
+            message = TRANSLATIONS[language]["feedback_sent"]
+            self.status.setText(message.format(url=detail) if detail else message.format(url=""))
+        else:
+            self.status.setText(TRANSLATIONS[language]["feedback_offline"])
+        self.send_button.setEnabled(True)
+
+    @Slot()
+    def handle_thread_finished(self):
+        pair = (self.sender, self)
+        if pair in self.sender_refs:
+            self.sender_refs.remove(pair)
+        self.sender.deleteLater()
+        self.deleteLater()
+
+
 def feedback_api_endpoint():
     """Read the endpoint from the environment or packaged/user-side config."""
     configured = os.environ.get("QCB_FEEDBACK_API_URL", "").strip()
@@ -2122,6 +2158,23 @@ def feedback_api_endpoint():
         if isinstance(value, str) and value.strip():
             return value.strip()
     return ""
+
+
+def warm_feedback_backend():
+    """Request the feedback service health endpoint without blocking the UI."""
+    endpoint = feedback_api_endpoint()
+    if not endpoint.lower().startswith("https://"):
+        return
+    health_endpoint = endpoint.rsplit("/feedback", 1)[0] + "/health"
+
+    def ping():
+        try:
+            with urlopen(health_endpoint, timeout=30) as response:
+                response.read(1024)
+        except (HTTPError, URLError, TimeoutError, OSError):
+            pass
+
+    threading.Thread(target=ping, name="FeedbackBackendWarmup", daemon=True).start()
 
 
 def create_feedback_page(language, source):
@@ -2210,22 +2263,14 @@ def create_feedback_page(language, source):
             "feedback": feedback,
         }
         sender = FeedbackSender(endpoint, payload, page)
-        sender_refs.append(sender)
-
-        def finished(success, detail):
-            if success:
-                editor.clear()
-                message = TRANSLATIONS[selected_language]["feedback_sent"]
-                status.setText(message.format(url=detail) if detail else message.format(url=""))
-            else:
-                status.setText(TRANSLATIONS[selected_language]["feedback_offline"])
-            sender_refs.remove(sender)
-            sender.deleteLater()
-
-        sender.completed.connect(finished)
+        result_handler = FeedbackResultHandler(
+            sender, editor, status, send_button, active_language, feedback,
+            sender_refs, page)
+        sender_refs.append((sender, result_handler))
+        sender.completed.connect(result_handler.handle_result)
+        sender.finished.connect(result_handler.handle_thread_finished)
         send_button.setEnabled(False)
         status.setText(TRANSLATIONS[selected_language]["feedback_sending"])
-        sender.finished.connect(lambda: send_button.setEnabled(True))
         sender.start()
 
     send_button.clicked.connect(submit_feedback)
@@ -4947,6 +4992,7 @@ def launch_simulation(answers, circuit_name):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setQuitOnLastWindowClosed(True)
+    warm_feedback_backend()
 
     # ── Apply light grey theme across all windows ──
     app.setStyleSheet(APP_STYLE)

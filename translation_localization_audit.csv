@@ -1,0 +1,131 @@
+﻿Dataset,Field path,English,Spanish,Arabic,Audit flags,Spanish→English rendering,Exact match to English static,Review note
+TRANSLATIONS,back,◀ Back,◀ Atrás,◀ رجوع,,◀ Back,Yes,
+TRANSLATIONS,begin,▶ Begin Tutorial,▶ Comenzar tutorial,▶ ابدأ الدرس,,▶ Start tutorial,No,
+TRANSLATIONS,choose_circuit,Choose a circuit to explore:,Elige un circuito para explorar:,اختر دائرة لاستكشافها:,,Choose a circuit to explore:,Yes,
+TRANSLATIONS,circuit,🔌 YOUR SELECTED CIRCUIT,🔌 TU CIRCUITO SELECCIONADO,🔌 الدائرة المحددة,,🔌 YOUR SELECTED CIRCUIT,Yes,
+TRANSLATIONS,circuit_help,Circuit overview,Resumen del circuito,نظرة عامة على الدائرة,,Circuit summary,No,
+TRANSLATIONS,close,✕ Close,✕ Cerrar,✕ إغلاق,,✕ Close,Yes,
+TRANSLATIONS,close_application,✕ Close Application,✕ Cerrar aplicación,✕ إغلاق التطبيق,,✕ Close Application,Yes,
+TRANSLATIONS,continue,✔ Continue,✔ Continuar,✔ متابعة,,✔ Continue,Yes,
+TRANSLATIONS,country,Country:,País:,البلد:,,Country:,Yes,
+TRANSLATIONS,cryptography,🔐 Quantum Cryptography,🔐 Criptografía cuántica,🔐 التشفير الكمي,,🔐 Quantum Cryptography,Yes,
+TRANSLATIONS,description,Explanation,Explicación,الشرح,,Explanation,Yes,
+TRANSLATIONS,diagram_error,"For graphical diagrams, install 'qiskit[visualization]' and matplotlib.","Para ver diagramas, instala 'qiskit[visualization]' y matplotlib.",لعرض المخططات، ثبّت 'qiskit[visualization]' وmatplotlib.,,"To view diagrams, install 'qiskit[visualization]' and matplotlib.",No,
+TRANSLATIONS,diagram_tooltip,Graphical quantum circuit diagram,Diagrama visual del circuito cuántico,مخطط مرئي للدائرة الكمية,,Visual diagram of the quantum circuit,No,
+TRANSLATIONS,experience,Experience Level:,Nivel de experiencia:,مستوى الخبرة:,,Experience Level:,Yes,
+TRANSLATIONS,explore,▶ Explore Circuit,▶ Explorar circuito,▶ استكشف الدائرة,,▶ Explore Circuit,Yes,
+TRANSLATIONS,feedback_empty,Write a few words before submitting.,Escribe un comentario antes de enviarlo.,اكتب ملاحظاتك قبل الإرسال.,,Write a comment before submitting.,No,
+TRANSLATIONS,feedback_error,Could not save feedback. Check that this folder is writable.,No se pudieron guardar los comentarios. Comprueba que la carpeta permita escritura.,تعذّر حفظ الملاحظات. تحقّق من صلاحية الكتابة في المجلد.,,Could not save the comments. Check that the folder allows writing.,No,
+TRANSLATIONS,feedback_issue_title,Feedback issue,Incidencia de comentarios,ملاحظة المستخدم,,Feedback issue,Yes,
+TRANSLATIONS,feedback_language_label,Interface language,Idioma de la interfaz,لغة الواجهة,,Interface language,Yes,
+TRANSLATIONS,feedback_offline,Could not reach the feedback service. Your text is still in the form; please try again later.,No se pudo conectar con el servicio. El texto sigue en el formulario; inténtalo de nuevo más tarde.,تعذّر الاتصال بالخدمة. ما زال النص في النموذج؛ حاول مرة أخرى لاحقًا.,,Could not connect to the service. The text is still in the form; try again later.,No,
+TRANSLATIONS,feedback_open_label,Open,Abierta,مفتوحة,,Open,Yes,
+TRANSLATIONS,feedback_prompt,"Tell us what worked, what was confusing, or what you would like changed.","Cuéntanos qué funcionó, qué resultó confuso o qué te gustaría cambiar.",أخبرنا بما أعجبك، وما كان مربكًا، وما الذي تقترح تغييره.,,"Tell us what worked, what was confusing, or what you would like to change.",No,
+TRANSLATIONS,feedback_saved,Saved as an open issue in Feedback/.,Guardado como incidencia abierta en Feedback/.,حُفظت الملاحظات كمسألة مفتوحة في مجلد Feedback/.,,Saved as an open issue in Feedback/.,Yes,
+TRANSLATIONS,feedback_screen_label,Screen,Pantalla,الشاشة,,Screen,Yes,
+TRANSLATIONS,feedback_send,Submit feedback,Enviar comentarios,إرسال الملاحظات,,Send comments,No,
+TRANSLATIONS,feedback_sending,Sending feedback…,Enviando comentarios…,جارٍ إرسال الملاحظات…,,Sending feedback…,Yes,
+TRANSLATIONS,feedback_sent,Feedback sent to GitHub. Issue: {url},Comentarios enviados a GitHub. Incidencia: {url},أُرسلت الملاحظات إلى GitHub. المسألة: {url},,Comments sent to GitHub. Issue: {url},No,
+TRANSLATIONS,feedback_status_label,Status,Estado,الحالة,,Status,Yes,
+TRANSLATIONS,feedback_submitted_label,Submitted,Enviada,تاريخ الإرسال,,Sent,No,
+TRANSLATIONS,feedback_text_heading,Feedback,Comentarios,الملاحظات,,Comments,No,
+TRANSLATIONS,feedback_title,Send feedback,Enviar comentarios,أرسل ملاحظاتك,,Send comments,No,
+TRANSLATIONS,hide_code,▼ Hide Qiskit Code,▼ Ocultar código Qiskit,▼ أخفِ كود Qiskit,,▼ Hide Qiskit Code,Yes,
+TRANSLATIONS,language,Preferred Language:,Idioma preferido:,اللغة المفضلة:,,Preferred Language:,Yes,
+TRANSLATIONS,main,⚛️ Quantum Circuit Builder,⚛️ Constructor de Circuitos Cuánticos,⚛️ منشئ الدوائر الكمية,,⚛️ Quantum Circuit Constructor,No,
+TRANSLATIONS,matrix_label,Gate Matrix:,Matriz de la Puerta:,مصفوفة البوابة:,,Gate Matrix:,Yes,
+TRANSLATIONS,novice,Brand new,Desde cero,مبتدئ تمامًا,,Starting from scratch,No,"Close in context, but “from scratch” is less direct than “brand new”; consider “Principiante total.”"
+TRANSLATIONS,operator_chart_hint,Select a gate image to open its explanation.,Selecciona la imagen de una puerta para ver su explicación.,اختر صورة بوابة لفتح شرحها.,,Select a gate image to open its explanation.,Yes,
+TRANSLATIONS,operators,⚛️ Quantum Operators Guide,⚛️ Guía de Operadores Cuánticos,⚛️ دليل البوابات والعمليات الكمية,,⚛️ Quantum Operators Guide,Yes,
+TRANSLATIONS,playground,🧩 Two-Qubit Playground,🧩 Zona de dos qubits,🧩 مساحة بناء دائرة بكيوبتين,,🧩 Two-qubit area,No,“Area” is less playful and less specific than “playground.”
+TRANSLATIONS,qiskit_missing,Qiskit not installed. Install it to build and simulate circuits.,Qiskit no está instalado. Instálalo para crear y simular circuitos.,حزمة Qiskit غير مثبتة. ثبّتها لإنشاء الدوائر ومحاكاتها.,,Qiskit not installed. Install it to build and simulate circuits.,Yes,
+TRANSLATIONS,ready,Status: Ready ✅,Estado: Listo ✅,الحالة: جاهز ✅,,Status: Ready ✅,Yes,
+TRANSLATIONS,region,State / Province:,Estado / Provincia:,الولاية / المنطقة:,,State / Province:,Yes,
+TRANSLATIONS,run,▶ Run Local Simulation,▶ Ejecutar simulación local,▶ شغّل المحاكاة المحلية,,▶ Run Local Simulation,Yes,
+TRANSLATIONS,running,Selected: {value},Seleccionado: {value},المحدد: {value},,Selected: {value},Yes,
+TRANSLATIONS,school,Secondary-School Level,Nivel secundaria,مستوى المدرسة الثانوية,,Secondary level,No,
+TRANSLATIONS,shots,Number of circuit runs:,Número de mediciones:,عدد قياسات المحاكاة:,,Number of measurements:,No,Meaning differs: measurements are outcomes; circuit runs are repetitions. Consider “Número de ejecuciones del circuito.”
+TRANSLATIONS,show_code,▶ Show Qiskit Code,▶ Mostrar código Qiskit,▶ أظهر كود Qiskit,,▶ Show Qiskit Code,Yes,
+TRANSLATIONS,simulation,▶ Theory & Local Simulation,▶ Teoría y simulación local,▶ النظرية والمحاكاة المحلية,,▶ Theory and local simulation,No,
+TRANSLATIONS,tab_feedback,Feedback,Comentarios,الملاحظات,,Comments,No,
+TRANSLATIONS,tab_main,App,Aplicación,التطبيق,,Application,No,
+TRANSLATIONS,title,Qiskit Quantum Circuit Builder,Constructor de Circuitos Cuánticos Qiskit,منشئ الدوائر الكمية,,Qiskit Quantum Circuit Constructor,No,
+TRANSLATIONS,university,University Level,Nivel universitario,مستوى جامعي,,University Level,Yes,
+TRANSLATIONS,welcome,Quantum Circuit Builder — Welcome,Constructor de circuitos cuánticos — Bienvenida,منشئ الدوائر الكمية — مرحبًا,,Quantum circuit constructor — Welcome,No,
+FEEDBACK_SOURCE_LABELS,circuit,Circuit selection,Selección de circuito,اختيار الدائرة,,Circuit selection,Yes,
+FEEDBACK_SOURCE_LABELS,cryptography,Quantum cryptography / BB84,Criptografía cuántica / BB84,التشفير الكمي / BB84,,Quantum cryptography / BB84,Yes,
+FEEDBACK_SOURCE_LABELS,experience,Experience selection,Selección de experiencia,اختيار مستوى الخبرة,,Experience selection,Yes,
+FEEDBACK_SOURCE_LABELS,operator,Operator guide,Guía de operadores,دليل البوابات,,Operator guide,Yes,
+FEEDBACK_SOURCE_LABELS,operator_detail,Operator explanation,Explicación del operador,شرح البوابة,,Gate explanation,No,
+FEEDBACK_SOURCE_LABELS,playground,Two-qubit circuit playground,Zona de circuitos de dos qubits,مساحة دائرة بكيوبتين,,Two-qubit circuit area,No,
+FEEDBACK_SOURCE_LABELS,simulation,Theory and local simulation,Teoría y simulación local,النظرية والمحاكاة المحلية,,Theory and local simulation,Yes,
+FEEDBACK_SOURCE_LABELS,welcome,Welcome,Bienvenida,الترحيب,,Welcome,Yes,
+COUNTRY_LABELS,Canada,Canada,Canadá,كندا,,Canada,Yes,
+COUNTRY_LABELS,India,India,India,الهند,,India,Yes,
+COUNTRY_LABELS,Other,Other,Otro,أخرى,,Other,Yes,
+COUNTRY_LABELS,United Kingdom,United Kingdom,Reino Unido,المملكة المتحدة,,United Kingdom,Yes,
+COUNTRY_LABELS,United States,United States,Estados Unidos,الولايات المتحدة,,United States,Yes,
+BEGINNER_PRIMER,,"Picture a qubit as a tiny arrow. Gates can turn it, and its direction helps set the chances of measurement results.
+Superposition: like a coin in motion, more than one result is possible. The coin is only an analogy: a qubit can show wave-like interference between possibilities.
+A gate: a controlled move of the arrow. H prepares two equally likely results if measured right away; later gates can change those chances. X flips 0 and 1; Z changes phase.
+Entanglement: two qubits can share one quantum state. In this circuit's Bell pair, the shown measurement results always match, but neither qubit sends a message to the other.
+Coherence: like ripples keeping their rhythm, the wave-like pattern stays intact. Later gates can make parts reinforce or cancel, changing the chances of results. Noise is like a splash that scrambles the pattern.
+Measurement: asks for one result and changes the state. Reset returns the qubit to its starting state; a barrier is just a circuit marker.","Imagina un qubit como una flecha pequeña. Las puertas pueden girarla, y su dirección influye en las probabilidades de los resultados al medir.
+Superposición: como una moneda en movimiento, hay varios resultados posibles. Es solo una comparación: un qubit puede mostrar interferencia ondulatoria entre posibilidades.
+Una puerta es un movimiento controlado de la flecha. H prepara dos resultados igual de probables si se mide enseguida; otras puertas pueden cambiar esas probabilidades. X intercambia 0 y 1; Z cambia la fase.
+Entrelazamiento: dos qubits pueden compartir un estado cuántico. En el par de Bell de este circuito, los resultados de la medición mostrada siempre coinciden, pero ningún qubit envía un mensaje al otro.
+Coherencia: como ondas que conservan el ritmo, el patrón ondulatorio sigue intacto. Otras puertas pueden hacer que algunas partes se refuercen o se cancelen y así cambiar las probabilidades. El ruido altera el patrón, como una salpicadura.
+Medir da un resultado y cambia el estado. Reiniciar devuelve el qubit a su estado inicial; una barrera solo marca una sección del circuito.","للتقريب، تخيّل الكيوبت سهمًا صغيرًا. تغيّر البوابات اتجاهه، ويساعد اتجاهه في تحديد فرص نتائج القياس.
+التراكب: يشبه قطعة نقدية تتحرك، إذ توجد نتائج محتملة متعددة. لكنه تشبيه فقط؛ فالكيوبت يُظهر تداخلًا موجيًا بين الاحتمالات.
+البوابة حركة تغيّر حالة الكيوبت. تهيّئ H نتيجتين متساويتين في الاحتمال إذا قِيس الكيوبت مباشرة؛ ويمكن للبوابات اللاحقة تغيير هذه الفرص. تبدّل X القيمتين 0 و1، وتغيّر Z الطور.
+التشابك: قد يشترك كيوبتان في حالة كمية واحدة. في حالة بيل التي تنشئها هذه الدائرة تتطابق نتيجتا القياس المعروض دائمًا، لكن أيًّا من الكيوبتين لا يرسل رسالة إلى الآخر.
+التماسك: يشبه موجات تحافظ على إيقاعها؛ فيبقى النمط الموجي محفوظًا. قد تجعل بوابات لاحقة أجزاءً تتعزز أو تلغي بعضها، فتتغير فرص النتائج. والضوضاء كرشة ماء تفسد النمط.
+القياس يعطي نتيجة ويغيّر الحالة. إعادة الضبط تعيد الكيوبت إلى حالة البداية، والحاجز علامة لتنظيم الدائرة فقط.",,"Picture a qubit as a tiny arrow. Gates can turn it, and its direction helps set the chances of measurement results.
+Superposition: like a coin in motion, more than one result is possible. The coin is only an analogy: a qubit can show wave-like interference between possibilities.
+A gate: a controlled move of the arrow. H prepares two equally likely results if measured right away; later gates can change those chances. X flips 0 and 1; Z changes phase.
+Entanglement: two qubits can share one quantum state. In this circuit's Bell pair, the shown measurement results always match, but neither qubit sends a message to the other.
+Coherence: like ripples keeping their rhythm, the wave-like pattern stays intact. Later gates can make parts reinforce or cancel, changing the chances of results. Noise is like a splash that scrambles the pattern.
+Measurement: asks for one result and changes the state. Reset returns the qubit to its starting state; a barrier is just a circuit marker.",Yes,
+BRAND_NEW_CIRCUITS,The Bell State Circuit (Entanglement)/description,"This circuit prepares two equally likely possibilities, then links the qubits in one shared quantum state. Their measurement results always match: both are 0 or both are 1. Neither qubit sends a message to the other.","Primero prepara dos posibilidades igual de probables y después conecta los qubits en un mismo estado cuántico. Al medirlos, los resultados siempre coinciden: ambos son 0 o ambos son 1. Ningún qubit envía un mensaje al otro.",تهيّئ الدائرة احتمالين متساويين، ثم تربط الكيوبتين في حالة كمية مشتركة. عند القياس تتطابق النتيجتان دائمًا: إما 0 لكليهما أو 1 لكليهما. ولا يرسل أيٌّ من الكيوبتين رسالة إلى الآخر.,,"The circuit first prepares two equally likely possibilities, then connects the qubits in a shared quantum state. When measured, their results always match: both are 0 or both are 1. Neither qubit sends a message to the other.",No,
+BRAND_NEW_CIRCUITS,The Bell State Circuit (Entanglement)/steps,"1. Start with both qubits at zero.
+2. Create two possible paths for the first qubit.
+3. Link the qubits with a controlled flip.
+4. Measure them; the results match.","1. Empieza con ambos qubits en cero.
+2. Crea dos posibilidades para el primero.
+3. Conecta los qubits con un cambio controlado.
+4. Mídelos; los resultados coinciden.","1. ابدأ والكيوبتان عند الصفر.
+2. أنشئ احتمالين للكيوبت الأول.
+3. اربط الكيوبتين بقلب مشروط.
+4. قِسهما؛ تتطابق النتيجتان.",,"1. Start with both qubits at zero.
+2. Create two possibilities for the first qubit.
+3. Connect the qubits with a controlled flip.
+4. Measure them; the results match.",No,
+BRAND_NEW_CIRCUITS,Three-Qubit GHZ State Circuit/description,"The first qubit creates two shared possibilities. It then passes that connection to the other qubits, so all three measurement results match.",El primer qubit crea dos posibilidades compartidas y conecta los otros dos. Por eso coinciden los resultados de las tres mediciones.,ينشئ الكيوبت الأول احتمالين مشتركين، ثم يربط الكيوبتين الآخرين به. لذلك تتطابق نتائج قياس الكيوبتات الثلاثة.,,"The first qubit creates two shared possibilities and connects the other two. As a result, all three measurement results match.",No,
+BRAND_NEW_CIRCUITS,Three-Qubit GHZ State Circuit/steps,"1. Start all three qubits at zero.
+2. Create two shared possibilities.
+3. Connect the first qubit to each of the others.
+4. Measure all three; their results match.","1. Empieza con los tres qubits en cero.
+2. Crea dos posibilidades compartidas.
+3. Conecta el primer qubit con cada uno de los otros.
+4. Mide los tres; los resultados coinciden.","1. ابدأ والكيوبتات الثلاثة عند الصفر.
+2. أنشئ احتمالين مشتركين.
+3. اربط الكيوبت الأول بكل واحد من الآخرين.
+4. قِس الكيوبتات الثلاثة؛ تتطابق النتائج.",,"1. Start with all three qubits at zero.
+2. Create two shared possibilities.
+3. Connect the first qubit to each of the others.
+4. Measure all three; the results match.",No,
+BRAND_NEW_CIRCUITS,Two-Qubit Grover Search Circuit/description,"This circuit searches four possible answers for one marked answer. It marks the target, then shifts the odds so a measurement finds that answer in the ideal case.",El circuito busca una respuesta marcada entre cuatro opciones. La marca ayuda a desplazar las probabilidades hacia esa respuesta para que la medición la encuentre en el caso ideal.,تبحث الدائرة عن إجابة محددة بين أربع إجابات. تضع علامة على الهدف ثم تغيّر الاحتمالات لصالحه، بحيث يعثر عليه القياس في الحالة المثالية.,,The circuit searches among four options for a marked answer. The mark helps shift the probabilities toward that answer so that measurement finds it in the ideal case.,No,
+BRAND_NEW_CIRCUITS,Two-Qubit Grover Search Circuit/steps,"1. Give all four answers an equal chance.
+2. Mark the target answer.
+3. Shift the odds toward that answer.
+4. Measure to read the answer.","1. Da la misma oportunidad a las cuatro respuestas.
+2. Marca la respuesta buscada.
+3. Desplaza las probabilidades hacia ella.
+4. Mide para leer la respuesta.","1. امنح الإجابات الأربع فرصًا متساوية.
+2. ضع علامة على الإجابة المطلوبة.
+3. غيّر الاحتمالات لصالحها.
+4. قِس لقراءة الإجابة.",,"1. Give all four answers an equal chance.
+2. Mark the desired answer.
+3. Shift the probabilities toward it.
+4. Measure to read the answer.",No,
+BRAND_NEW_CIRCUITS,heading,How this circuit works,Cómo funciona este circuito,كيف تعمل هذه الدائرة,,How this circuit works,Yes,
