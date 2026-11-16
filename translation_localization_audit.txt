@@ -1,0 +1,448 @@
+SPANISH-TO-ENGLISH STATIC STRING COMPARISON
+
+Review: English renderings of Spanish static strings compared with the corresponding English static strings in prototype.py. This is a text comparison, not an automated provider round trip; prototype.py has no translation provider.
+
+Fields reviewed: 74
+Exact text matches (Yes): 43
+Non-exact renderings (No): 31
+Match rate: 58.1%
+Wording items flagged for review: 3
+
+Exact means the reviewed English wording matches the static string after trimming outer whitespace. Non-exact wording may still be semantically equivalent.
+
+ITEMS FLAGGED FOR REVIEW
+
+- TRANSLATIONS / novice
+  Spanish: Desde cero
+  English static: Brand new
+  English rendering: Starting from scratch
+  Note: Close in context, but “from scratch” is less direct than “brand new”; consider “Principiante total.”
+
+- TRANSLATIONS / playground
+  Spanish: 🧩 Zona de dos qubits
+  English static: 🧩 Two-Qubit Playground
+  English rendering: 🧩 Two-qubit area
+  Note: “Area” is less playful and less specific than “playground.”
+
+- TRANSLATIONS / shots
+  Spanish: Número de mediciones:
+  English static: Number of circuit runs:
+  English rendering: Number of measurements:
+  Note: Meaning differs: measurements are outcomes; circuit runs are repetitions. Consider “Número de ejecuciones del circuito.”
+
+FULL FIELD-BY-FIELD COMPARISON
+
+[Yes] TRANSLATIONS / back
+  Spanish: ◀ Atrás
+  English static: ◀ Back
+  Spanish→English rendering: ◀ Back
+
+[No] TRANSLATIONS / begin
+  Spanish: ▶ Comenzar tutorial
+  English static: ▶ Begin Tutorial
+  Spanish→English rendering: ▶ Start tutorial
+
+[Yes] TRANSLATIONS / choose_circuit
+  Spanish: Elige un circuito para explorar:
+  English static: Choose a circuit to explore:
+  Spanish→English rendering: Choose a circuit to explore:
+
+[Yes] TRANSLATIONS / circuit
+  Spanish: 🔌 TU CIRCUITO SELECCIONADO
+  English static: 🔌 YOUR SELECTED CIRCUIT
+  Spanish→English rendering: 🔌 YOUR SELECTED CIRCUIT
+
+[No] TRANSLATIONS / circuit_help
+  Spanish: Resumen del circuito
+  English static: Circuit overview
+  Spanish→English rendering: Circuit summary
+
+[Yes] TRANSLATIONS / close
+  Spanish: ✕ Cerrar
+  English static: ✕ Close
+  Spanish→English rendering: ✕ Close
+
+[Yes] TRANSLATIONS / close_application
+  Spanish: ✕ Cerrar aplicación
+  English static: ✕ Close Application
+  Spanish→English rendering: ✕ Close Application
+
+[Yes] TRANSLATIONS / continue
+  Spanish: ✔ Continuar
+  English static: ✔ Continue
+  Spanish→English rendering: ✔ Continue
+
+[Yes] TRANSLATIONS / country
+  Spanish: País:
+  English static: Country:
+  Spanish→English rendering: Country:
+
+[Yes] TRANSLATIONS / cryptography
+  Spanish: 🔐 Criptografía cuántica
+  English static: 🔐 Quantum Cryptography
+  Spanish→English rendering: 🔐 Quantum Cryptography
+
+[Yes] TRANSLATIONS / description
+  Spanish: Explicación
+  English static: Explanation
+  Spanish→English rendering: Explanation
+
+[No] TRANSLATIONS / diagram_error
+  Spanish: Para ver diagramas, instala 'qiskit[visualization]' y matplotlib.
+  English static: For graphical diagrams, install 'qiskit[visualization]' and matplotlib.
+  Spanish→English rendering: To view diagrams, install 'qiskit[visualization]' and matplotlib.
+
+[No] TRANSLATIONS / diagram_tooltip
+  Spanish: Diagrama visual del circuito cuántico
+  English static: Graphical quantum circuit diagram
+  Spanish→English rendering: Visual diagram of the quantum circuit
+
+[Yes] TRANSLATIONS / experience
+  Spanish: Nivel de experiencia:
+  English static: Experience Level:
+  Spanish→English rendering: Experience Level:
+
+[Yes] TRANSLATIONS / explore
+  Spanish: ▶ Explorar circuito
+  English static: ▶ Explore Circuit
+  Spanish→English rendering: ▶ Explore Circuit
+
+[No] TRANSLATIONS / feedback_empty
+  Spanish: Escribe un comentario antes de enviarlo.
+  English static: Write a few words before submitting.
+  Spanish→English rendering: Write a comment before submitting.
+
+[No] TRANSLATIONS / feedback_error
+  Spanish: No se pudieron guardar los comentarios. Comprueba que la carpeta permita escritura.
+  English static: Could not save feedback. Check that this folder is writable.
+  Spanish→English rendering: Could not save the comments. Check that the folder allows writing.
+
+[Yes] TRANSLATIONS / feedback_issue_title
+  Spanish: Incidencia de comentarios
+  English static: Feedback issue
+  Spanish→English rendering: Feedback issue
+
+[Yes] TRANSLATIONS / feedback_language_label
+  Spanish: Idioma de la interfaz
+  English static: Interface language
+  Spanish→English rendering: Interface language
+
+[No] TRANSLATIONS / feedback_offline
+  Spanish: No se pudo conectar con el servicio. El texto sigue en el formulario; inténtalo de nuevo más tarde.
+  English static: Could not reach the feedback service. Your text is still in the form; please try again later.
+  Spanish→English rendering: Could not connect to the service. The text is still in the form; try again later.
+
+[Yes] TRANSLATIONS / feedback_open_label
+  Spanish: Abierta
+  English static: Open
+  Spanish→English rendering: Open
+
+[No] TRANSLATIONS / feedback_prompt
+  Spanish: Cuéntanos qué funcionó, qué resultó confuso o qué te gustaría cambiar.
+  English static: Tell us what worked, what was confusing, or what you would like changed.
+  Spanish→English rendering: Tell us what worked, what was confusing, or what you would like to change.
+
+[Yes] TRANSLATIONS / feedback_saved
+  Spanish: Guardado como incidencia abierta en Feedback/.
+  English static: Saved as an open issue in Feedback/.
+  Spanish→English rendering: Saved as an open issue in Feedback/.
+
+[Yes] TRANSLATIONS / feedback_screen_label
+  Spanish: Pantalla
+  English static: Screen
+  Spanish→English rendering: Screen
+
+[No] TRANSLATIONS / feedback_send
+  Spanish: Enviar comentarios
+  English static: Submit feedback
+  Spanish→English rendering: Send comments
+
+[Yes] TRANSLATIONS / feedback_sending
+  Spanish: Enviando comentarios…
+  English static: Sending feedback…
+  Spanish→English rendering: Sending feedback…
+
+[No] TRANSLATIONS / feedback_sent
+  Spanish: Comentarios enviados a GitHub. Incidencia: {url}
+  English static: Feedback sent to GitHub. Issue: {url}
+  Spanish→English rendering: Comments sent to GitHub. Issue: {url}
+
+[Yes] TRANSLATIONS / feedback_status_label
+  Spanish: Estado
+  English static: Status
+  Spanish→English rendering: Status
+
+[No] TRANSLATIONS / feedback_submitted_label
+  Spanish: Enviada
+  English static: Submitted
+  Spanish→English rendering: Sent
+
+[No] TRANSLATIONS / feedback_text_heading
+  Spanish: Comentarios
+  English static: Feedback
+  Spanish→English rendering: Comments
+
+[No] TRANSLATIONS / feedback_title
+  Spanish: Enviar comentarios
+  English static: Send feedback
+  Spanish→English rendering: Send comments
+
+[Yes] TRANSLATIONS / hide_code
+  Spanish: ▼ Ocultar código Qiskit
+  English static: ▼ Hide Qiskit Code
+  Spanish→English rendering: ▼ Hide Qiskit Code
+
+[Yes] TRANSLATIONS / language
+  Spanish: Idioma preferido:
+  English static: Preferred Language:
+  Spanish→English rendering: Preferred Language:
+
+[No] TRANSLATIONS / main
+  Spanish: ⚛️ Constructor de Circuitos Cuánticos
+  English static: ⚛️ Quantum Circuit Builder
+  Spanish→English rendering: ⚛️ Quantum Circuit Constructor
+
+[Yes] TRANSLATIONS / matrix_label
+  Spanish: Matriz de la Puerta:
+  English static: Gate Matrix:
+  Spanish→English rendering: Gate Matrix:
+
+[No] TRANSLATIONS / novice
+  Spanish: Desde cero
+  English static: Brand new
+  Spanish→English rendering: Starting from scratch
+  Review: Close in context, but “from scratch” is less direct than “brand new”; consider “Principiante total.”
+
+[Yes] TRANSLATIONS / operator_chart_hint
+  Spanish: Selecciona la imagen de una puerta para ver su explicación.
+  English static: Select a gate image to open its explanation.
+  Spanish→English rendering: Select a gate image to open its explanation.
+
+[Yes] TRANSLATIONS / operators
+  Spanish: ⚛️ Guía de Operadores Cuánticos
+  English static: ⚛️ Quantum Operators Guide
+  Spanish→English rendering: ⚛️ Quantum Operators Guide
+
+[No] TRANSLATIONS / playground
+  Spanish: 🧩 Zona de dos qubits
+  English static: 🧩 Two-Qubit Playground
+  Spanish→English rendering: 🧩 Two-qubit area
+  Review: “Area” is less playful and less specific than “playground.”
+
+[Yes] TRANSLATIONS / qiskit_missing
+  Spanish: Qiskit no está instalado. Instálalo para crear y simular circuitos.
+  English static: Qiskit not installed. Install it to build and simulate circuits.
+  Spanish→English rendering: Qiskit not installed. Install it to build and simulate circuits.
+
+[Yes] TRANSLATIONS / ready
+  Spanish: Estado: Listo ✅
+  English static: Status: Ready ✅
+  Spanish→English rendering: Status: Ready ✅
+
+[Yes] TRANSLATIONS / region
+  Spanish: Estado / Provincia:
+  English static: State / Province:
+  Spanish→English rendering: State / Province:
+
+[Yes] TRANSLATIONS / run
+  Spanish: ▶ Ejecutar simulación local
+  English static: ▶ Run Local Simulation
+  Spanish→English rendering: ▶ Run Local Simulation
+
+[Yes] TRANSLATIONS / running
+  Spanish: Seleccionado: {value}
+  English static: Selected: {value}
+  Spanish→English rendering: Selected: {value}
+
+[No] TRANSLATIONS / school
+  Spanish: Nivel secundaria
+  English static: Secondary-School Level
+  Spanish→English rendering: Secondary level
+
+[No] TRANSLATIONS / shots
+  Spanish: Número de mediciones:
+  English static: Number of circuit runs:
+  Spanish→English rendering: Number of measurements:
+  Review: Meaning differs: measurements are outcomes; circuit runs are repetitions. Consider “Número de ejecuciones del circuito.”
+
+[Yes] TRANSLATIONS / show_code
+  Spanish: ▶ Mostrar código Qiskit
+  English static: ▶ Show Qiskit Code
+  Spanish→English rendering: ▶ Show Qiskit Code
+
+[No] TRANSLATIONS / simulation
+  Spanish: ▶ Teoría y simulación local
+  English static: ▶ Theory & Local Simulation
+  Spanish→English rendering: ▶ Theory and local simulation
+
+[No] TRANSLATIONS / tab_feedback
+  Spanish: Comentarios
+  English static: Feedback
+  Spanish→English rendering: Comments
+
+[No] TRANSLATIONS / tab_main
+  Spanish: Aplicación
+  English static: App
+  Spanish→English rendering: Application
+
+[No] TRANSLATIONS / title
+  Spanish: Constructor de Circuitos Cuánticos Qiskit
+  English static: Qiskit Quantum Circuit Builder
+  Spanish→English rendering: Qiskit Quantum Circuit Constructor
+
+[Yes] TRANSLATIONS / university
+  Spanish: Nivel universitario
+  English static: University Level
+  Spanish→English rendering: University Level
+
+[No] TRANSLATIONS / welcome
+  Spanish: Constructor de circuitos cuánticos — Bienvenida
+  English static: Quantum Circuit Builder — Welcome
+  Spanish→English rendering: Quantum circuit constructor — Welcome
+
+[Yes] FEEDBACK_SOURCE_LABELS / circuit
+  Spanish: Selección de circuito
+  English static: Circuit selection
+  Spanish→English rendering: Circuit selection
+
+[Yes] FEEDBACK_SOURCE_LABELS / cryptography
+  Spanish: Criptografía cuántica / BB84
+  English static: Quantum cryptography / BB84
+  Spanish→English rendering: Quantum cryptography / BB84
+
+[Yes] FEEDBACK_SOURCE_LABELS / experience
+  Spanish: Selección de experiencia
+  English static: Experience selection
+  Spanish→English rendering: Experience selection
+
+[Yes] FEEDBACK_SOURCE_LABELS / operator
+  Spanish: Guía de operadores
+  English static: Operator guide
+  Spanish→English rendering: Operator guide
+
+[No] FEEDBACK_SOURCE_LABELS / operator_detail
+  Spanish: Explicación del operador
+  English static: Operator explanation
+  Spanish→English rendering: Gate explanation
+
+[No] FEEDBACK_SOURCE_LABELS / playground
+  Spanish: Zona de circuitos de dos qubits
+  English static: Two-qubit circuit playground
+  Spanish→English rendering: Two-qubit circuit area
+
+[Yes] FEEDBACK_SOURCE_LABELS / simulation
+  Spanish: Teoría y simulación local
+  English static: Theory and local simulation
+  Spanish→English rendering: Theory and local simulation
+
+[Yes] FEEDBACK_SOURCE_LABELS / welcome
+  Spanish: Bienvenida
+  English static: Welcome
+  Spanish→English rendering: Welcome
+
+[Yes] COUNTRY_LABELS / Canada
+  Spanish: Canadá
+  English static: Canada
+  Spanish→English rendering: Canada
+
+[Yes] COUNTRY_LABELS / India
+  Spanish: India
+  English static: India
+  Spanish→English rendering: India
+
+[Yes] COUNTRY_LABELS / Other
+  Spanish: Otro
+  English static: Other
+  Spanish→English rendering: Other
+
+[Yes] COUNTRY_LABELS / United Kingdom
+  Spanish: Reino Unido
+  English static: United Kingdom
+  Spanish→English rendering: United Kingdom
+
+[Yes] COUNTRY_LABELS / United States
+  Spanish: Estados Unidos
+  English static: United States
+  Spanish→English rendering: United States
+
+[Yes] BEGINNER_PRIMER / 
+  Spanish: Imagina un qubit como una flecha pequeña. Las puertas pueden girarla, y su dirección influye en las probabilidades de los resultados al medir.
+Superposición: como una moneda en movimiento, hay varios resultados posibles. Es solo una comparación: un qubit puede mostrar interferencia ondulatoria entre posibilidades.
+Una puerta es un movimiento controlado de la flecha. H prepara dos resultados igual de probables si se mide enseguida; otras puertas pueden cambiar esas probabilidades. X intercambia 0 y 1; Z cambia la fase.
+Entrelazamiento: dos qubits pueden compartir un estado cuántico. En el par de Bell de este circuito, los resultados de la medición mostrada siempre coinciden, pero ningún qubit envía un mensaje al otro.
+Coherencia: como ondas que conservan el ritmo, el patrón ondulatorio sigue intacto. Otras puertas pueden hacer que algunas partes se refuercen o se cancelen y así cambiar las probabilidades. El ruido altera el patrón, como una salpicadura.
+Medir da un resultado y cambia el estado. Reiniciar devuelve el qubit a su estado inicial; una barrera solo marca una sección del circuito.
+  English static: Picture a qubit as a tiny arrow. Gates can turn it, and its direction helps set the chances of measurement results.
+Superposition: like a coin in motion, more than one result is possible. The coin is only an analogy: a qubit can show wave-like interference between possibilities.
+A gate: a controlled move of the arrow. H prepares two equally likely results if measured right away; later gates can change those chances. X flips 0 and 1; Z changes phase.
+Entanglement: two qubits can share one quantum state. In this circuit's Bell pair, the shown measurement results always match, but neither qubit sends a message to the other.
+Coherence: like ripples keeping their rhythm, the wave-like pattern stays intact. Later gates can make parts reinforce or cancel, changing the chances of results. Noise is like a splash that scrambles the pattern.
+Measurement: asks for one result and changes the state. Reset returns the qubit to its starting state; a barrier is just a circuit marker.
+  Spanish→English rendering: Picture a qubit as a tiny arrow. Gates can turn it, and its direction helps set the chances of measurement results.
+Superposition: like a coin in motion, more than one result is possible. The coin is only an analogy: a qubit can show wave-like interference between possibilities.
+A gate: a controlled move of the arrow. H prepares two equally likely results if measured right away; later gates can change those chances. X flips 0 and 1; Z changes phase.
+Entanglement: two qubits can share one quantum state. In this circuit's Bell pair, the shown measurement results always match, but neither qubit sends a message to the other.
+Coherence: like ripples keeping their rhythm, the wave-like pattern stays intact. Later gates can make parts reinforce or cancel, changing the chances of results. Noise is like a splash that scrambles the pattern.
+Measurement: asks for one result and changes the state. Reset returns the qubit to its starting state; a barrier is just a circuit marker.
+
+[No] BRAND_NEW_CIRCUITS / The Bell State Circuit (Entanglement)/description
+  Spanish: Primero prepara dos posibilidades igual de probables y después conecta los qubits en un mismo estado cuántico. Al medirlos, los resultados siempre coinciden: ambos son 0 o ambos son 1. Ningún qubit envía un mensaje al otro.
+  English static: This circuit prepares two equally likely possibilities, then links the qubits in one shared quantum state. Their measurement results always match: both are 0 or both are 1. Neither qubit sends a message to the other.
+  Spanish→English rendering: The circuit first prepares two equally likely possibilities, then connects the qubits in a shared quantum state. When measured, their results always match: both are 0 or both are 1. Neither qubit sends a message to the other.
+
+[No] BRAND_NEW_CIRCUITS / The Bell State Circuit (Entanglement)/steps
+  Spanish: 1. Empieza con ambos qubits en cero.
+2. Crea dos posibilidades para el primero.
+3. Conecta los qubits con un cambio controlado.
+4. Mídelos; los resultados coinciden.
+  English static: 1. Start with both qubits at zero.
+2. Create two possible paths for the first qubit.
+3. Link the qubits with a controlled flip.
+4. Measure them; the results match.
+  Spanish→English rendering: 1. Start with both qubits at zero.
+2. Create two possibilities for the first qubit.
+3. Connect the qubits with a controlled flip.
+4. Measure them; the results match.
+
+[No] BRAND_NEW_CIRCUITS / Three-Qubit GHZ State Circuit/description
+  Spanish: El primer qubit crea dos posibilidades compartidas y conecta los otros dos. Por eso coinciden los resultados de las tres mediciones.
+  English static: The first qubit creates two shared possibilities. It then passes that connection to the other qubits, so all three measurement results match.
+  Spanish→English rendering: The first qubit creates two shared possibilities and connects the other two. As a result, all three measurement results match.
+
+[No] BRAND_NEW_CIRCUITS / Three-Qubit GHZ State Circuit/steps
+  Spanish: 1. Empieza con los tres qubits en cero.
+2. Crea dos posibilidades compartidas.
+3. Conecta el primer qubit con cada uno de los otros.
+4. Mide los tres; los resultados coinciden.
+  English static: 1. Start all three qubits at zero.
+2. Create two shared possibilities.
+3. Connect the first qubit to each of the others.
+4. Measure all three; their results match.
+  Spanish→English rendering: 1. Start with all three qubits at zero.
+2. Create two shared possibilities.
+3. Connect the first qubit to each of the others.
+4. Measure all three; the results match.
+
+[No] BRAND_NEW_CIRCUITS / Two-Qubit Grover Search Circuit/description
+  Spanish: El circuito busca una respuesta marcada entre cuatro opciones. La marca ayuda a desplazar las probabilidades hacia esa respuesta para que la medición la encuentre en el caso ideal.
+  English static: This circuit searches four possible answers for one marked answer. It marks the target, then shifts the odds so a measurement finds that answer in the ideal case.
+  Spanish→English rendering: The circuit searches among four options for a marked answer. The mark helps shift the probabilities toward that answer so that measurement finds it in the ideal case.
+
+[No] BRAND_NEW_CIRCUITS / Two-Qubit Grover Search Circuit/steps
+  Spanish: 1. Da la misma oportunidad a las cuatro respuestas.
+2. Marca la respuesta buscada.
+3. Desplaza las probabilidades hacia ella.
+4. Mide para leer la respuesta.
+  English static: 1. Give all four answers an equal chance.
+2. Mark the target answer.
+3. Shift the odds toward that answer.
+4. Measure to read the answer.
+  Spanish→English rendering: 1. Give all four answers an equal chance.
+2. Mark the desired answer.
+3. Shift the probabilities toward it.
+4. Measure to read the answer.
+
+[Yes] BRAND_NEW_CIRCUITS / heading
+  Spanish: Cómo funciona este circuito
+  English static: How this circuit works
+  Spanish→English rendering: How this circuit works
