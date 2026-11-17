@@ -61,7 +61,7 @@ def main() -> int:
                 "--noconfirm",
                 "--clean",
                 "--windowed",
-                "--onedir",
+                "--onefile",
                 "--name",
                 "QuantumCircuitBuilder",
                 "--add-data",
@@ -83,7 +83,7 @@ def main() -> int:
                 "prototype.py",
             ]
         )
-        output = ROOT / "dist" / "QuantumCircuitBuilder" / "QuantumCircuitBuilder.exe"
+        output = ROOT / "dist" / "QuantumCircuitBuilder.exe"
     else:
         run([str(python_path), "packaging/macos/setup.py", "py2app"])
         output = ROOT / "dist" / "PrototypeApp.app"
