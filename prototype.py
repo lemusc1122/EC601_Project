@@ -19,6 +19,7 @@ import random
 import secrets
 import math
 import threading
+import ssl
 from html import escape as html_escape
 from collections import Counter
 from datetime import datetime
@@ -26,6 +27,11 @@ from io import BytesIO
 from pathlib import Path
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
+
+try:
+    import certifi
+except ImportError:
+    certifi = None
 
 from PySide6.QtCore import Qt, Signal, Slot, QObject, QTimer, QSize, QMimeData, QThread
 from PySide6.QtGui  import QFont, QPixmap, QPainter, QPen, QColor, QIcon, QDrag
@@ -2090,7 +2096,7 @@ class FeedbackSender(QThread):
                 headers={"Content-Type": "application/json", "Accept": "application/json"},
                 method="POST",
             )
-            with urlopen(request, timeout=12) as response:
+            with urlopen(request, timeout=60, context=feedback_ssl_context()) as response:
                 result = json.loads(response.read(65536).decode("utf-8"))
             issue_url = result.get("url", "") if isinstance(result, dict) else ""
             if not isinstance(issue_url, str):
@@ -2098,6 +2104,16 @@ class FeedbackSender(QThread):
             self.completed.emit(True, issue_url)
         except (HTTPError, URLError, TimeoutError, OSError, ValueError) as exc:
             self.completed.emit(False, str(exc))
+
+
+def feedback_ssl_context():
+    """Use the bundled CA roots when available in a packaged app."""
+    if certifi is not None:
+        try:
+            return ssl.create_default_context(cafile=certifi.where())
+        except (OSError, ssl.SSLError):
+            pass
+    return ssl.create_default_context()
 
 
 class FeedbackResultHandler(QObject):
@@ -2123,7 +2139,10 @@ class FeedbackResultHandler(QObject):
             message = TRANSLATIONS[language]["feedback_sent"]
             self.status.setText(message.format(url=detail) if detail else message.format(url=""))
         else:
-            self.status.setText(TRANSLATIONS[language]["feedback_offline"])
+            message = TRANSLATIONS[language]["feedback_offline"]
+            if detail:
+                message += f"\nNetwork detail: {detail}"
+            self.status.setText(message)
         self.send_button.setEnabled(True)
 
     @Slot()
@@ -2169,7 +2188,9 @@ def warm_feedback_backend():
 
     def ping():
         try:
-            with urlopen(health_endpoint, timeout=30) as response:
+            with urlopen(
+                health_endpoint, timeout=60, context=feedback_ssl_context()
+            ) as response:
                 response.read(1024)
         except (HTTPError, URLError, TimeoutError, OSError):
             pass
@@ -2879,6 +2900,7 @@ class TwoQubitPlaygroundWindow(QMainWindow):
         self.audio_copy = AUDIO_COPY[self.language]
         self._speech = None
         self._audio_active = False
+        self._audio_waiting_for_ready = False
         self._audio_lines = []
         self._audio_index = 0
         self._closing_for_navigation = False
@@ -3195,6 +3217,7 @@ class TwoQubitPlaygroundWindow(QMainWindow):
 
     def _stop_audio_walkthrough(self):
         self._audio_active = False
+        self._audio_waiting_for_ready = False
         if self._speech is not None:
             self._speech.stop()
         self._set_audio_button(False)
@@ -3225,38 +3248,56 @@ class TwoQubitPlaygroundWindow(QMainWindow):
             }[self.language]
             requested_locale = QLocale(locale_name)
             self._speech.setLocale(requested_locale)
-            requested_language = requested_locale.language()
-            matching_voices = [
-                voice for voice in self._speech.availableVoices()
-                if voice.locale().language() == requested_language
-            ]
-            if not matching_voices:
-                self._speech.stop()
-                self.status.setText(self.audio_copy["no_voice"])
-                self._set_audio_button(False)
-                return
-            self._speech.setVoice(matching_voices[0])
             self._audio_lines = playground_audio_walkthrough_lines(
                 self.canvas.slots, self.language)
             self._audio_index = 0
             self._audio_active = True
+            self._audio_waiting_for_ready = True
             self.status.setText(self._audio_lines[0])
-            self._speak_next_audio_line()
-        except Exception:
+            if self._speech.state() == QTextToSpeech.State.Ready:
+                self._begin_audio_walkthrough()
+            elif self._speech.state() == QTextToSpeech.State.Error:
+                self._report_speech_error(self._speech.errorString())
+        except Exception as exc:
             self._audio_active = False
             if self._speech is not None:
                 self._speech.stop()
-            self.status.setText(self.audio_copy["no_voice"])
+            self.status.setText(f"{self.audio_copy['no_voice']}\n{exc}")
             self._set_audio_button(False)
+
+    def _begin_audio_walkthrough(self):
+        if not self._audio_active or not self._audio_waiting_for_ready:
+            return
+        requested_language = self._speech.locale().language()
+        matching_voices = [
+            voice for voice in self._speech.availableVoices()
+            if voice.locale().language() == requested_language
+        ]
+        if not matching_voices:
+            self._report_speech_error(self._speech.errorString())
+            return
+        self._audio_waiting_for_ready = False
+        self._speech.setVoice(matching_voices[0])
+        self._speak_next_audio_line()
+
+    def _report_speech_error(self, detail=""):
+        self._audio_active = False
+        self._audio_waiting_for_ready = False
+        message = self.audio_copy["no_voice"]
+        if detail:
+            message += f"\n{detail}"
+        self.status.setText(message)
+        self._set_audio_button(False)
 
     def _on_speech_state_changed(self, state):
         if self._audio_active and state == QTextToSpeech.State.Error:
-            self._audio_active = False
-            self.status.setText(self.audio_copy["no_voice"])
-            self._set_audio_button(False)
+            self._report_speech_error(self._speech.errorString())
             return
         if self._audio_active and state == QTextToSpeech.State.Ready:
-            QTimer.singleShot(100, self._speak_next_audio_line)
+            if self._audio_waiting_for_ready:
+                QTimer.singleShot(0, self._begin_audio_walkthrough)
+            else:
+                QTimer.singleShot(100, self._speak_next_audio_line)
 
     def _speak_next_audio_line(self):
         if not self._audio_active:
@@ -4615,6 +4656,7 @@ class SimulationWindow(QMainWindow):
         self.audio_copy = AUDIO_COPY[answers["language"]]
         self._speech = None
         self._audio_active = False
+        self._audio_waiting_for_ready = False
         self._audio_lines = []
         self._audio_index = 0
         self._closing_for_navigation = False
@@ -4773,6 +4815,7 @@ class SimulationWindow(QMainWindow):
         if not enabled:
             was_active = self._audio_active
             self._audio_active = False
+            self._audio_waiting_for_ready = False
             if self._speech is not None:
                 self._speech.stop()
             if was_active:
@@ -4799,37 +4842,55 @@ class SimulationWindow(QMainWindow):
             }[self.answers["language"]]
             requested_locale = QLocale(locale_name)
             self._speech.setLocale(requested_locale)
-            requested_language = requested_locale.language()
-            matching_voices = [
-                voice for voice in self._speech.availableVoices()
-                if voice.locale().language() == requested_language
-            ]
-            if not matching_voices:
-                self._speech.stop()
-                self.status.setText(self.audio_copy["no_voice"])
-                self._set_audio_button(False)
-                return
-            self._speech.setVoice(matching_voices[0])
             self._audio_lines = audio_walkthrough_lines(qc, self.answers["language"])
             self._audio_index = 0
             self._audio_active = True
+            self._audio_waiting_for_ready = True
             self.status.setText(self._audio_lines[0])
-            self._speak_next_audio_line()
-        except Exception:
+            if self._speech.state() == QTextToSpeech.State.Ready:
+                self._begin_audio_walkthrough()
+            elif self._speech.state() == QTextToSpeech.State.Error:
+                self._report_speech_error(self._speech.errorString())
+        except Exception as exc:
             self._audio_active = False
             if self._speech is not None:
                 self._speech.stop()
-            self.status.setText(self.audio_copy["no_voice"])
+            self.status.setText(f"{self.audio_copy['no_voice']}\n{exc}")
             self._set_audio_button(False)
+
+    def _begin_audio_walkthrough(self):
+        if not self._audio_active or not self._audio_waiting_for_ready:
+            return
+        requested_language = self._speech.locale().language()
+        matching_voices = [
+            voice for voice in self._speech.availableVoices()
+            if voice.locale().language() == requested_language
+        ]
+        if not matching_voices:
+            self._report_speech_error(self._speech.errorString())
+            return
+        self._audio_waiting_for_ready = False
+        self._speech.setVoice(matching_voices[0])
+        self._speak_next_audio_line()
+
+    def _report_speech_error(self, detail=""):
+        self._audio_active = False
+        self._audio_waiting_for_ready = False
+        message = self.audio_copy["no_voice"]
+        if detail:
+            message += f"\n{detail}"
+        self.status.setText(message)
+        self._set_audio_button(False)
 
     def _on_speech_state_changed(self, state):
         if self._audio_active and state == QTextToSpeech.State.Error:
-            self._audio_active = False
-            self.status.setText(self.audio_copy["no_voice"])
-            self._set_audio_button(False)
+            self._report_speech_error(self._speech.errorString())
             return
         if self._audio_active and state == QTextToSpeech.State.Ready:
-            QTimer.singleShot(100, self._speak_next_audio_line)
+            if self._audio_waiting_for_ready:
+                QTimer.singleShot(0, self._begin_audio_walkthrough)
+            else:
+                QTimer.singleShot(100, self._speak_next_audio_line)
 
     def _speak_next_audio_line(self):
         if not self._audio_active:

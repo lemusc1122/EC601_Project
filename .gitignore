@@ -1,3 +1,6 @@
 .venv/
+.venv-windows-*/
+.venv-macos-*/
 build/
 dist/
+venv/
