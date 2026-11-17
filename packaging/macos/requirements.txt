@@ -1,0 +1,7 @@
+# Dependencies used by the desktop app and its macOS app bundle.
+PySide6
+numpy==1.26.4
+qiskit[visualization]==2.4.2
+matplotlib
+py2app
+certifi
