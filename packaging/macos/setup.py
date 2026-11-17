@@ -1,5 +1,6 @@
 import sys
 import os
+import importlib.util
 from pathlib import Path
 
 sys.setrecursionlimit(10000)
@@ -52,6 +53,21 @@ OPTIONS = {
 }
 if framework_paths:
     OPTIONS["frameworks"] = framework_paths
+
+# Do not copy the development test suites from large scientific packages into
+# the application bundle; the desktop app never imports these modules.
+test_package_excludes = []
+for package_name in ("scipy", "numpy", "matplotlib", "qiskit"):
+    package_spec = importlib.util.find_spec(package_name)
+    if not package_spec or not package_spec.submodule_search_locations:
+        continue
+    package_root = Path(next(iter(package_spec.submodule_search_locations)))
+    for tests_dir in package_root.rglob("tests"):
+        if (tests_dir / "__init__.py").is_file():
+            relative_parts = tests_dir.relative_to(package_root).parts
+            module_name = ".".join((package_name, *relative_parts))
+            test_package_excludes.append(module_name)
+OPTIONS["excludes"] = sorted(set(test_package_excludes))
 
 setup(
     name="PrototypeApp",
