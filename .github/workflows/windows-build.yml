@@ -1,0 +1,39 @@
+name: Windows executable build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - development
+    paths:
+      - "prototype.py"
+      - "assets/**"
+      - "feedback_config.json"
+      - "packaging/**"
+      - ".github/workflows/windows-build.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build Windows executable
+        run: python packaging/build_app.py
+
+      - name: Upload executable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: QuantumCircuitBuilder-windows
+          path: dist/QuantumCircuitBuilder.exe
+          if-no-files-found: error
+          compression-level: 0
